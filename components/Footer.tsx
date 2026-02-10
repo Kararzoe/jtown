@@ -52,6 +52,7 @@ export default function Footer() {
 
         <div className="border-t border-gray-800 pt-8 text-center text-sm">
           <p>&copy; 2024 Jos Marketplace. All rights reserved.</p>
+          <p className="mt-2 text-gray-500">Powered by Plero Digitals</p>
         </div>
       </div>
     </footer>
