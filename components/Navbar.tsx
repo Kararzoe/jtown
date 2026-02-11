@@ -33,15 +33,15 @@ export default function Navbar() {
         className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50 shadow-sm"
       >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-14 md:h-16">
           <motion.div
             whileHover={{ scale: 1.02 }}
             className="relative"
           >
-            <span className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 via-primary-500 to-primary-600 bg-clip-text text-transparent">
+            <span className="text-xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 via-primary-500 to-primary-600 bg-clip-text text-transparent">
               Jos
             </span>
-            <span className="text-2xl md:text-3xl font-light text-gray-700 dark:text-gray-300 ml-1">
+            <span className="text-xl md:text-3xl font-light text-gray-700 dark:text-gray-300 ml-1">
               Marketplace
             </span>
             <div className="absolute -bottom-1 left-0 w-12 h-0.5 bg-gradient-to-r from-primary-600 to-transparent"></div>
@@ -65,10 +65,16 @@ export default function Navbar() {
             </a>
           </div>
 
-          <div className="flex items-center space-x-2 md:space-x-4">
-            <NotificationCenter />
-            <LanguageSelector />
-            <DarkModeToggle />
+          <div className="flex items-center space-x-1 md:space-x-4">
+            <div className="hidden md:flex">
+              <NotificationCenter />
+            </div>
+            <div className="hidden md:flex">
+              <LanguageSelector />
+            </div>
+            <div className="hidden md:flex">
+              <DarkModeToggle />
+            </div>
             <motion.button 
               whileHover={{ scale: 1.1 }} 
               whileTap={{ scale: 0.95 }} 
@@ -96,7 +102,7 @@ export default function Navbar() {
               </div>
             )}
             {user ? (
-              <div className="relative group">
+              <div className="relative group hidden md:block">
                 <button className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
                   <span className="text-2xl">{user.avatar}</span>
                 </button>
@@ -120,7 +126,7 @@ export default function Navbar() {
                 </div>
               </div>
             ) : (
-              <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }} onClick={() => setAuthOpen(true)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+              <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }} onClick={() => setAuthOpen(true)} className="hidden md:block p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
                 <User className="w-5 h-5 text-gray-700 dark:text-gray-300" />
               </motion.button>
             )}
@@ -137,11 +143,25 @@ export default function Navbar() {
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden py-4 border-t"
           >
-            <div className="flex flex-col space-y-4">
-              <a href="/" className="text-gray-700 hover:text-primary-600 transition font-medium">{t('home')}</a>
-              <a href="/#categories" className="text-gray-700 hover:text-primary-600 transition font-medium">{t('categories')}</a>
-              <a href="/#products" className="text-gray-700 hover:text-primary-600 transition font-medium">{t('products')}</a>
-              <a href="/become-seller" className="px-4 py-2 bg-primary-500 text-white rounded-lg font-semibold text-center">{t('sell')}</a>
+            <div className="flex flex-col space-y-3">
+              <a href="/" className="text-gray-700 hover:text-primary-600 transition font-medium px-2">{t('home')}</a>
+              <a href="/#categories" className="text-gray-700 hover:text-primary-600 transition font-medium px-2">{t('categories')}</a>
+              <a href="/#products" className="text-gray-700 hover:text-primary-600 transition font-medium px-2">{t('products')}</a>
+              {user ? (
+                <>
+                  <a href="/dashboard" className="text-gray-700 hover:text-primary-600 transition font-medium px-2">{t('dashboard')}</a>
+                  <a href="/wishlist" className="text-gray-700 hover:text-primary-600 transition font-medium px-2">{t('wishlist')}</a>
+                  <button onClick={logout} className="text-left text-red-600 font-medium px-2">{t('logout')}</button>
+                </>
+              ) : (
+                <button onClick={() => setAuthOpen(true)} className="text-left text-gray-700 hover:text-primary-600 transition font-medium px-2">Login</button>
+              )}
+              <div className="flex items-center gap-4 px-2 pt-2 border-t">
+                <NotificationCenter />
+                <LanguageSelector />
+                <DarkModeToggle />
+              </div>
+              <a href="/become-seller" className="mx-2 px-4 py-2 bg-primary-500 text-white rounded-lg font-semibold text-center">{t('sell')}</a>
             </div>
           </motion.div>
         )}
