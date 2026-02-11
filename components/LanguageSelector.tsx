@@ -32,7 +32,7 @@ export default function LanguageSelector() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 rounded-lg shadow-xl border dark:border-gray-700 z-50"
+            className="absolute left-1/2 -translate-x-1/2 md:right-0 md:left-auto md:translate-x-0 mt-2 w-40 bg-white dark:bg-gray-800 rounded-lg shadow-xl border dark:border-gray-700 z-50"
           >
             {languages.map((lang) => (
               <button
