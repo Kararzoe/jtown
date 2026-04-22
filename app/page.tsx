@@ -9,11 +9,9 @@ import FilterBar from "@/components/FilterBar";
 import StatsCounter from "@/components/StatsCounter";
 import FloatingChat from "@/components/FloatingChat";
 import TopSellers from "@/components/TopSellers";
-import TrustSection from "@/components/TrustSection";
 import ScrollToTop from "@/components/ScrollToTop";
 import HowItWorks from "@/components/HowItWorks";
 import Testimonials from "@/components/Testimonials";
-import AppDownload from "@/components/AppDownload";
 import Newsletter from "@/components/Newsletter";
 import FAQ from "@/components/FAQ";
 import CookieConsent from "@/components/CookieConsent";
@@ -30,10 +28,8 @@ export default function Home() {
       <TopSellers />
       <FilterBar />
       <ProductGrid />
-      <TrustSection />
       <Testimonials />
       <StatsCounter />
-      <AppDownload />
       <FAQ />
       <Newsletter />
       <Footer />
