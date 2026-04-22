@@ -22,10 +22,43 @@ export default function Categories() {
   return (
     <section id="categories" className="py-16 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">{t('browseCategories')}</h2>
-          <p className="text-gray-600">{t('findWhatYouNeed')}</p>
-        </motion.div>
+        <div className="text-center mb-12">
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="text-4xl font-bold text-gray-900 mb-4"
+          >
+            {t('browseCategories').split('').map((char: string, i: number) => (
+              <motion.span
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.03, duration: 0.4 }}
+              >
+                {char}
+              </motion.span>
+            ))}
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="text-gray-600 text-lg"
+          >
+            {t('findWhatYouNeed')}
+          </motion.p>
+          <motion.div
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="w-24 h-1 bg-gradient-to-r from-primary-500 to-primary-600 mx-auto mt-4 rounded-full"
+          />
+        </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           {categories.map((category, index) => {
