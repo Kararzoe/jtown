@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Star, MessageCircle, Phone, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Breadcrumb from "./Breadcrumb";
+import ServiceProviders from "./ServiceProviders";
 
 interface CategoryPageProps {
   category: string;
@@ -191,6 +192,8 @@ export default function CategoryPage({ category }: CategoryPageProps) {
             </motion.div>
           ))}
         </div>
+
+        <ServiceProviders category={category} />
       </div>
     </div>
   );

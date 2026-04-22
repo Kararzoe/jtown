@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useInView, useMotionValue, useSpring } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Users, Package, ShoppingBag, TrendingUp } from "lucide-react";
 
 function Counter({ value, suffix = "" }: { value: number; suffix?: string }) {
@@ -27,14 +27,31 @@ function Counter({ value, suffix = "" }: { value: number; suffix?: string }) {
   return <span ref={ref}>0</span>;
 }
 
-const stats = [
-  { icon: Users, label: "Active Users", value: 50000, suffix: "+" },
-  { icon: Package, label: "Products Listed", value: 100000, suffix: "+" },
-  { icon: ShoppingBag, label: "Orders Completed", value: 25000, suffix: "+" },
-  { icon: TrendingUp, label: "Success Rate", value: 98, suffix: "%" },
-];
-
 export default function StatsCounter() {
+  const [stats, setStats] = useState({
+    activeUsers: 0,
+    productsListed: 0,
+    ordersCompleted: 0,
+    successRate: 0
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/stats')
+      .then(res => res.json())
+      .then(data => {
+        setStats(data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
+  const statsConfig = [
+    { icon: Users, label: "Active Users", value: stats.activeUsers, suffix: "+" },
+    { icon: Package, label: "Products Listed", value: stats.productsListed, suffix: "+" },
+    { icon: ShoppingBag, label: "Orders Completed", value: stats.ordersCompleted, suffix: "+" },
+    { icon: TrendingUp, label: "Success Rate", value: stats.successRate, suffix: "%" },
+  ];
   return (
     <section className="py-16 px-4 bg-gradient-to-br from-primary-600 to-primary-700">
       <div className="max-w-7xl mx-auto">
@@ -49,27 +66,37 @@ export default function StatsCounter() {
         </motion.div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          {stats.map((stat, index) => {
-            const Icon = stat.icon;
-            return (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="text-center"
-              >
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-white/10 rounded-full mb-4">
-                  <Icon className="w-8 h-8 text-white" />
-                </div>
-                <div className="text-4xl font-bold text-white mb-2">
-                  <Counter value={stat.value} suffix={stat.suffix} />
-                </div>
-                <p className="text-primary-100">{stat.label}</p>
-              </motion.div>
-            );
-          })}
+          {loading ? (
+            Array.from({ length: 4 }).map((_, index) => (
+              <div key={index} className="text-center animate-pulse">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-white/10 rounded-full mb-4" />
+                <div className="h-8 bg-white/10 rounded mb-2" />
+                <div className="h-4 bg-white/10 rounded" />
+              </div>
+            ))
+          ) : (
+            statsConfig.map((stat, index) => {
+              const Icon = stat.icon;
+              return (
+                <motion.div
+                  key={stat.label}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="text-center"
+                >
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-white/10 rounded-full mb-4">
+                    <Icon className="w-8 h-8 text-white" />
+                  </div>
+                  <div className="text-4xl font-bold text-white mb-2">
+                    <Counter value={stat.value} suffix={stat.suffix} />
+                  </div>
+                  <p className="text-primary-100">{stat.label}</p>
+                </motion.div>
+              );
+            })
+          )}
         </div>
       </div>
     </section>

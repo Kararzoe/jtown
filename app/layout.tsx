@@ -4,6 +4,7 @@ import "./globals.css";
 import PlateauBackground from "@/components/PlateauBackground";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { CartProvider } from "@/contexts/CartContext";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
 
@@ -28,10 +29,12 @@ export default function RootLayout({
       </head>
       <body className={poppins.className}>
         <AuthProvider>
-          <LanguageProvider>
-            <PlateauBackground />
-            <div className="relative z-10">{children}</div>
-          </LanguageProvider>
+          <CartProvider>
+            <LanguageProvider>
+              <PlateauBackground />
+              <div className="relative z-10">{children}</div>
+            </LanguageProvider>
+          </CartProvider>
         </AuthProvider>
       </body>
     </html>

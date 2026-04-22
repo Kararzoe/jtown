@@ -1,19 +1,19 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Smartphone, Shirt, Home, Dumbbell, Book, Utensils, Car, Briefcase } from "lucide-react";
+import { Smartphone, Shirt, Home, Dumbbell, Book, Utensils, Car, Briefcase, Phone, Laptop } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const categories = [
-  { key: "electronics", icon: Smartphone, color: "from-blue-500 to-blue-600", slug: "electronics" },
+  { key: "phones", icon: Phone, color: "from-blue-500 to-blue-600", slug: "phones" },
+  { key: "gadgets", icon: Laptop, color: "from-purple-500 to-purple-600", slug: "gadgets" },
+  { key: "electronics", icon: Smartphone, color: "from-cyan-500 to-cyan-600", slug: "electronics" },
   { key: "fashion", icon: Shirt, color: "from-pink-500 to-pink-600", slug: "fashion" },
   { key: "homeProperties", icon: Home, color: "from-green-500 to-green-600", slug: "home" },
   { key: "sports", icon: Dumbbell, color: "from-orange-500 to-orange-600", slug: "sports" },
-  { key: "books", icon: Book, color: "from-purple-500 to-purple-600", slug: "books" },
+  { key: "books", icon: Book, color: "from-violet-500 to-violet-600", slug: "books" },
   { key: "food", icon: Utensils, color: "from-red-500 to-red-600", slug: "food" },
-  { key: "automotive", icon: Car, color: "from-gray-500 to-gray-600", slug: "automotive" },
-  { key: "services", icon: Briefcase, color: "from-indigo-500 to-indigo-600", slug: "services" },
 ];
 
 export default function Categories() {

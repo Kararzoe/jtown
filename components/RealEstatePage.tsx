@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Star, MessageCircle, Phone, ArrowLeft, Bed, Bath, Home as HomeIcon, Hotel } from "lucide-react";
+import ServiceProviders from "./ServiceProviders";
 
 const properties = [
   {
@@ -212,6 +213,8 @@ export default function RealEstatePage() {
             </motion.div>
           ))}
         </div>
+
+        <ServiceProviders category="home" />
       </div>
     </div>
   );

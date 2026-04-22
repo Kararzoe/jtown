@@ -20,9 +20,16 @@ export const translations = {
     featuredProducts: 'Featured Products',
     discover: 'Discover amazing deals',
     viewAll: 'View All Products',
-    new: 'New',
-    used: 'Used',
-    refurbished: 'Refurbished'
+    phones: 'Phones',
+    gadgets: 'Gadgets',
+    electronics: 'Electronics',
+    fashion: 'Fashion',
+    homeProperties: 'Home & Garden',
+    sports: 'Sports',
+    books: 'Books',
+    food: 'Food',
+    browseCategories: 'Browse Categories',
+    findWhatYouNeed: 'Find what you need'
   },
   ha: {
     home: 'Gida',
@@ -45,8 +52,15 @@ export const translations = {
     featuredProducts: 'Kayayyaki masu mahimmanci',
     discover: 'Gano ciniki mai kyau',
     viewAll: 'Duba duk kayayyaki',
-    new: 'Sabo',
-    used: 'An yi amfani',
-    refurbished: 'An gyara'
+    phones: 'Wayoyi',
+    gadgets: 'Na\'urori',
+    electronics: 'Kayan lantarki',
+    fashion: 'Tufafi',
+    homeProperties: 'Gida da lambun',
+    sports: 'Wasanni',
+    books: 'Littattafai',
+    food: 'Abinci',
+    browseCategories: 'Duba nau\'i',
+    findWhatYouNeed: 'Nemo abin da kuke bukata'
   }
 };

@@ -34,6 +34,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     throw new Error(data.message || "Login failed");
   };
 
+  const sendLoginCode = async (email: string) => {
+    const data = await api.sendLoginCode(email);
+    if (!data.success) {
+      throw new Error(data.message || "Failed to send verification code");
+    }
+    return data;
+  };
+
+  const verifyLoginCode = async (email: string, code: string) => {
+    const data = await api.verifyLoginCode(email, code);
+    if (data.token) {
+      localStorage.setItem("token", data.token);
+      setUser(data);
+      return data;
+    }
+    throw new Error(data.message || "Invalid verification code");
+  };
+
   const register = async (userData: any) => {
     const data = await api.register(userData);
     if (data.token) {
@@ -50,7 +68,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, register, logout, loading, sendLoginCode, verifyLoginCode }}>
       {children}
     </AuthContext.Provider>
   );

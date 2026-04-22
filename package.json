@@ -6,15 +6,22 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:seed": "npx tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "bcryptjs": "^3.0.3",
     "framer-motion": "^11",
     "lucide-react": "^0.294.0",
     "next": "^14",
+    "next-auth": "^4.24.13",
+    "nodemailer": "^7.0.13",
+    "prisma": "^5.22.0",
     "react": "^18",
     "react-dom": "^18",
-    "socket.io-client": "^4.8.3"
+    "socket.io-client": "^4.8.3",
+    "tsx": "^4.21.0"
   },
   "devDependencies": {
     "@types/node": "^20",

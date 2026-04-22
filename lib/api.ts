@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
 const getToken = () => {
   if (typeof window !== 'undefined') {
@@ -23,6 +23,18 @@ export const api = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
+  }).then(r => r.json()),
+
+  sendLoginCode: (email: string) => fetch(`${API_URL}/auth/send-login-code`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email })
+  }).then(r => r.json()),
+
+  verifyLoginCode: (email: string, code: string) => fetch(`${API_URL}/auth/verify-login-code`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, code })
   }).then(r => r.json()),
 
   getProfile: () => fetch(`${API_URL}/auth/profile`, {
@@ -326,6 +338,33 @@ export const api = {
   }).then(r => r.json()),
 
   getShops: () => fetch(`${API_URL}/business/shops`, {
+    headers: headers()
+  }).then(r => r.json()),
+
+  getServiceProviders: (category: string) => fetch(`${API_URL}/services/category/${category}`).then(r => r.json()),
+
+  applyAsProvider: (data: any) => fetch(`${API_URL}/services/apply`, {
+    method: 'POST',
+    headers: headers(),
+    body: JSON.stringify(data)
+  }).then(r => r.json()),
+
+  getMyServiceApplications: () => fetch(`${API_URL}/services/my-applications`, {
+    headers: headers()
+  }).then(r => r.json()),
+
+  getAllServiceApplications: () => fetch(`${API_URL}/services/all`, {
+    headers: headers()
+  }).then(r => r.json()),
+
+  updateServiceStatus: (id: string, status: string) => fetch(`${API_URL}/services/${id}/status`, {
+    method: 'PATCH',
+    headers: headers(),
+    body: JSON.stringify({ status })
+  }).then(r => r.json()),
+
+  deleteServiceApplication: (id: string) => fetch(`${API_URL}/services/${id}`, {
+    method: 'DELETE',
     headers: headers()
   }).then(r => r.json())
 };

@@ -1,27 +1,45 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Mail, Lock, Phone, User as UserIcon } from "lucide-react";
+import { X, Mail, Lock, Phone, User as UserIcon, KeyRound } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function AuthModal({ isOpen, onClose }: any) {
   const [mode, setMode] = useState<"login" | "register">("login");
-  const [formData, setFormData] = useState({ email: "", password: "", name: "", phone: "" });
-  const { login, register } = useAuth();
+  const [step, setStep] = useState<"credentials" | "verify">("credentials");
+  const [formData, setFormData] = useState({ email: "", password: "", name: "", phone: "", code: "" });
+  const { login, register, sendLoginCode, verifyLoginCode } = useAuth();
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+    setLoading(true);
     try {
       if (mode === "login") {
-        await login(formData.email, formData.password);
+        if (step === "credentials") {
+          await sendLoginCode(formData.email);
+          setStep("verify");
+        } else {
+          await verifyLoginCode(formData.email, formData.code);
+          onClose();
+          setStep("credentials");
+          setFormData({ email: "", password: "", name: "", phone: "", code: "" });
+        }
       } else {
         await register(formData);
+        onClose();
       }
-      onClose();
     } catch (error: any) {
       alert(error.message || "Authentication failed");
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleBack = () => {
+    setStep("credentials");
+    setFormData({ ...formData, code: "" });
   };
 
   return (
@@ -44,77 +62,118 @@ export default function AuthModal({ isOpen, onClose }: any) {
           >
             <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full p-6 shadow-2xl" style={{ pointerEvents: 'auto' }}>
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold">{mode === "login" ? "Welcome Back" : "Create Account"}</h2>
+                <h2 className="text-2xl font-bold">
+                  {mode === "login" 
+                    ? (step === "verify" ? "Verify Email" : "Welcome Back") 
+                    : "Create Account"}
+                </h2>
                 <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
-                {mode === "register" && (
+                {mode === "login" && step === "verify" ? (
                   <>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                      We've sent a verification code to {formData.email}
+                    </p>
                     <div>
                       <label className="flex items-center gap-2 text-sm font-semibold mb-2">
-                        <UserIcon className="w-4 h-4" />
-                        Full Name
+                        <KeyRound className="w-4 h-4" />
+                        Verification Code
                       </label>
                       <input
                         type="text"
                         required
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        maxLength={6}
+                        value={formData.code}
+                        onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                        className="w-full px-4 py-3 border-2 rounded-lg focus:border-primary-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 text-center text-2xl tracking-widest"
+                        placeholder="000000"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleBack}
+                      className="text-sm text-primary-600 hover:underline"
+                    >
+                      ← Back to login
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    {mode === "register" && (
+                      <>
+                        <div>
+                          <label className="flex items-center gap-2 text-sm font-semibold mb-2">
+                            <UserIcon className="w-4 h-4" />
+                            Full Name
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={formData.name}
+                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                            className="w-full px-4 py-3 border-2 rounded-lg focus:border-primary-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600"
+                          />
+                        </div>
+                        <div>
+                          <label className="flex items-center gap-2 text-sm font-semibold mb-2">
+                            <Phone className="w-4 h-4" />
+                            Phone Number
+                          </label>
+                          <input
+                            type="tel"
+                            required
+                            value={formData.phone}
+                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                            className="w-full px-4 py-3 border-2 rounded-lg focus:border-primary-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600"
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    <div>
+                      <label className="flex items-center gap-2 text-sm font-semibold mb-2">
+                        <Mail className="w-4 h-4" />
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        required
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         className="w-full px-4 py-3 border-2 rounded-lg focus:border-primary-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600"
                       />
                     </div>
+
                     <div>
                       <label className="flex items-center gap-2 text-sm font-semibold mb-2">
-                        <Phone className="w-4 h-4" />
-                        Phone Number
+                        <Lock className="w-4 h-4" />
+                        Password
                       </label>
                       <input
-                        type="tel"
+                        type="password"
                         required
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        value={formData.password}
+                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                         className="w-full px-4 py-3 border-2 rounded-lg focus:border-primary-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600"
                       />
                     </div>
                   </>
                 )}
 
-                <div>
-                  <label className="flex items-center gap-2 text-sm font-semibold mb-2">
-                    <Mail className="w-4 h-4" />
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-3 border-2 rounded-lg focus:border-primary-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600"
-                  />
-                </div>
-
-                <div>
-                  <label className="flex items-center gap-2 text-sm font-semibold mb-2">
-                    <Lock className="w-4 h-4" />
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    required
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="w-full px-4 py-3 border-2 rounded-lg focus:border-primary-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600"
-                  />
-                </div>
-
                 <button
                   type="submit"
-                  className="w-full py-3 bg-primary-500 text-white rounded-lg font-bold hover:bg-primary-600"
+                  disabled={loading}
+                  className="w-full py-3 bg-primary-500 text-white rounded-lg font-bold hover:bg-primary-600 disabled:opacity-50"
                 >
-                  {mode === "login" ? "Login" : "Create Account"}
+                  {loading ? "Please wait..." : (
+                    mode === "login" 
+                      ? (step === "verify" ? "Verify Code" : "Send Verification Code")
+                      : "Create Account"
+                  )}
                 </button>
               </form>
 

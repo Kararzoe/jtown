@@ -15,6 +15,7 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [reports, setReports] = useState<any[]>([]);
+  const [serviceApps, setServiceApps] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -42,6 +43,9 @@ export default function AdminDashboard() {
       } else if (activeTab === 'reports') {
         const data = await api.getAllReports();
         setReports(Array.isArray(data) ? data : []);
+      } else if (activeTab === 'services') {
+        const data = await api.getAllServiceApplications();
+        setServiceApps(Array.isArray(data) ? data : []);
       }
     } catch (error) {
       console.error(error);
@@ -77,7 +81,7 @@ export default function AdminDashboard() {
           <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
 
           <div className="flex gap-4 mb-8 border-b overflow-x-auto">
-            {['stats', 'users', 'products', 'reports'].map(tab => (
+            {['stats', 'users', 'products', 'reports', 'services'].map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -255,6 +259,80 @@ export default function AdminDashboard() {
                                     Reject
                                   </button>
                                 </div>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+              )}
+
+              {activeTab === 'services' && (
+                <div className="bg-white rounded-lg shadow overflow-x-auto">
+                  {serviceApps.length === 0 ? (
+                    <p className="p-8 text-center text-gray-600">No service applications found</p>
+                  ) : (
+                    <table className="w-full">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Applicant</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Service</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        {serviceApps.map(app => (
+                          <tr key={app._id}>
+                            <td className="px-6 py-4">
+                              <div>
+                                <p className="font-medium">{app.user?.name || 'N/A'}</p>
+                                <p className="text-xs text-gray-500">{app.user?.email}</p>
+                                <p className="text-xs text-gray-500">{app.phone}</p>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <p className="font-medium">{app.serviceName}</p>
+                              <p className="text-xs text-gray-500 max-w-xs truncate">{app.description}</p>
+                            </td>
+                            <td className="px-6 py-4 capitalize">{app.category}</td>
+                            <td className="px-6 py-4">{app.location}</td>
+                            <td className="px-6 py-4">
+                              <span className={`px-2 py-1 text-xs rounded ${
+                                app.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                app.status === 'approved' ? 'bg-green-100 text-green-800' :
+                                'bg-red-100 text-red-800'
+                              }`}>
+                                {app.status}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4">
+                              {app.status === 'pending' ? (
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={async () => { await api.updateServiceStatus(app._id, 'approved'); loadData(); }}
+                                    className="text-green-600 hover:text-green-800 text-sm font-medium"
+                                  >
+                                    Approve
+                                  </button>
+                                  <button
+                                    onClick={async () => { await api.updateServiceStatus(app._id, 'rejected'); loadData(); }}
+                                    className="text-red-600 hover:text-red-800 text-sm font-medium"
+                                  >
+                                    Reject
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  onClick={async () => { await api.deleteServiceApplication(app._id); loadData(); }}
+                                  className="text-red-600 hover:text-red-800 text-sm"
+                                >
+                                  Delete
+                                </button>
                               )}
                             </td>
                           </tr>
