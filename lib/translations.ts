@@ -29,7 +29,11 @@ export const translations = {
     books: 'Books',
     food: 'Food',
     browseCategories: 'Browse Categories',
-    findWhatYouNeed: 'Find what you need'
+    findWhatYouNeed: 'Find what you need',
+    welcome: 'Buy & Sell Anything in Jos',
+    subtitle: 'Your trusted marketplace for electronics, fashion, food, properties & services — all in one place',
+    search: 'Search for products, services, or sellers...',
+    popular: 'Popular'
   },
   ha: {
     home: 'Gida',
@@ -61,6 +65,10 @@ export const translations = {
     books: 'Littattafai',
     food: 'Abinci',
     browseCategories: 'Duba nau\'i',
-    findWhatYouNeed: 'Nemo abin da kuke bukata'
+    findWhatYouNeed: 'Nemo abin da kuke bukata',
+    welcome: 'Saya & Sayar da Komai a Jos',
+    subtitle: 'Kasuwar ku ta aminci don kayan lantarki, tufafi, abinci, gidaje & ayyuka — duka a wuri guda',
+    search: 'Nemo kayayyaki, ayyuka, ko masu sayarwa...',
+    popular: 'Shahararru'
   }
 };
