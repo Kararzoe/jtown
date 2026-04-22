@@ -6,7 +6,6 @@ import Navbar from "@/components/Navbar";
 import TrendingBanner from "@/components/TrendingBanner";
 import TrendingSection from "@/components/TrendingSection";
 import FilterBar from "@/components/FilterBar";
-import StatsCounter from "@/components/StatsCounter";
 import FloatingChat from "@/components/FloatingChat";
 import TopSellers from "@/components/TopSellers";
 import ScrollToTop from "@/components/ScrollToTop";
@@ -29,7 +28,6 @@ export default function Home() {
       <FilterBar />
       <ProductGrid />
       <Testimonials />
-      <StatsCounter />
       <FAQ />
       <Newsletter />
       <Footer />
