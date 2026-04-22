@@ -16,13 +16,11 @@ import Testimonials from "@/components/Testimonials";
 import AppDownload from "@/components/AppDownload";
 import Newsletter from "@/components/Newsletter";
 import FAQ from "@/components/FAQ";
-import ProgressBar from "@/components/ProgressBar";
 import CookieConsent from "@/components/CookieConsent";
 
 export default function Home() {
   return (
     <main className="min-h-screen">
-      <ProgressBar />
       <Navbar />
       <TrendingBanner />
       <Hero />
