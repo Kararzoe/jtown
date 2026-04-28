@@ -6,6 +6,7 @@ import TrendingBanner from "@/components/TrendingBanner";
 import TrendingSection from "@/components/TrendingSection";
 import FloatingChat from "@/components/FloatingChat";
 import TopSellers from "@/components/TopSellers";
+import JosMarketplace from "@/components/JosMarketplace";
 import ScrollToTop from "@/components/ScrollToTop";
 import HowItWorks from "@/components/HowItWorks";
 import Testimonials from "@/components/Testimonials";
@@ -20,6 +21,7 @@ export default function Home() {
       <TrendingBanner />
       <Hero />
       <Categories />
+      <JosMarketplace />
       <TrendingSection />
       <HowItWorks />
       <TopSellers />
