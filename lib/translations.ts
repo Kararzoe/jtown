@@ -3,7 +3,7 @@ export const translations = {
     home: 'Home',
     categories: 'Categories',
     products: 'Products',
-    sell: 'Sell',
+    sell: 'Get Started',
     dashboard: 'Dashboard',
     wishlist: 'Wishlist',
     logout: 'Logout',
@@ -30,16 +30,16 @@ export const translations = {
     food: 'Food',
     browseCategories: 'Browse Categories',
     findWhatYouNeed: 'Find what you need',
-    welcome: 'Buy & Sell Anything in Jos',
-    subtitle: 'Your trusted marketplace for electronics, fashion, food, properties & services — all in one place',
-    search: 'Search for products, services, or sellers...',
+    welcome: 'Grow Your Visibility & Get Promoted',
+    subtitle: 'Showcase your business to thousands of buyers in Jos — get discovered, get promoted, get results',
+    search: 'Search services, businesses, promotions...',
     popular: 'Popular'
   },
   ha: {
     home: 'Gida',
     categories: 'Nau\'i',
     products: 'Kayayyaki',
-    sell: 'Sayar',
+    sell: 'Fara',
     dashboard: 'Dashboard',
     wishlist: 'Abubuwan da nake so',
     logout: 'Fita',
@@ -66,9 +66,9 @@ export const translations = {
     food: 'Abinci',
     browseCategories: 'Duba nau\'i',
     findWhatYouNeed: 'Nemo abin da kuke bukata',
-    welcome: 'Saya & Sayar da Komai a Jos',
-    subtitle: 'Kasuwar ku ta aminci don kayan lantarki, tufafi, abinci, gidaje & ayyuka — duka a wuri guda',
-    search: 'Nemo kayayyaki, ayyuka, ko masu sayarwa...',
+    welcome: 'Kara Ganin Kasuwancin ku a Jos',
+    subtitle: 'Nuna kasuwancin ku ga dubban masu saye a Jos — a same ku, a tallata ku, a sami sakamako',
+    search: 'Nemo ayyuka, kasuwanci, tallace-tallace...',
     popular: 'Shahararru'
   }
 };

@@ -9,8 +9,8 @@ import { CartProvider } from "@/contexts/CartContext";
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
 
 export const metadata: Metadata = {
-  title: "Jos Marketplace - Buy & Sell Anything",
-  description: "Your one-stop marketplace for everything",
+  title: "JosMKT — Business Visibility & Promotions in Jos",
+  description: "Grow your business visibility, get promoted, and reach thousands of buyers in Jos, Plateau State",
   manifest: "/manifest.json",
   themeColor: "#10b981",
   viewport: "width=device-width, initial-scale=1, maximum-scale=1"

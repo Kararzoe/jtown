@@ -1,19 +1,24 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone, MapPin } from "lucide-react";
+import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone, MapPin, Rocket } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-gray-300 py-12 px-4">
+    <footer className="bg-gray-950 text-gray-400 py-16 px-4">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
           <div>
-            <h3 className="text-2xl font-bold text-white mb-4">Jos Marketplace</h3>
-            <p className="text-sm mb-4">Your trusted platform for buying and selling anything, anywhere.</p>
-            <div className="flex space-x-4">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
+                <Rocket className="w-4 h-4 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-white">JosMKT</h3>
+            </div>
+            <p className="text-sm mb-5 leading-relaxed">Your go-to platform for building business visibility, promotions, and growth in Jos, Plateau State.</p>
+            <div className="flex space-x-3">
               {[Facebook, Twitter, Instagram, Linkedin].map((Icon, i) => (
-                <motion.a key={i} whileHover={{ scale: 1.2, y: -2 }} href="#" className="p-2 bg-gray-800 rounded-full hover:bg-primary-500 transition">
+                <motion.a key={i} whileHover={{ scale: 1.1, y: -2 }} href="#" className="p-2.5 bg-gray-800/80 rounded-xl hover:bg-emerald-600 transition-all">
                   <Icon className="w-4 h-4" />
                 </motion.a>
               ))}
@@ -21,38 +26,38 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-white font-semibold mb-4">Quick Links</h4>
-            <ul className="space-y-2 text-sm">
-              <li><a href="#" className="hover:text-primary-500 transition">About Us</a></li>
-              <li><a href="#" className="hover:text-primary-500 transition">How It Works</a></li>
-              <li><a href="#" className="hover:text-primary-500 transition">Pricing</a></li>
-              <li><a href="#" className="hover:text-primary-500 transition">Blog</a></li>
+            <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Services</h4>
+            <ul className="space-y-2.5 text-sm">
+              <li><a href="#" className="hover:text-emerald-400 transition">Business Listings</a></li>
+              <li><a href="#" className="hover:text-emerald-400 transition">Promotions & Ads</a></li>
+              <li><a href="#" className="hover:text-emerald-400 transition">Branding Services</a></li>
+              <li><a href="#" className="hover:text-emerald-400 transition">Social Media Boost</a></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="text-white font-semibold mb-4">Support</h4>
-            <ul className="space-y-2 text-sm">
-              <li><a href="#" className="hover:text-primary-500 transition">Help Center</a></li>
-              <li><a href="#" className="hover:text-primary-500 transition">Safety Tips</a></li>
-              <li><a href="#" className="hover:text-primary-500 transition">Terms of Service</a></li>
-              <li><a href="#" className="hover:text-primary-500 transition">Privacy Policy</a></li>
+            <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Company</h4>
+            <ul className="space-y-2.5 text-sm">
+              <li><a href="#" className="hover:text-emerald-400 transition">About Us</a></li>
+              <li><a href="#" className="hover:text-emerald-400 transition">How It Works</a></li>
+              <li><a href="#" className="hover:text-emerald-400 transition">Terms of Service</a></li>
+              <li><a href="#" className="hover:text-emerald-400 transition">Privacy Policy</a></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="text-white font-semibold mb-4">Contact</h4>
+            <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Contact</h4>
             <ul className="space-y-3 text-sm">
-              <li className="flex items-center"><Mail className="w-4 h-4 mr-2" /> support@jos.com</li>
-              <li className="flex items-center"><Phone className="w-4 h-4 mr-2" /> +234 904 383 2380</li>
-              <li className="flex items-center"><MapPin className="w-4 h-4 mr-2" /> Jos, Nigeria</li>
+              <li className="flex items-center gap-2"><Mail className="w-4 h-4 text-emerald-500" /> support@josmkt.ng.com</li>
+              <li className="flex items-center gap-2"><Phone className="w-4 h-4 text-emerald-500" /> +234 904 383 2380</li>
+              <li className="flex items-center gap-2"><MapPin className="w-4 h-4 text-emerald-500" /> Jos, Plateau State, Nigeria</li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-gray-800 pt-8 text-center text-sm">
-          <p>&copy; 2024 Jos Marketplace. All rights reserved.</p>
-          <p className="mt-2 text-gray-500">Powered by Plero Digitals</p>
+        <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
+          <p>&copy; 2024 JosMKT. All rights reserved.</p>
+          <p className="text-gray-600">Powered by <span className="text-emerald-500 font-medium">Plero Digitals</span></p>
         </div>
       </div>
     </footer>
