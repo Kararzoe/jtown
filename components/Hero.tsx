@@ -109,9 +109,9 @@ export default function Hero() {
             className="grid grid-cols-3 gap-6 max-w-lg mx-auto"
           >
             {[
-              { icon: Eye, value: "50K+", label: "Monthly Views" },
-              { icon: Rocket, value: "2K+", label: "Businesses" },
-              { icon: TrendingUp, value: "95%", label: "Growth Rate" },
+              { icon: Eye, value: "—", label: "Monthly Views" },
+              { icon: Rocket, value: "—", label: "Businesses" },
+              { icon: TrendingUp, value: "—", label: "Growth Rate" },
             ].map((stat) => (
               <div key={stat.label} className="text-center">
                 <stat.icon className="w-5 h-5 text-emerald-400 mx-auto mb-1" />

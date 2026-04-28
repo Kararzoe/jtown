@@ -14,37 +14,7 @@ const marketCategories = [
   { key: "pharmacy", label: "Pharmacy", icon: Pill },
 ];
 
-const vendors = [
-  // Fashion
-  { name: "Mr R Maleek", category: "fashion", type: "Men's Fashion & Shoes", location: "Terminus Market, Jos", rating: 4.8, phone: "+234XXXXXXXXXX", avatar: "👔" },
-  { name: "Shoe Food", category: "fashion", type: "Sneakers & Footwear", location: "Terminus, Jos", rating: 4.7, phone: "+234XXXXXXXXXX", avatar: "👟" },
-  { name: "Tonero", category: "fashion", type: "Fashion & Streetwear", location: "Jos", rating: 4.9, phone: "+234XXXXXXXXXX", avatar: "🧥" },
-  { name: "House of Fabrics", category: "fashion", type: "Fabrics & Traditional Wear", location: "Bukuru, Jos", rating: 4.6, phone: "+234XXXXXXXXXX", avatar: "🪡" },
-
-  // Cosmetics
-  { name: "Glow Beauty Hub", category: "cosmetics", type: "Skincare & Makeup", location: "Rayfield, Jos", rating: 4.8, phone: "+234XXXXXXXXXX", avatar: "💄" },
-  { name: "Scent Palace", category: "cosmetics", type: "Perfumes & Fragrances", location: "Terminus, Jos", rating: 4.7, phone: "+234XXXXXXXXXX", avatar: "🧴" },
-  { name: "Natural Hair Studio", category: "cosmetics", type: "Hair Products & Extensions", location: "Angwan Rogo, Jos", rating: 4.5, phone: "+234XXXXXXXXXX", avatar: "💇" },
-
-  // Electronics
-  { name: "TechHub Jos", category: "electronics", type: "Phones & Laptops", location: "Ahmadu Bello Way, Jos", rating: 4.9, phone: "+234XXXXXXXXXX", avatar: "📱" },
-  { name: "Gadget World", category: "electronics", type: "Gadgets & Accessories", location: "Terminus, Jos", rating: 4.6, phone: "+234XXXXXXXXXX", avatar: "⚡" },
-  { name: "Solar King", category: "electronics", type: "Solar Panels & Inverters", location: "Bukuru, Jos", rating: 4.7, phone: "+234XXXXXXXXXX", avatar: "☀️" },
-
-  // Food
-  { name: "Jos Grills", category: "food", type: "Grills & BBQ", location: "Rayfield, Jos", rating: 4.8, phone: "+234XXXXXXXXXX", avatar: "🍖" },
-  { name: "Mama's Kitchen", category: "food", type: "Local Dishes & Catering", location: "Lamingo, Jos", rating: 4.9, phone: "+234XXXXXXXXXX", avatar: "🍲" },
-  { name: "Fresh Farm Produce", category: "food", type: "Fresh Fruits & Vegetables", location: "Farin Gada Market, Jos", rating: 4.5, phone: "+234XXXXXXXXXX", avatar: "🥬" },
-  { name: "Plateau Bakery", category: "food", type: "Bread, Cakes & Pastries", location: "Terminus, Jos", rating: 4.7, phone: "+234XXXXXXXXXX", avatar: "🎂" },
-
-  // Furniture
-  { name: "Royal Furniture", category: "furniture", type: "Home & Office Furniture", location: "Bukuru, Jos", rating: 4.6, phone: "+234XXXXXXXXXX", avatar: "🛋️" },
-  { name: "WoodCraft Jos", category: "furniture", type: "Custom Woodwork", location: "Lamingo, Jos", rating: 4.8, phone: "+234XXXXXXXXXX", avatar: "🪑" },
-
-  // Pharmacy
-  { name: "HealthPlus Jos", category: "pharmacy", type: "Pharmacy & Wellness", location: "Ahmadu Bello Way, Jos", rating: 4.9, phone: "+234XXXXXXXXXX", avatar: "💊" },
-  { name: "MedCare Pharmacy", category: "pharmacy", type: "Drugs & Medical Supplies", location: "Terminus, Jos", rating: 4.7, phone: "+234XXXXXXXXXX", avatar: "🏥" },
-];
+const vendors: any[] = [];
 
 export default function JosMarketplace() {
   const [activeCategory, setActiveCategory] = useState("all");
@@ -113,7 +83,26 @@ export default function JosMarketplace() {
         </motion.div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5">
-          {filtered.map((vendor, idx) => (
+        {filtered.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="col-span-full text-center py-16"
+          >
+            <Store className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Coming Soon</h3>
+            <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
+              We&apos;re onboarding vendors in Jos. Want to list your shop here?
+            </p>
+            <a
+              href="/become-seller"
+              className="inline-flex items-center gap-2 mt-6 px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-amber-500/25 transition-all"
+            >
+              <Store className="w-4 h-4" /> Register Your Shop
+            </a>
+          </motion.div>
+        ) : (
+          filtered.map((vendor, idx) => (
             <motion.div
               key={vendor.name}
               initial={{ opacity: 0, y: 20 }}
@@ -156,7 +145,8 @@ export default function JosMarketplace() {
                 </button>
               </div>
             </motion.div>
-          ))}
+          ))
+        )}
         </div>
       </div>
     </section>
