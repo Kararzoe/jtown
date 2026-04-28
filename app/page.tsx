@@ -1,11 +1,9 @@
 import Hero from "@/components/Hero";
 import Categories from "@/components/Categories";
-import ProductGrid from "@/components/ProductGrid";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import TrendingBanner from "@/components/TrendingBanner";
 import TrendingSection from "@/components/TrendingSection";
-import FilterBar from "@/components/FilterBar";
 import FloatingChat from "@/components/FloatingChat";
 import TopSellers from "@/components/TopSellers";
 import ScrollToTop from "@/components/ScrollToTop";
@@ -25,8 +23,6 @@ export default function Home() {
       <TrendingSection />
       <HowItWorks />
       <TopSellers />
-      <FilterBar />
-      <ProductGrid />
       <Testimonials />
       <FAQ />
       <Newsletter />
