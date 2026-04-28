@@ -47,7 +47,7 @@ export default function Navbar() {
                 JosMKT
               </span>
               <span className="hidden sm:inline text-xs text-gray-500 dark:text-gray-400 ml-1.5 font-medium">
-                Visibility & Promotions
+                Find Help Fast
               </span>
             </div>
           </motion.a>
