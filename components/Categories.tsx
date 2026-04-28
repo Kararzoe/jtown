@@ -1,19 +1,27 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Megaphone, Globe, Palette, Camera, BarChart3, Users, Smartphone, Store } from "lucide-react";
+import { Wrench, Zap, Flame, CakeSlice, Paintbrush, Car, Scissors, Hammer, ShowerHead, Shirt, Camera, Laptop, Truck, Baby, Dog, Dumbbell } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const categories = [
-  { key: "phones", label: "Social Media", icon: Smartphone, color: "from-blue-500 to-indigo-600", slug: "phones" },
-  { key: "gadgets", label: "Branding", icon: Palette, color: "from-purple-500 to-violet-600", slug: "gadgets" },
-  { key: "electronics", label: "Ads & Promos", icon: Megaphone, color: "from-amber-500 to-orange-600", slug: "electronics" },
-  { key: "fashion", label: "Photography", icon: Camera, color: "from-pink-500 to-rose-600", slug: "fashion" },
-  { key: "homeProperties", label: "Web & Digital", icon: Globe, color: "from-emerald-500 to-teal-600", slug: "home" },
-  { key: "sports", label: "Analytics", icon: BarChart3, color: "from-cyan-500 to-blue-600", slug: "sports" },
-  { key: "books", label: "Influencers", icon: Users, color: "from-red-500 to-pink-600", slug: "books" },
-  { key: "food", label: "Storefronts", icon: Store, color: "from-green-500 to-emerald-600", slug: "food" },
+  { key: "plumbing", label: "Plumbing", icon: ShowerHead, color: "from-blue-500 to-indigo-600", slug: "plumbing" },
+  { key: "electrical", label: "Electricians", icon: Zap, color: "from-amber-500 to-orange-600", slug: "electrical" },
+  { key: "ac", label: "AC Installation", icon: Flame, color: "from-cyan-500 to-blue-600", slug: "ac" },
+  { key: "baking", label: "Bakers & Catering", icon: CakeSlice, color: "from-pink-500 to-rose-600", slug: "baking" },
+  { key: "painting", label: "Painting", icon: Paintbrush, color: "from-purple-500 to-violet-600", slug: "painting" },
+  { key: "mechanic", label: "Auto Mechanic", icon: Car, color: "from-red-500 to-pink-600", slug: "mechanic" },
+  { key: "barbing", label: "Barbing & Salon", icon: Scissors, color: "from-emerald-500 to-teal-600", slug: "barbing" },
+  { key: "carpentry", label: "Carpentry", icon: Hammer, color: "from-yellow-600 to-amber-600", slug: "carpentry" },
+  { key: "tailoring", label: "Tailoring", icon: Shirt, color: "from-indigo-500 to-purple-600", slug: "tailoring" },
+  { key: "photography", label: "Photography", icon: Camera, color: "from-rose-500 to-red-600", slug: "photography" },
+  { key: "tech", label: "Tech & Repairs", icon: Laptop, color: "from-gray-600 to-gray-800", slug: "tech" },
+  { key: "logistics", label: "Logistics & Moving", icon: Truck, color: "from-green-500 to-emerald-600", slug: "logistics" },
+  { key: "cleaning", label: "Cleaning", icon: Wrench, color: "from-teal-500 to-cyan-600", slug: "cleaning" },
+  { key: "childcare", label: "Childcare", icon: Baby, color: "from-sky-400 to-blue-500", slug: "childcare" },
+  { key: "pets", label: "Pet Services", icon: Dog, color: "from-orange-500 to-amber-600", slug: "pets" },
+  { key: "fitness", label: "Fitness & Gym", icon: Dumbbell, color: "from-lime-500 to-green-600", slug: "fitness" },
 ];
 
 export default function Categories() {
@@ -38,9 +46,9 @@ export default function Categories() {
             transition={{ delay: 0.1 }}
             className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4"
           >
-            How We Boost Your{" "}
+            Find a{" "}
             <span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
-              Visibility
+              Service Provider
             </span>
           </motion.h2>
           <motion.p
@@ -50,7 +58,7 @@ export default function Categories() {
             transition={{ delay: 0.2 }}
             className="text-gray-500 dark:text-gray-400 text-lg max-w-xl mx-auto"
           >
-            Choose from our range of promotion and visibility services
+            Trusted professionals in Jos ready to get the job done
           </motion.p>
         </div>
 
@@ -58,7 +66,7 @@ export default function Categories() {
           {categories.map((category, index) => {
             const Icon = category.icon;
             return (
-              <Link key={category.key} href={`/products?category=${category.slug}`}>
+              <Link key={category.key} href={`/services?category=${category.slug}`}>
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
