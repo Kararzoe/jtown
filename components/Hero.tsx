@@ -36,7 +36,7 @@ export default function Hero() {
             className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/20 border border-emerald-500/30 rounded-full text-emerald-300 text-sm font-medium mb-8 backdrop-blur-sm"
           >
             <Zap className="w-4 h-4" />
-            Your #1 Platform for Finding Help in Jos
+            Your #1 Site to Find Professional Service Providers in Jos
           </motion.div>
 
           <motion.h1
