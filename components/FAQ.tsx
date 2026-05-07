@@ -3,18 +3,20 @@
 import { motion } from "framer-motion";
 import { Plus, Minus } from "lucide-react";
 import { useState } from "react";
-
-const faqs = [
-  { q: "How does JosMKT boost my business visibility?", a: "We list your business on our platform seen by thousands of active buyers in Jos. Our promotion packages include featured listings, social media shoutouts, and targeted ads." },
-  { q: "What promotion packages are available?", a: "We offer Basic (free listing), Standard (featured placement + social media), and Premium (full promotion suite with analytics). Contact us for custom packages." },
-  { q: "How do I list my business or service?", a: "Click 'Get Started' in the navigation, fill out your business profile, and choose a promotion plan. Your listing goes live within 24 hours." },
-  { q: "Is there a free option?", a: "Yes! Our Basic listing is completely free. You can upgrade anytime to get more visibility and promotion features." },
-  { q: "Can I track how my business is performing?", a: "Absolutely! Our dashboard shows views, clicks, inquiries, and engagement metrics so you can measure your growth." },
-  { q: "What areas does JosMKT cover?", a: "We cover all areas in Jos including Bukuru, Rayfield, Terminus, Lamingo, and surrounding areas in Plateau State." },
-];
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function FAQ() {
+  const { t } = useLanguage();
   const [open, setOpen] = useState<number | null>(null);
+
+  const faqs = [
+    { q: t('faq1Q'), a: t('faq1A') },
+    { q: t('faq2Q'), a: t('faq2A') },
+    { q: t('faq3Q'), a: t('faq3A') },
+    { q: t('faq4Q'), a: t('faq4A') },
+    { q: t('faq5Q'), a: t('faq5A') },
+    { q: t('faq6Q'), a: t('faq6A') },
+  ];
 
   return (
     <section className="py-20 px-4 bg-white dark:bg-gray-900">
@@ -26,10 +28,10 @@ export default function FAQ() {
           className="text-center mb-14"
         >
           <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
-            FAQ
+            {t('faqTitle')}
           </div>
-          <h2 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">Frequently Asked Questions</h2>
-          <p className="text-gray-500 dark:text-gray-400">Everything you need to know about our services</p>
+          <h2 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">{t('faqTitle')}</h2>
+          <p className="text-gray-500 dark:text-gray-400">{t('faqSubtitle')}</p>
         </motion.div>
 
         <div className="space-y-3">

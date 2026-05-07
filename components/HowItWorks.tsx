@@ -2,15 +2,18 @@
 
 import { motion } from "framer-motion";
 import { UserPlus, Megaphone, Eye, TrendingUp } from "lucide-react";
-
-const steps = [
-  { icon: UserPlus, title: "Create Your Profile", desc: "Sign up and set up your business or service profile in minutes" },
-  { icon: Megaphone, title: "Choose a Promo Plan", desc: "Pick a visibility package that fits your budget and goals" },
-  { icon: Eye, title: "Get Discovered", desc: "Your business gets seen by thousands of active buyers in Jos" },
-  { icon: TrendingUp, title: "Grow & Scale", desc: "Track results, get reviews, and watch your business grow" },
-];
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function HowItWorks() {
+  const { t } = useLanguage();
+
+  const steps = [
+    { icon: UserPlus, title: t('step1Title'), desc: t('step1Desc') },
+    { icon: Megaphone, title: t('step2Title'), desc: t('step2Desc') },
+    { icon: Eye, title: t('step3Title'), desc: t('step3Desc') },
+    { icon: TrendingUp, title: t('step4Title'), desc: t('step4Desc') },
+  ];
+
   return (
     <section className="py-20 px-4 bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
       <div className="max-w-7xl mx-auto">
@@ -21,13 +24,13 @@ export default function HowItWorks() {
           className="text-center mb-14"
         >
           <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
-            Simple Process
+            {t('simpleProcess')}
           </div>
           <h2 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-            How It Works
+            {t('howItWorks')}
           </h2>
           <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
-            Four simple steps to boost your business visibility
+            {t('fourSteps')}
           </p>
         </motion.div>
 

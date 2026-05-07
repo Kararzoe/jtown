@@ -8,7 +8,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 const languages = [
   { code: "en", name: "English", flag: "🇬🇧" },
   { code: "ha", name: "Hausa", flag: "🇳🇬" },
-  { code: "pi", name: "Pidgin", flag: "🇳🇬" },
+  { code: "pcm", name: "Pidgin", flag: "🇳🇬" },
 ];
 
 export default function LanguageSelector() {

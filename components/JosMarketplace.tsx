@@ -3,22 +3,23 @@
 import { motion } from "framer-motion";
 import { Store, MapPin, Star, Phone, ShoppingBag, Shirt, Sparkles, Smartphone, UtensilsCrossed, Sofa, Pill } from "lucide-react";
 import { useState } from "react";
-
-const marketCategories = [
-  { key: "all", label: "All", icon: ShoppingBag },
-  { key: "fashion", label: "Fashion", icon: Shirt },
-  { key: "cosmetics", label: "Cosmetics", icon: Sparkles },
-  { key: "electronics", label: "Electronics", icon: Smartphone },
-  { key: "food", label: "Food", icon: UtensilsCrossed },
-  { key: "furniture", label: "Furniture", icon: Sofa },
-  { key: "pharmacy", label: "Pharmacy", icon: Pill },
-];
-
-const vendors: any[] = [];
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function JosMarketplace() {
+  const { t } = useLanguage();
   const [activeCategory, setActiveCategory] = useState("all");
 
+  const marketCategories = [
+    { key: "all", label: t('all'), icon: ShoppingBag },
+    { key: "fashion", label: t('fashion'), icon: Shirt },
+    { key: "cosmetics", label: t('cosmetics'), icon: Sparkles },
+    { key: "electronics", label: t('electronics'), icon: Smartphone },
+    { key: "food", label: t('food'), icon: UtensilsCrossed },
+    { key: "furniture", label: t('furniture'), icon: Sofa },
+    { key: "pharmacy", label: t('pharmacy'), icon: Pill },
+  ];
+
+  const vendors: any[] = [];
   const filtered = activeCategory === "all" ? vendors : vendors.filter((v) => v.category === activeCategory);
 
   return (
@@ -32,7 +33,7 @@ export default function JosMarketplace() {
             className="inline-flex items-center gap-2 px-4 py-1.5 bg-amber-50 dark:bg-amber-900/30 rounded-full text-amber-600 dark:text-amber-400 text-sm font-medium mb-4"
           >
             <Store className="w-4 h-4" />
-            Jos Marketplace
+            {t('josMarketplace')}
           </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -41,9 +42,9 @@ export default function JosMarketplace() {
             transition={{ delay: 0.1 }}
             className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4"
           >
-            Shop from{" "}
+            {t('shopFrom')}{" "}
             <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
-              Jos Vendors
+              {t('shopFromVendors')}
             </span>
           </motion.h2>
           <motion.p
@@ -53,7 +54,7 @@ export default function JosMarketplace() {
             transition={{ delay: 0.2 }}
             className="text-gray-500 dark:text-gray-400 text-lg max-w-xl mx-auto"
           >
-            Discover real shops and vendors selling in Jos — fashion, food, electronics & more
+            {t('vendorDescription')}
           </motion.p>
         </div>
 
@@ -90,15 +91,15 @@ export default function JosMarketplace() {
             className="col-span-full text-center py-16"
           >
             <Store className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Coming Soon</h3>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{t('comingSoon')}</h3>
             <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
-              We&apos;re onboarding vendors in Jos. Want to list your shop here?
+              {t('onboardingVendors')}
             </p>
             <a
               href="/become-seller"
               className="inline-flex items-center gap-2 mt-6 px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-amber-500/25 transition-all"
             >
-              <Store className="w-4 h-4" /> Register Your Shop
+              <Store className="w-4 h-4" /> {t('registerShop')}
             </a>
           </motion.div>
         ) : (
@@ -138,10 +139,10 @@ export default function JosMarketplace() {
                   href={`tel:${vendor.phone}`}
                   className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl text-sm font-semibold hover:shadow-lg hover:shadow-amber-500/25 transition-all"
                 >
-                  <Phone className="w-4 h-4" /> Contact
+                  <Phone className="w-4 h-4" /> {t('contact')}
                 </a>
                 <button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 border-2 border-amber-500 text-amber-600 dark:text-amber-400 rounded-xl text-sm font-semibold hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-all">
-                  <Store className="w-4 h-4" /> Visit
+                  <Store className="w-4 h-4" /> {t('visit')}
                 </button>
               </div>
             </motion.div>
