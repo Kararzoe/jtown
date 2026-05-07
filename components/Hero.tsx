@@ -36,7 +36,7 @@ export default function Hero() {
             className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/20 border border-emerald-500/30 rounded-full text-emerald-300 text-sm font-medium mb-8 backdrop-blur-sm"
           >
             <Zap className="w-4 h-4" />
-            Your #1 Site to Find Professional Service Providers in Jos
+            {t('tagline')}
           </motion.div>
 
           <motion.h1
@@ -45,14 +45,14 @@ export default function Hero() {
             transition={{ delay: 0.2 }}
             className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight"
           >
-            Find the{" "}
+            {t('heroTitle1')}{" "}
             <span className="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">
-              Right Help
+              {t('heroHighlight1')}
             </span>
             <br />
-            When You{" "}
+            {t('heroTitle2')}{" "}
             <span className="bg-gradient-to-r from-amber-400 to-orange-300 bg-clip-text text-transparent">
-              Need It
+              {t('heroHighlight2')}
             </span>
           </motion.h1>
 
@@ -62,7 +62,7 @@ export default function Hero() {
             transition={{ delay: 0.4 }}
             className="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed"
           >
-            Plumbers, electricians, bakers, mechanics & more — find trusted service providers in Jos, fast.
+            {t('heroDescription')}
           </motion.p>
 
           <motion.div
@@ -74,7 +74,7 @@ export default function Hero() {
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search for a service... e.g. plumber, electrician"
+                placeholder={t('searchPlaceholder')}
                 className="w-full px-6 py-5 pr-14 rounded-2xl border-2 border-white/10 bg-white/10 backdrop-blur-md focus:border-emerald-400 focus:bg-white/15 focus:outline-none text-white placeholder-gray-400 shadow-2xl transition-all"
               />
               <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white p-3.5 rounded-xl hover:shadow-lg hover:shadow-emerald-500/25 transition">
@@ -89,7 +89,7 @@ export default function Hero() {
             transition={{ delay: 0.8 }}
             className="flex flex-wrap justify-center gap-3 mb-12"
           >
-            {["Plumbing", "Electricians", "AC Repair", "Bakers"].map((tag) => (
+            {[t('plumbing'), t('electricians'), t('acRepair'), t('bakers')].map((tag) => (
               <motion.button
                 key={tag}
                 whileHover={{ scale: 1.05 }}
@@ -108,9 +108,9 @@ export default function Hero() {
             className="grid grid-cols-3 gap-6 max-w-lg mx-auto"
           >
             {[
-              { icon: Eye, value: "—", label: "Monthly Views" },
-              { icon: Rocket, value: "—", label: "Businesses" },
-              { icon: TrendingUp, value: "—", label: "Growth Rate" },
+              { icon: Eye, value: "—", label: t('monthlyViews') },
+              { icon: Rocket, value: "—", label: t('businesses') },
+              { icon: TrendingUp, value: "—", label: t('growthRate') },
             ].map((stat) => (
               <div key={stat.label} className="text-center">
                 <stat.icon className="w-5 h-5 text-emerald-400 mx-auto mb-1" />

@@ -47,7 +47,7 @@ export default function Navbar() {
                 JosMKT
               </span>
               <span className="hidden sm:inline text-xs text-gray-500 dark:text-gray-400 ml-1.5 font-medium">
-                Find Help Fast
+                {t('findHelpFast')}
               </span>
             </div>
           </motion.a>
@@ -56,8 +56,8 @@ export default function Navbar() {
             {[
               { href: "/", label: t('home') },
               { href: "/#services", label: t('categories') },
-              { href: "/#products", label: "Promotions" },
-              { href: "/trending", label: "Trending" },
+              { href: "/#products", label: t('products') },
+              { href: "/trending", label: t('trending') },
             ].map((link) => (
               <a
                 key={link.href}
@@ -120,10 +120,10 @@ export default function Navbar() {
                   </div>
                   <div className="py-1">
                     <a href="/dashboard" className="block px-4 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-700 text-sm transition">{t('dashboard')}</a>
-                    <a href="/seller-dashboard" className="block px-4 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-700 text-sm transition">Seller Dashboard</a>
+                    <a href="/seller-dashboard" className="block px-4 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-700 text-sm transition">{t('seller')} {t('dashboard')}</a>
                     <a href="/wishlist" className="block px-4 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-700 text-sm transition">{t('wishlist')}</a>
-                    <a href="/compare" className="block px-4 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-700 text-sm transition">Compare</a>
-                    <a href="/saved-searches" className="block px-4 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-700 text-sm transition">Saved Searches</a>
+                    <a href="/compare" className="block px-4 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-700 text-sm transition">{t('compare')}</a>
+                    <a href="/saved-searches" className="block px-4 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-700 text-sm transition">{t('savedSearches')}</a>
                     {user.role === 'admin' && (
                       <a href="/admin" className="block px-4 py-2.5 hover:bg-emerald-50 dark:hover:bg-gray-700 text-sm text-purple-600 transition">Admin Dashboard</a>
                     )}
@@ -156,9 +156,9 @@ export default function Navbar() {
           >
             <div className="flex flex-col space-y-1">
               <a href="/" className="text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition font-medium px-3 py-2.5 rounded-lg">{t('home')}</a>
-              <a href="/#services" className="text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition font-medium px-3 py-2.5 rounded-lg">Services</a>
-              <a href="/#products" className="text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition font-medium px-3 py-2.5 rounded-lg">Promotions</a>
-              <a href="/trending" className="text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition font-medium px-3 py-2.5 rounded-lg">Trending</a>
+              <a href="/#services" className="text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition font-medium px-3 py-2.5 rounded-lg">{t('categories')}</a>
+              <a href="/#products" className="text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition font-medium px-3 py-2.5 rounded-lg">{t('products')}</a>
+              <a href="/trending" className="text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition font-medium px-3 py-2.5 rounded-lg">{t('trending')}</a>
               {user ? (
                 <>
                   <a href="/dashboard" className="text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition font-medium px-3 py-2.5 rounded-lg">{t('dashboard')}</a>
@@ -166,7 +166,7 @@ export default function Navbar() {
                   <button onClick={logout} className="text-left text-red-600 font-medium px-3 py-2.5 rounded-lg hover:bg-red-50 transition">{t('logout')}</button>
                 </>
               ) : (
-                <button onClick={() => setAuthOpen(true)} className="text-left text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition font-medium px-3 py-2.5 rounded-lg">Login</button>
+                <button onClick={() => setAuthOpen(true)} className="text-left text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition font-medium px-3 py-2.5 rounded-lg">{t('login')}</button>
               )}
               <div className="flex items-center gap-4 px-3 pt-3 border-t border-emerald-100">
                 <NotificationCenter />

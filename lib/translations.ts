@@ -12,6 +12,26 @@ export const translations = {
     register: 'Register',
     profile: 'Profile',
     cart: 'Cart',
+    compare: 'Compare',
+    savedSearches: 'Saved Searches',
+    findHelpFast: 'Find Help Fast',
+    trending: 'Trending',
+
+    // Hero
+    tagline: 'Your #1 Site to Find Professional Service Providers in Jos',
+    heroTitle1: 'Find the',
+    heroHighlight1: 'Right Help',
+    heroTitle2: 'When You',
+    heroHighlight2: 'Need It',
+    heroDescription: 'Plumbers, electricians, bakers, mechanics & more — find trusted service providers in Jos, fast.',
+    searchPlaceholder: 'Search for a service... e.g. plumber, electrician',
+    plumbing: 'Plumbing',
+    electricians: 'Electricians',
+    acRepair: 'AC Repair',
+    bakers: 'Bakers',
+    monthlyViews: 'Monthly Views',
+    businesses: 'Businesses',
+    growthRate: 'Growth Rate',
 
     // Dashboard
     welcomeBack: 'Welcome Back',
@@ -29,7 +49,6 @@ export const translations = {
     featuredProducts: 'Featured Services',
     discover: 'Discover amazing services',
     viewAll: 'View All Services',
-    trending: 'Trending',
     newArrivals: 'New Arrivals',
     bestSellers: 'Best Sellers',
     addToCart: 'Add to Cart',
@@ -64,7 +83,7 @@ export const translations = {
     findWhatYouNeed: 'Find what you need',
     allCategories: 'All Categories',
 
-    // Hero
+    // General
     welcome: 'Grow Your Visibility & Get Promoted',
     subtitle: 'Showcase your business to thousands of buyers in Jos — get discovered, get promoted, get results',
     search: 'Search services, businesses, promotions...',
@@ -135,7 +154,7 @@ export const translations = {
     enterEmail: 'Enter your email',
     allRightsReserved: 'All rights reserved',
 
-    // General
+    // General UI
     loading: 'Loading...',
     error: 'Something went wrong',
     tryAgain: 'Try Again',
@@ -161,20 +180,40 @@ export const translations = {
   ha: {
     // Navigation
     home: 'Gida',
-    categories: 'Nau\'i',
+    categories: 'Nau\'ikan Aiki',
     products: 'Kayayyaki',
     sell: 'Fara',
-    dashboard: 'Dashboard',
+    dashboard: 'Shafin Sarrafa',
     wishlist: 'Abubuwan da nake so',
     logout: 'Fita',
     login: 'Shiga',
     register: 'Yi rajista',
     profile: 'Bayanan kai',
     cart: 'Kwandon saye',
+    compare: 'Kwatanta',
+    savedSearches: 'Binciken da aka ajiye',
+    findHelpFast: 'Nemo Taimako Cikin Sauri',
+    trending: 'Masu yawan kasuwa',
+
+    // Hero
+    tagline: 'Shafin ku na #1 don Nemo Masu Bayar da Sabis a Jos',
+    heroTitle1: 'Nemo',
+    heroHighlight1: 'Taimakon da ya dace',
+    heroTitle2: 'Lokacin da kuke',
+    heroHighlight2: 'Bukata',
+    heroDescription: 'Masu gyaran bututu, masu lantarki, masu yin burodi, injiniyoyi da sauransu — nemo masu bayar da sabis da ake amincewa da su a Jos, cikin sauri.',
+    searchPlaceholder: 'Nemo sabis... misali mai gyaran bututu, mai lantarki',
+    plumbing: 'Bututu',
+    electricians: 'Lantarki',
+    acRepair: 'Gyaran AC',
+    bakers: 'Masu Burodi',
+    monthlyViews: 'Kallon Wata',
+    businesses: 'Kasuwanci',
+    growthRate: 'Yawan Girma',
 
     // Dashboard
     welcomeBack: 'Barka da zuwa',
-    manageAccount: 'Sarrafa asusun ku',
+    manageAccount: 'Sarrafa asusun ku da oda',
     orders: 'Oda',
     messages: 'Saƙonni',
     recentOrders: 'Oda na baya-bayan nan',
@@ -188,7 +227,6 @@ export const translations = {
     featuredProducts: 'Ayyuka masu mahimmanci',
     discover: 'Gano ayyuka masu kyau',
     viewAll: 'Duba duk ayyuka',
-    trending: 'Masu yawan kasuwa',
     newArrivals: 'Sababbin kayayyaki',
     bestSellers: 'Mafi kyawun masu sayarwa',
     addToCart: 'Saka a kwandon saye',
@@ -219,12 +257,12 @@ export const translations = {
     sports: 'Wasanni',
     books: 'Littattafai',
     food: 'Abinci',
-    browseCategories: 'Duba nau\'i',
+    browseCategories: 'Duba nau\'ikan aiki',
     findWhatYouNeed: 'Nemo abin da kuke bukata',
     allCategories: 'Duk nau\'i',
 
-    // Hero
-    welcome: 'Kara Ganin Kasuwancin ku a Jos',
+    // General
+    welcome: 'Ƙara Ganin Kasuwancin ku a Jos',
     subtitle: 'Nuna kasuwancin ku ga dubban masu saye a Jos — a same ku, a tallata ku, a sami sakamako',
     search: 'Nemo ayyuka, kasuwanci, tallace-tallace...',
     popular: 'Shahararru',
@@ -294,7 +332,7 @@ export const translations = {
     enterEmail: 'Shigar da imel ɗin ku',
     allRightsReserved: 'An kiyaye duk haƙƙoƙi',
 
-    // General
+    // General UI
     loading: 'Ana lodi...',
     error: 'Wani abu ya faru',
     tryAgain: 'Sake gwadawa',
