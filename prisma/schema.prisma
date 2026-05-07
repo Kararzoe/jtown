@@ -10,16 +10,21 @@ datasource db {
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
+  password  String
   name      String
   phone     String?
+  role      String   @default("user") // user, seller, admin
+  avatar    String?
+  location  String?
   active    Boolean  @default(true)
   verified  Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  products Product[]
-  orders   Order[]
-  reviews  Review[]
+  products         Product[]
+  orders           Order[]
+  reviews          Review[]
+  serviceProviders ServiceProvider[]
 }
 
 model Product {
@@ -28,9 +33,10 @@ model Product {
   description String
   price       Float
   category    String
-  images      String   // JSON string of image URLs
+  images      String
   status      String   @default("active")
   stock       Int      @default(1)
+  views       Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -45,6 +51,8 @@ model Order {
   id        String   @id @default(cuid())
   status    String   @default("pending")
   total     Float
+  quantity  Int      @default(1)
+  address   String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -66,4 +74,24 @@ model Review {
 
   productId String
   product   Product @relation(fields: [productId], references: [id])
+}
+
+model ServiceProvider {
+  id          String   @id @default(cuid())
+  serviceName String
+  category    String
+  description String
+  location    String
+  phone       String
+  priceRange  String?
+  experience  String?
+  rating      Float    @default(0)
+  totalReviews Int     @default(0)
+  verified    Boolean  @default(false)
+  approved    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
 }

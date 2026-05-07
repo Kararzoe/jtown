@@ -1,43 +1,47 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
+import { getUserIdFromRequest } from '@/lib/auth';
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const productId = searchParams.get('productId');
-
   try {
+    const { searchParams } = new URL(request.url);
+    const productId = searchParams.get('productId');
+
     const reviews = await prisma.review.findMany({
       where: productId ? { productId } : {},
-      include: { user: true }
+      include: { user: { select: { name: true, avatar: true } } },
+      orderBy: { createdAt: 'desc' }
     });
+
     return NextResponse.json(reviews);
   } catch {
-    return NextResponse.json([
-      {
-        id: '1',
-        rating: 5,
-        comment: 'Great product!',
-        user: { name: 'Jane Doe' },
-        createdAt: new Date()
-      }
-    ]);
+    return NextResponse.json([]);
   }
 }
 
 export async function POST(request: Request) {
-  const data = await request.json();
-  
   try {
+    const userId = getUserIdFromRequest(request);
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    const data = await request.json();
+    if (!data.productId || !data.rating) {
+      return NextResponse.json({ error: 'Product and rating required' }, { status: 400 });
+    }
+
     const review = await prisma.review.create({
       data: {
-        ...data,
-        userId: data.userId || '1'
-      }
+        rating: data.rating,
+        comment: data.comment || null,
+        userId,
+        productId: data.productId,
+      },
+      include: { user: { select: { name: true, avatar: true } } }
     });
+
     return NextResponse.json(review);
-  } catch {
+  } catch (error) {
+    console.error('Review POST error:', error);
     return NextResponse.json({ error: 'Failed to create review' }, { status: 500 });
   }
 }
