@@ -15,7 +15,6 @@ export default function NotFound() {
         animate={{ opacity: 1, y: 0 }}
         className="text-center max-w-lg"
       >
-        <img src="/josmkt-logo-2.png" alt="JosMKT" className="w-20 h-20 mx-auto object-contain mb-6" />
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">{t('comingSoon')}</h1>
         <p className="text-gray-600 dark:text-gray-400 mb-8 text-lg">{t('onboardingVendors')}</p>
         
