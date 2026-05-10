@@ -13,7 +13,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <img src="/photo_2026-05-10_20-17-47.jpg" alt="JosMKT" className="w-8 h-8 rounded-lg object-cover" />
+              <img src="/josmkt-logo-3.png" alt="JosMKT" className="w-10 h-10 object-contain" />
               <h3 className="text-xl font-bold text-white">JosMKT</h3>
             </div>
             <p className="text-sm mb-5 leading-relaxed">{t('subtitle')}</p>

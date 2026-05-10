@@ -39,7 +39,7 @@ export default function Navbar() {
             whileHover={{ scale: 1.02 }}
             className="relative flex items-center gap-2"
           >
-            <img src="/photo_2026-05-10_20-17-47.jpg" alt="JosMKT" className="w-9 h-9 rounded-lg object-cover" />
+            <img src="/josmkt-logo-3.png" alt="JosMKT" className="w-10 h-10 object-contain" />
             <div>
               <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
                 JosMKT

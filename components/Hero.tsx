@@ -35,7 +35,7 @@ export default function Hero() {
             transition={{ delay: 0.1 }}
             className="mb-6"
           >
-            <img src="/photo_2026-05-10_20-15-35.jpg" alt="JosMKT Logo" className="w-24 h-24 mx-auto rounded-2xl object-cover shadow-2xl shadow-emerald-500/20 border-2 border-white/20" />
+            <img src="/josmkt-logo.png" alt="JosMKT Logo" className="w-28 h-28 mx-auto object-contain drop-shadow-2xl" />
           </motion.div>
 
           <motion.div

@@ -15,8 +15,8 @@ export default function Newsletter() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <div className="w-16 h-16 rounded-2xl overflow-hidden mx-auto mb-6 shadow-lg shadow-emerald-500/20">
-            <img src="/photo_2026-05-10_20-15-36.jpg" alt="JosMKT" className="w-full h-full object-cover" />
+          <div className="w-16 h-16 rounded-2xl overflow-hidden mx-auto mb-6">
+            <img src="/josmkt-logo-2.png" alt="JosMKT" className="w-full h-full object-contain" />
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">{t('readyToGrow')}</h2>
           <p className="text-gray-400 mb-8 max-w-md mx-auto">{t('weeklyTips')}</p>
