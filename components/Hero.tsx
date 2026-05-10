@@ -33,6 +33,15 @@ export default function Hero() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.1 }}
+            className="mb-6"
+          >
+            <img src="/photo_2026-05-10_20-15-35.jpg" alt="JosMKT Logo" className="w-24 h-24 mx-auto rounded-2xl object-cover shadow-2xl shadow-emerald-500/20 border-2 border-white/20" />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2 }}
             className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/20 border border-emerald-500/30 rounded-full text-emerald-300 text-sm font-medium mb-8 backdrop-blur-sm"
           >
             <Zap className="w-4 h-4" />

@@ -39,9 +39,7 @@ export default function Navbar() {
             whileHover={{ scale: 1.02 }}
             className="relative flex items-center gap-2"
           >
-            <div className="w-9 h-9 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
-              <Rocket className="w-5 h-5 text-white" />
-            </div>
+            <img src="/photo_2026-05-10_20-17-47.jpg" alt="JosMKT" className="w-9 h-9 rounded-lg object-cover" />
             <div>
               <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
                 JosMKT

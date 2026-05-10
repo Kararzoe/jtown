@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Rocket, Send } from "lucide-react";
+import { Send } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Newsletter() {
@@ -15,8 +15,8 @@ export default function Newsletter() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-emerald-500/20">
-            <Rocket className="w-8 h-8 text-white" />
+          <div className="w-16 h-16 rounded-2xl overflow-hidden mx-auto mb-6 shadow-lg shadow-emerald-500/20">
+            <img src="/photo_2026-05-10_20-15-36.jpg" alt="JosMKT" className="w-full h-full object-cover" />
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">{t('readyToGrow')}</h2>
           <p className="text-gray-400 mb-8 max-w-md mx-auto">{t('weeklyTips')}</p>
