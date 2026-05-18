@@ -54,12 +54,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const register = async (userData: any) => {
     const data = await api.register(userData);
+    if (data.requiresVerification) {
+      return data;
+    }
     if (data.token) {
       localStorage.setItem("token", data.token);
       setUser(data);
       return data;
     }
-    throw new Error(data.message || "Registration failed");
+    throw new Error(data.error || data.message || "Registration failed");
+  };
+
+  const verifySignup = async (email: string, code: string) => {
+    const data = await api.verifySignup(email, code);
+    if (data.token) {
+      localStorage.setItem("token", data.token);
+      setUser(data.user || data);
+      return data;
+    }
+    throw new Error(data.error || "Verification failed");
   };
 
   const logout = () => {
@@ -68,7 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, loading, sendLoginCode, verifyLoginCode }}>
+    <AuthContext.Provider value={{ user, login, register, logout, loading, sendLoginCode, verifyLoginCode, verifySignup }}>
       {children}
     </AuthContext.Provider>
   );

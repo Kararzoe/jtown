@@ -21,30 +21,27 @@ export async function POST(request: Request) {
     }
 
     if (user.verificationCodeExpires && user.verificationCodeExpires < new Date()) {
-      return NextResponse.json({ error: 'Code expired. Please request a new one.' }, { status: 400 });
+      return NextResponse.json({ error: 'Code expired. Please register again.' }, { status: 400 });
     }
 
-    await prisma.user.update({
+    const updatedUser = await prisma.user.update({
       where: { email },
       data: {
+        verified: true,
         verificationCode: null,
         verificationCodeExpires: null,
       },
     });
 
-    const token = generateToken(user.id);
+    const token = generateToken(updatedUser.id);
 
     return NextResponse.json({
       success: true,
       token,
-      _id: user.id,
-      name: user.name,
-      email: user.email,
-      phone: user.phone,
-      role: user.role,
+      user: { id: updatedUser.id, email: updatedUser.email, name: updatedUser.name, role: updatedUser.role },
     });
   } catch (error) {
-    console.error('Verify login code error:', error);
+    console.error('Verify signup error:', error);
     return NextResponse.json({ error: 'Verification failed' }, { status: 500 });
   }
 }

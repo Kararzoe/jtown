@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { hashPassword, generateToken } from '@/lib/auth';
+import { hashPassword } from '@/lib/auth';
+import { generateCode, sendVerificationEmail } from '@/lib/email';
 
 export async function POST(request: Request) {
   try {
@@ -11,25 +12,45 @@ export async function POST(request: Request) {
     }
 
     const existing = await prisma.user.findUnique({ where: { email } });
-    if (existing) {
+    if (existing && existing.verified) {
       return NextResponse.json({ error: 'Email already registered' }, { status: 409 });
     }
 
-    const user = await prisma.user.create({
-      data: {
-        email,
-        password: hashPassword(password),
-        name,
-        phone: phone || null,
-      }
-    });
+    const code = generateCode();
+    const codeExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-    const token = generateToken(user.id);
+    if (existing && !existing.verified) {
+      // Update existing unverified user
+      await prisma.user.update({
+        where: { email },
+        data: {
+          password: hashPassword(password),
+          name,
+          phone: phone || null,
+          verificationCode: code,
+          verificationCodeExpires: codeExpires,
+        },
+      });
+    } else {
+      // Create new user
+      await prisma.user.create({
+        data: {
+          email,
+          password: hashPassword(password),
+          name,
+          phone: phone || null,
+          verificationCode: code,
+          verificationCodeExpires: codeExpires,
+        },
+      });
+    }
+
+    await sendVerificationEmail(email, code, 'signup');
 
     return NextResponse.json({
       success: true,
-      token,
-      user: { id: user.id, email: user.email, name: user.name, role: user.role }
+      message: 'Verification code sent to your email',
+      requiresVerification: true,
     });
   } catch (error) {
     console.error('Register error:', error);

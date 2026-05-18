@@ -9,7 +9,7 @@ export default function AuthModal({ isOpen, onClose }: any) {
   const [mode, setMode] = useState<"login" | "register">("login");
   const [step, setStep] = useState<"credentials" | "verify">("credentials");
   const [formData, setFormData] = useState({ email: "", password: "", name: "", phone: "", code: "" });
-  const { login, register, sendLoginCode, verifyLoginCode } = useAuth();
+  const { register, sendLoginCode, verifyLoginCode, verifySignup } = useAuth();
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: any) => {
@@ -22,13 +22,20 @@ export default function AuthModal({ isOpen, onClose }: any) {
           setStep("verify");
         } else {
           await verifyLoginCode(formData.email, formData.code);
-          onClose();
-          setStep("credentials");
-          setFormData({ email: "", password: "", name: "", phone: "", code: "" });
+          resetAndClose();
         }
       } else {
-        await register(formData);
-        onClose();
+        if (step === "credentials") {
+          const res = await register(formData);
+          if (res.requiresVerification) {
+            setStep("verify");
+          } else {
+            resetAndClose();
+          }
+        } else {
+          await verifySignup(formData.email, formData.code);
+          resetAndClose();
+        }
       }
     } catch (error: any) {
       alert(error.message || "Authentication failed");
@@ -37,9 +44,22 @@ export default function AuthModal({ isOpen, onClose }: any) {
     }
   };
 
+  const resetAndClose = () => {
+    onClose();
+    setStep("credentials");
+    setFormData({ email: "", password: "", name: "", phone: "", code: "" });
+  };
+
   const handleBack = () => {
     setStep("credentials");
     setFormData({ ...formData, code: "" });
+  };
+
+  const getButtonText = () => {
+    if (loading) return "Please wait...";
+    if (step === "verify") return "Verify Code";
+    if (mode === "login") return "Send Verification Code";
+    return "Create Account";
   };
 
   return (
@@ -63,8 +83,10 @@ export default function AuthModal({ isOpen, onClose }: any) {
             <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full p-6 shadow-2xl" style={{ pointerEvents: 'auto' }}>
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">
-                  {mode === "login" 
-                    ? (step === "verify" ? "Verify Email" : "Welcome Back") 
+                  {step === "verify"
+                    ? "Verify Email"
+                    : mode === "login"
+                    ? "Welcome Back"
                     : "Create Account"}
                 </h2>
                 <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
@@ -73,10 +95,10 @@ export default function AuthModal({ isOpen, onClose }: any) {
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
-                {mode === "login" && step === "verify" ? (
+                {step === "verify" ? (
                   <>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                      We've sent a verification code to {formData.email}
+                      We've sent a 6-digit code to <strong>{formData.email}</strong>
                     </p>
                     <div>
                       <label className="flex items-center gap-2 text-sm font-semibold mb-2">
@@ -98,7 +120,7 @@ export default function AuthModal({ isOpen, onClose }: any) {
                       onClick={handleBack}
                       className="text-sm text-primary-600 hover:underline"
                     >
-                      ← Back to login
+                      ← Back
                     </button>
                   </>
                 ) : (
@@ -148,19 +170,21 @@ export default function AuthModal({ isOpen, onClose }: any) {
                       />
                     </div>
 
-                    <div>
-                      <label className="flex items-center gap-2 text-sm font-semibold mb-2">
-                        <Lock className="w-4 h-4" />
-                        Password
-                      </label>
-                      <input
-                        type="password"
-                        required
-                        value={formData.password}
-                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                        className="w-full px-4 py-3 border-2 rounded-lg focus:border-primary-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600"
-                      />
-                    </div>
+                    {mode === "register" && (
+                      <div>
+                        <label className="flex items-center gap-2 text-sm font-semibold mb-2">
+                          <Lock className="w-4 h-4" />
+                          Password
+                        </label>
+                        <input
+                          type="password"
+                          required
+                          value={formData.password}
+                          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                          className="w-full px-4 py-3 border-2 rounded-lg focus:border-primary-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600"
+                        />
+                      </div>
+                    )}
                   </>
                 )}
 
@@ -169,52 +193,26 @@ export default function AuthModal({ isOpen, onClose }: any) {
                   disabled={loading}
                   className="w-full py-3 bg-primary-500 text-white rounded-lg font-bold hover:bg-primary-600 disabled:opacity-50"
                 >
-                  {loading ? "Please wait..." : (
-                    mode === "login" 
-                      ? (step === "verify" ? "Verify Code" : "Send Verification Code")
-                      : "Create Account"
-                  )}
+                  {getButtonText()}
                 </button>
               </form>
 
               <div className="mt-4 text-center text-sm">
                 {mode === "login" ? (
-                  <>
-                    <p>
-                      Don't have an account?{" "}
-                      <button onClick={() => setMode("register")} className="text-primary-600 font-semibold">
-                        Sign up
-                      </button>
-                    </p>
-                    <p className="mt-2">
-                      <a href="/forgot-password" className="text-primary-600 font-semibold">
-                        Forgot Password?
-                      </a>
-                    </p>
-                  </>
+                  <p>
+                    Don't have an account?{" "}
+                    <button onClick={() => { setMode("register"); setStep("credentials"); }} className="text-primary-600 font-semibold">
+                      Sign up
+                    </button>
+                  </p>
                 ) : (
                   <p>
                     Already have an account?{" "}
-                    <button onClick={() => setMode("login")} className="text-primary-600 font-semibold">
+                    <button onClick={() => { setMode("login"); setStep("credentials"); }} className="text-primary-600 font-semibold">
                       Login
                     </button>
                   </p>
                 )}
-              </div>
-
-              <div className="mt-6 pt-6 border-t">
-                <p className="text-center text-sm text-gray-600 dark:text-gray-400 mb-3">Or continue with</p>
-                <div className="grid grid-cols-3 gap-3">
-                  <button className="p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
-                    <span className="text-2xl">🔵</span>
-                  </button>
-                  <button className="p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
-                    <span className="text-2xl">🔴</span>
-                  </button>
-                  <button className="p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
-                    <span className="text-2xl">⚫</span>
-                  </button>
-                </div>
               </div>
             </div>
           </motion.div>

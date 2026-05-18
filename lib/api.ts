@@ -37,6 +37,12 @@ export const api = {
     body: JSON.stringify({ email, code })
   }).then(r => r.json()),
 
+  verifySignup: (email: string, code: string) => fetch(`${API_URL}/auth/verify-signup`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, code })
+  }).then(r => r.json()),
+
   getProfile: () => fetch(`${API_URL}/auth/profile`, {
     headers: headers()
   }).then(r => r.json()),
