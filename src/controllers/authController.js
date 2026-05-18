@@ -18,14 +18,15 @@ exports.register = async (req, res) => {
     const code = Math.floor(100000 + Math.random() * 900000).toString();
 
     // Update existing unverified user or create new
-    const existingUnverified = await User.findOne({ email, verified: false });
-    if (existingUnverified) {
-      existingUnverified.name = name;
-      existingUnverified.phone = phone;
-      existingUnverified.password = password;
-      existingUnverified.verificationCode = code;
-      existingUnverified.verificationCodeExpires = Date.now() + 600000;
-      await existingUnverified.save();
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      existingUser.name = name;
+      existingUser.phone = phone;
+      existingUser.password = password;
+      existingUser.verified = false;
+      existingUser.verificationCode = code;
+      existingUser.verificationCodeExpires = Date.now() + 600000;
+      await existingUser.save();
     } else {
       await User.create({
         name, email, phone, password, role,
@@ -168,10 +169,16 @@ exports.resetPassword = async (req, res) => {
 exports.sendLoginCode = async (req, res) => {
   try {
     const { email } = req.body;
-    const user = await User.findOne({ email, verified: true });
+    const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(404).json({ message: 'No verified account found with this email' });
+      return res.status(404).json({ message: 'No account found with this email' });
+    }
+
+    // Auto-verify old accounts that existed before verification system
+    if (!user.verified) {
+      user.verified = true;
+      await user.save();
     }
 
     const code = Math.floor(100000 + Math.random() * 900000).toString();
