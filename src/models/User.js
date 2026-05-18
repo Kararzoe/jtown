@@ -21,8 +21,12 @@ const userSchema = new mongoose.Schema({
   blockedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   verificationCode: { type: String },
   verificationExpires: { type: Date },
+  verificationCodeExpires: { type: Date },
+  verified: { type: Boolean, default: false },
   resetPasswordToken: { type: String },
   resetPasswordExpires: { type: Date },
+  loginCode: { type: String },
+  loginCodeExpires: { type: Date },
   idDocument: { type: String },
   businessRegistration: { type: String },
   savedSearches: [{

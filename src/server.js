@@ -14,16 +14,20 @@ const userRoutes = require('./routes/userRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const businessRoutes = require('./routes/businessRoutes');
+const serviceRoutes = require('./routes/serviceRoutes');
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: { origin: 'http://localhost:3000', credentials: true }
+  cors: { origin: ['http://localhost:3000', 'https://josmkt.com.ng', 'https://www.josmkt.com.ng'], credentials: true }
 });
 
 connectDB();
 
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:3000', 'https://josmkt.com.ng', 'https://www.josmkt.com.ng'],
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -36,6 +40,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/business', businessRoutes);
+app.use('/api/services', serviceRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Jos Marketplace API' });
