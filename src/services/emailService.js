@@ -8,6 +8,15 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+// Verify transporter on startup
+transporter.verify(function(error, success) {
+  if (error) {
+    console.error('Email transporter error:', error);
+  } else {
+    console.log('Email server is ready to send messages');
+  }
+});
+
 exports.sendWelcomeEmail = async (email, name) => {
   const mailOptions = {
     from: process.env.EMAIL_USER,
@@ -111,11 +120,8 @@ exports.sendLoginCode = async (email, code) => {
     `
   };
 
-  try {
-    await transporter.sendMail(mailOptions);
-  } catch (error) {
-    console.error('Email error:', error);
-  }
+  await transporter.sendMail(mailOptions);
+  console.log('Login code sent to:', email);
 };
 
 exports.sendSignupCode = async (email, code) => {
@@ -139,9 +145,6 @@ exports.sendSignupCode = async (email, code) => {
     `
   };
 
-  try {
-    await transporter.sendMail(mailOptions);
-  } catch (error) {
-    console.error('Email error:', error);
-  }
+  await transporter.sendMail(mailOptions);
+  console.log('Signup code sent to:', email);
 };

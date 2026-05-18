@@ -186,7 +186,12 @@ exports.sendLoginCode = async (req, res) => {
     user.loginCodeExpires = Date.now() + 600000;
     await user.save();
 
-    await sendLoginCodeEmail(email, code);
+    try {
+      await sendLoginCodeEmail(email, code);
+    } catch (emailError) {
+      console.error('Email send failed:', emailError);
+      return res.status(500).json({ message: 'Failed to send email: ' + emailError.message });
+    }
 
     res.json({ success: true, message: 'Verification code sent' });
   } catch (error) {
