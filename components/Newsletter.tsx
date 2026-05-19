@@ -1,11 +1,34 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Send } from "lucide-react";
+import { Send, CheckCircle } from "lucide-react";
+import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Newsletter() {
   const { t } = useLanguage();
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus("loading");
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (res.ok) {
+        setStatus("success");
+        setEmail("");
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
+  };
 
   return (
     <section className="py-20 px-4 bg-gradient-to-br from-gray-900 via-emerald-950 to-gray-900">
@@ -22,21 +45,33 @@ export default function Newsletter() {
           <p className="text-gray-400 mb-8 max-w-md mx-auto">{t('weeklyTips')}</p>
 
           <div className="max-w-md mx-auto px-4">
-            <div className="flex flex-col sm:flex-row gap-2">
-              <input
-                type="email"
-                placeholder={t('enterEmail')}
-                className="flex-1 px-6 py-4 rounded-xl bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-emerald-400 backdrop-blur-sm transition"
-              />
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-6 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-emerald-500/25 flex items-center justify-center gap-2 transition-all"
-              >
-                <Send className="w-5 h-5" />
-                {t('subscribe')}
-              </motion.button>
-            </div>
+            {status === "success" ? (
+              <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="flex items-center justify-center gap-2 text-emerald-400 py-4">
+                <CheckCircle className="w-5 h-5" />
+                <span className="font-medium">Subscribed successfully!</span>
+              </motion.div>
+            ) : (
+              <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2">
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder={t('enterEmail')}
+                  className="flex-1 px-6 py-4 rounded-xl bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-emerald-400 backdrop-blur-sm transition"
+                />
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  type="submit"
+                  disabled={status === "loading"}
+                  className="px-6 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-emerald-500/25 flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                >
+                  <Send className="w-5 h-5" />
+                  {t('subscribe')}
+                </motion.button>
+              </form>
+            )}
             <p className="text-xs text-gray-500 mt-3">{t('freeForever')}</p>
           </div>
         </motion.div>

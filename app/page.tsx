@@ -25,7 +25,6 @@ export default function Home() {
       <TopSellers />
       <Testimonials />
       <FAQ />
-      <Newsletter />
       <Footer />
       <FloatingChat />
       <ScrollToTop />
