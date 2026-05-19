@@ -6,7 +6,7 @@ import { Users, Package, ShoppingCart, Wrench, Trash2, CheckCircle, XCircle, Eye
 import Navbar from "@/components/Navbar";
 
 export default function AdminDashboard() {
-  const [tab, setTab] = useState<"overview" | "users" | "products" | "providers" | "orders">("overview");
+  const [tab, setTab] = useState<"overview" | "users" | "products" | "providers" | "orders" | "addProduct" | "addProvider">("overview");
   const [stats, setStats] = useState({ users: 0, products: 0, orders: 0, providers: 0 });
   const [users, setUsers] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
@@ -15,6 +15,9 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [auth, setAuth] = useState(false);
   const [password, setPassword] = useState("");
+
+  const [newProduct, setNewProduct] = useState({ title: "", description: "", price: "", category: "", stock: "1" });
+  const [newProvider, setNewProvider] = useState({ serviceName: "", category: "", description: "", location: "", phone: "", experience: "", priceRange: "" });
 
   const ADMIN_PASSWORD = "Ojonsman122.";
 
@@ -76,6 +79,39 @@ export default function AdminDashboard() {
     setProviders(providers.map(p => p.id === id ? { ...p, approved: true } : p));
   };
 
+  const addProduct = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
+    const res = await fetch("/api/products", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ ...newProduct, price: parseFloat(newProduct.price), stock: parseInt(newProduct.stock), images: [] }),
+    });
+    if (res.ok) {
+      setNewProduct({ title: "", description: "", price: "", category: "", stock: "1" });
+      setTab("products");
+      fetchData();
+    } else {
+      alert("Failed to add product");
+    }
+  };
+
+  const addProvider = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const res = await fetch("/api/admin/providers/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newProvider),
+    });
+    if (res.ok) {
+      setNewProvider({ serviceName: "", category: "", description: "", location: "", phone: "", experience: "", priceRange: "" });
+      setTab("providers");
+      fetchData();
+    } else {
+      alert("Failed to add provider");
+    }
+  };
+
   if (!auth) {
     return (
       <>
@@ -134,9 +170,8 @@ export default function AdminDashboard() {
             ))}
           </div>
 
-          {/* Tabs */}
           <div className="flex gap-2 mb-6 overflow-x-auto">
-            {(["overview", "users", "products", "providers", "orders"] as const).map((t) => (
+            {(["overview", "users", "products", "addProduct", "providers", "addProvider", "orders"] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => setTab(t)}
@@ -144,7 +179,7 @@ export default function AdminDashboard() {
                   tab === t ? "bg-emerald-500 text-white" : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300"
                 }`}
               >
-                {t.charAt(0).toUpperCase() + t.slice(1)}
+                {t === "addProduct" ? "+ Product" : t === "addProvider" ? "+ Provider" : t.charAt(0).toUpperCase() + t.slice(1)}
               </button>
             ))}
           </div>
@@ -314,6 +349,70 @@ export default function AdminDashboard() {
                     ))}
                     {products.length === 0 && <p className="text-gray-500 text-sm">No products yet</p>}
                   </div>
+                </div>
+              )}
+
+              {/* Add Product Tab */}
+              {tab === "addProduct" && (
+                <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm max-w-2xl">
+                  <h3 className="font-bold text-lg mb-6">Add New Product</h3>
+                  <form onSubmit={addProduct} className="space-y-4">
+                    <input type="text" required placeholder="Product title" value={newProduct.title} onChange={(e) => setNewProduct({ ...newProduct, title: e.target.value })} className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                    <textarea required placeholder="Description" value={newProduct.description} onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })} className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white" rows={3} />
+                    <div className="grid grid-cols-2 gap-4">
+                      <input type="number" required placeholder="Price (₦)" value={newProduct.price} onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })} className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                      <input type="number" required placeholder="Stock" value={newProduct.stock} onChange={(e) => setNewProduct({ ...newProduct, stock: e.target.value })} className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                    </div>
+                    <select required value={newProduct.category} onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })} className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                      <option value="">Select category</option>
+                      <option value="phones">Phones</option>
+                      <option value="gadgets">Gadgets</option>
+                      <option value="electronics">Electronics</option>
+                      <option value="fashion">Fashion</option>
+                      <option value="food">Food</option>
+                      <option value="furniture">Furniture</option>
+                    </select>
+                    <button type="submit" className="w-full py-3 bg-emerald-500 text-white rounded-xl font-bold hover:bg-emerald-600">Add Product</button>
+                  </form>
+                </div>
+              )}
+
+              {/* Add Provider Tab */}
+              {tab === "addProvider" && (
+                <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm max-w-2xl">
+                  <h3 className="font-bold text-lg mb-6">Add Service Provider</h3>
+                  <form onSubmit={addProvider} className="space-y-4">
+                    <input type="text" required placeholder="Service/Business name" value={newProvider.serviceName} onChange={(e) => setNewProvider({ ...newProvider, serviceName: e.target.value })} className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                    <textarea required placeholder="Description" value={newProvider.description} onChange={(e) => setNewProvider({ ...newProvider, description: e.target.value })} className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white" rows={3} />
+                    <div className="grid grid-cols-2 gap-4">
+                      <input type="tel" required placeholder="Phone number" value={newProvider.phone} onChange={(e) => setNewProvider({ ...newProvider, phone: e.target.value })} className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                      <input type="text" placeholder="Location" value={newProvider.location} onChange={(e) => setNewProvider({ ...newProvider, location: e.target.value })} className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <input type="text" placeholder="Experience (e.g. 5 years)" value={newProvider.experience} onChange={(e) => setNewProvider({ ...newProvider, experience: e.target.value })} className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                      <input type="text" placeholder="Price range (e.g. ₦5,000 - ₦50,000)" value={newProvider.priceRange} onChange={(e) => setNewProvider({ ...newProvider, priceRange: e.target.value })} className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                    </div>
+                    <select required value={newProvider.category} onChange={(e) => setNewProvider({ ...newProvider, category: e.target.value })} className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                      <option value="">Select category</option>
+                      <option value="plumbing">Plumbing</option>
+                      <option value="electrical">Electricians</option>
+                      <option value="ac">AC Installation</option>
+                      <option value="baking">Bakers & Catering</option>
+                      <option value="painting">Painting</option>
+                      <option value="mechanic">Auto Mechanic</option>
+                      <option value="barbing">Barbing & Salon</option>
+                      <option value="carpentry">Carpentry</option>
+                      <option value="tailoring">Tailoring</option>
+                      <option value="photography">Photography</option>
+                      <option value="tech">Tech & Repairs</option>
+                      <option value="logistics">Logistics & Moving</option>
+                      <option value="cleaning">Cleaning</option>
+                      <option value="fashion">Fashion</option>
+                      <option value="electronics">Electronics</option>
+                      <option value="food">Food</option>
+                    </select>
+                    <button type="submit" className="w-full py-3 bg-emerald-500 text-white rounded-xl font-bold hover:bg-emerald-600">Add Provider</button>
+                  </form>
                 </div>
               )}
             </>
