@@ -22,8 +22,6 @@ export default function Home() {
       <Hero />
       <Categories />
       <JosMarketplace />
-      <TrendingSection />
-      <HowItWorks />
       <TopSellers />
       <Testimonials />
       <FAQ />
