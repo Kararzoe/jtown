@@ -10,7 +10,7 @@ export async function sendVerificationEmail(email: string, code: string, type: '
   const subject = type === 'login' ? 'Your JosMKT Login Code' : 'Verify Your JosMKT Account';
 
   await resend.emails.send({
-    from: 'JosMKT <onboarding@resend.dev>',
+    from: 'JosMKT <noreply@josmkt.com.ng>',
     to: email,
     subject,
     html: `
