@@ -1,41 +1,35 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD,
-  },
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-export function generateCode(): string {
+export function generateCode() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-export async function sendVerificationEmail(email: string, code: string, type: 'login' | 'signup') {
-  const subject = type === 'signup'
-    ? 'Verify Your Email - Jos Marketplace'
-    : 'Login Verification Code - Jos Marketplace';
+export async function sendVerificationEmail(email: string, code: string, type: 'login' | 'register') {
+  const subject = type === 'login' ? 'Your JosMKT Login Code' : 'Verify Your JosMKT Account';
 
-  const html = `
-    <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px;">
-      <h2 style="color: #10b981; text-align: center;">Jos Marketplace</h2>
-      <div style="background: #f9fafb; border-radius: 12px; padding: 30px; text-align: center;">
-        <h3>${type === 'signup' ? 'Welcome! Verify your email' : 'Your login code'}</h3>
-        <p style="color: #6b7280;">Use the code below to ${type === 'signup' ? 'complete your registration' : 'sign in to your account'}:</p>
-        <div style="background: #10b981; color: white; font-size: 32px; letter-spacing: 8px; padding: 15px 30px; border-radius: 8px; display: inline-block; font-weight: bold; margin: 20px 0;">
-          ${code}
-        </div>
-        <p style="color: #9ca3af; font-size: 14px;">This code expires in 10 minutes.</p>
-        <p style="color: #9ca3af; font-size: 12px;">If you didn't request this, ignore this email.</p>
-      </div>
-    </div>
-  `;
-
-  await transporter.sendMail({
-    from: process.env.EMAIL_USER,
+  await resend.emails.send({
+    from: 'JosMKT <onboarding@resend.dev>',
     to: email,
     subject,
-    html,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 32px; background: #f9fafb; border-radius: 12px;">
+        <div style="text-align: center; margin-bottom: 24px;">
+          <h1 style="color: #059669; margin: 0; font-size: 24px;">JosMKT</h1>
+          <p style="color: #6b7280; margin-top: 4px;">Your #1 Marketplace in Jos</p>
+        </div>
+        <div style="background: white; padding: 24px; border-radius: 8px; text-align: center;">
+          <p style="color: #374151; font-size: 16px; margin-bottom: 16px;">
+            ${type === 'login' ? 'Your login verification code is:' : 'Your verification code is:'}
+          </p>
+          <div style="background: #ecfdf5; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <span style="font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #059669;">${code}</span>
+          </div>
+          <p style="color: #6b7280; font-size: 14px;">This code expires in 10 minutes.</p>
+          <p style="color: #9ca3af; font-size: 12px; margin-top: 16px;">If you didn't request this, please ignore this email.</p>
+        </div>
+      </div>
+    `
   });
 }
