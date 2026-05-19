@@ -45,7 +45,7 @@ export async function POST(request: Request) {
       });
     }
 
-    await sendVerificationEmail(email, code, 'signup');
+    await sendVerificationEmail(email, code, 'register');
 
     return NextResponse.json({
       success: true,
