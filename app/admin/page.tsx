@@ -16,7 +16,7 @@ export default function AdminDashboard() {
   const [auth, setAuth] = useState(false);
   const [password, setPassword] = useState("");
 
-  const ADMIN_PASSWORD = "ojonsman122";
+  const ADMIN_PASSWORD = "Ojonsman122.";
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
