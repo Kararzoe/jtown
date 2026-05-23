@@ -225,7 +225,7 @@ export default function BecomeSellerPage() {
                   <option value="Tudun Wada">Tudun Wada</option>
                   <option value="Nassarawa">Nassarawa</option>
                   <option value="Old Airport">Old Airport</option>
-                  <option value="POLP">POLP</option>
+                  <option value="Polo">Polo</option>
                   <option value="British">British</option>
                   <option value="Other">Other</option>
                 </select>
