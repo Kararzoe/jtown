@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone, MapPin } from "lucide-react";
+import { Facebook, Twitter, Instagram, Mail, Phone, MapPin } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Footer() {
@@ -18,11 +18,18 @@ export default function Footer() {
             </div>
             <p className="text-sm mb-5 leading-relaxed">{t('subtitle')}</p>
             <div className="flex space-x-3">
-              {[Facebook, Twitter, Instagram, Linkedin].map((Icon, i) => (
-                <motion.a key={i} whileHover={{ scale: 1.1, y: -2 }} href="#" className="p-2.5 bg-gray-800/80 rounded-xl hover:bg-emerald-600 transition-all">
+              {[
+                { icon: Facebook, href: "https://facebook.com/josmarketplace" },
+                { icon: Twitter, href: "https://twitter.com/josMKTPlace" },
+                { icon: Instagram, href: "https://instagram.com/josmarketplace_" },
+              ].map(({ icon: Icon, href }, i) => (
+                <motion.a key={i} whileHover={{ scale: 1.1, y: -2 }} href={href} target="_blank" className="p-2.5 bg-gray-800/80 rounded-xl hover:bg-emerald-600 transition-all">
                   <Icon className="w-4 h-4" />
                 </motion.a>
               ))}
+              <motion.a whileHover={{ scale: 1.1, y: -2 }} href="https://tiktok.com/@jos.market.place" target="_blank" className="p-2.5 bg-gray-800/80 rounded-xl hover:bg-emerald-600 transition-all">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.88 2.89 2.89 0 01-2.88-2.88 2.89 2.89 0 012.88-2.88c.28 0 .56.04.82.11v-3.5a6.37 6.37 0 00-.82-.05A6.34 6.34 0 003.15 15.6a6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V9.4a8.16 8.16 0 004.76 1.52v-3.4a4.85 4.85 0 01-1-.83z"/></svg>
+              </motion.a>
             </div>
           </div>
 
