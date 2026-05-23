@@ -114,13 +114,17 @@ export default function ServiceProviders({ category }: { category: string }) {
               <div className="flex gap-2">
                 <a
                   href={`tel:${provider.phone}`}
-                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-primary-500 text-white rounded-lg text-sm font-semibold hover:bg-primary-600"
+                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-emerald-500 text-white rounded-lg text-sm font-semibold hover:bg-emerald-600"
                 >
                   <Phone className="w-4 h-4" /> Call
                 </a>
-                <button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 border-2 border-primary-500 text-primary-600 rounded-lg text-sm font-semibold hover:bg-primary-50 dark:hover:bg-gray-700">
-                  <MessageCircle className="w-4 h-4" /> Chat
-                </button>
+                <a
+                  href={`https://wa.me/${provider.phone?.replace(/[^0-9]/g, '')}?text=Hi, I found you on JosMKT. I need your service.`}
+                  target="_blank"
+                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-green-500 text-white rounded-lg text-sm font-semibold hover:bg-green-600"
+                >
+                  <MessageCircle className="w-4 h-4" /> WhatsApp
+                </a>
               </div>
             </motion.div>
           ))}

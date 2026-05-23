@@ -1,18 +1,22 @@
 import { NextResponse } from 'next/server';
+import { put } from '@vercel/blob';
 
 export async function POST(request: Request) {
-  const formData = await request.formData();
-  const file = formData.get('file') as File;
-  
-  if (!file) {
-    return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
-  }
+  try {
+    const formData = await request.formData();
+    const file = formData.get('file') as File;
 
-  // Mock upload - in production, upload to cloud storage
-  const mockUrl = `/api/placeholder/400/300?text=${encodeURIComponent(file.name)}`;
-  
-  return NextResponse.json({ 
-    url: mockUrl,
-    filename: file.name 
-  });
+    if (!file) {
+      return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
+    }
+
+    const blob = await put(file.name, file, {
+      access: 'public',
+    });
+
+    return NextResponse.json({ url: blob.url, filename: file.name });
+  } catch (error) {
+    console.error('Upload error:', error);
+    return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
+  }
 }
