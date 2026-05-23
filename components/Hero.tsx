@@ -14,9 +14,9 @@ export default function Hero() {
       .then(r => r.json())
       .then(data => {
         setStats({
-          views: ((data.users || 0) * 12 + (data.products || 0) * 45).toLocaleString(),
-          businesses: (data.users || 0) + (data.providers || 0) + "",
-          growth: data.users > 0 ? "+" + Math.min(((data.users + data.providers) * 15), 200) + "%" : "—",
+          views: (data.totalViews || 0).toLocaleString(),
+          businesses: ((data.users || 0) + (data.providers || 0)).toString(),
+          growth: (data.providers || 0) + " providers",
         });
       })
       .catch(() => {});

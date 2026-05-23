@@ -5,6 +5,7 @@ import PlateauBackground from "@/components/PlateauBackground";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { CartProvider } from "@/contexts/CartContext";
+import { Analytics } from "@vercel/analytics/next";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
 
@@ -36,6 +37,7 @@ export default function RootLayout({
             </LanguageProvider>
           </CartProvider>
         </AuthProvider>
+        <Analytics />
       </body>
     </html>
   );
