@@ -50,7 +50,7 @@ export default function Footer() {
             <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">{t('contactUs')}</h4>
             <ul className="space-y-3 text-sm">
               <li className="flex items-center gap-2"><Mail className="w-4 h-4 text-emerald-500" /> support@josmkt.ng.com</li>
-              <li className="flex items-center gap-2"><Phone className="w-4 h-4 text-emerald-500" /> +234 904 383 2380</li>
+              <li className="flex items-center gap-2"><Phone className="w-4 h-4 text-emerald-500" /> +234 911 514 6303</li>
               <li className="flex items-center gap-2"><MapPin className="w-4 h-4 text-emerald-500" /> Jos, Plateau State, Nigeria</li>
             </ul>
           </div>

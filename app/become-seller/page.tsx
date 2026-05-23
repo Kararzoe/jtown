@@ -219,11 +219,14 @@ export default function BecomeSellerPage() {
                   <option value="Bukuru">Bukuru</option>
                   <option value="Rayfield">Rayfield</option>
                   <option value="Terminus">Terminus</option>
-                  <option value="Angwan Rogo">Angwan Rogo</option>
+                  <option value="Sukuwa">Sukuwa</option>
                   <option value="Lamingo">Lamingo</option>
                   <option value="Hwolshe">Hwolshe</option>
                   <option value="Tudun Wada">Tudun Wada</option>
                   <option value="Nassarawa">Nassarawa</option>
+                  <option value="Old Airport">Old Airport</option>
+                  <option value="POLP">POLP</option>
+                  <option value="British">British</option>
                   <option value="Other">Other</option>
                 </select>
               </div>

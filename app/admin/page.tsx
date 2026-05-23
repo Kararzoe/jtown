@@ -47,7 +47,7 @@ export default function AdminDashboard() {
         fetch("/api/stats").then(r => r.json()),
         fetch("/api/admin/users").then(r => r.json()).catch(() => []),
         fetch("/api/products").then(r => r.json()).catch(() => ({ products: [] })),
-        fetch("/api/services").then(r => r.json()).catch(() => []),
+        fetch("/api/admin/providers").then(r => r.json()).catch(() => []),
         fetch("/api/orders").then(r => r.json()).catch(() => []),
       ]);
       setStats(statsRes);
