@@ -5,9 +5,9 @@ import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { useState, useEffect } from "react";
 
 const deals = [
-  { id: 1, title: "🚀 Boost Your Business — Get 50% Off Promotions This Week!", bg: "from-emerald-600 to-teal-600" },
-  { id: 2, title: "✨ New: Premium Business Listings Now Available", bg: "from-purple-600 to-indigo-600" },
-  { id: 3, title: "📢 Free Visibility Boost for New Sellers — Limited Time", bg: "from-amber-600 to-orange-600" },
+  { id: 1, title: "🚀 Register your business on JosMKT — Get discovered by thousands in Jos!", bg: "from-emerald-600 to-teal-600" },
+  { id: 2, title: "📍 Find trusted plumbers, electricians, bakers & more in Jos", bg: "from-purple-600 to-indigo-600" },
+  { id: 3, title: "📢 List your service for FREE — Start getting customers today", bg: "from-amber-600 to-orange-600" },
 ];
 
 export default function TrendingBanner() {
@@ -31,13 +31,12 @@ export default function TrendingBanner() {
           >
             <Sparkles className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
             <h3 className="text-xs md:text-sm font-semibold text-center">{deals[current].title}</h3>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+            <a
+              href="/become-seller"
               className="hidden sm:block px-4 py-1 bg-white/20 backdrop-blur-sm text-white rounded-full font-medium hover:bg-white/30 text-xs border border-white/30 transition"
             >
-              Learn More
-            </motion.button>
+              Get Started
+            </a>
           </motion.div>
         </AnimatePresence>
 
