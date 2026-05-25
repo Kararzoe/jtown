@@ -9,13 +9,16 @@ export default function CookieConsent() {
 
   useEffect(() => {
     const consent = localStorage.getItem("cookieConsent");
-    if (!consent) {
-      setTimeout(() => setShow(true), 2000);
-    }
+    if (!consent) setTimeout(() => setShow(true), 2000);
   }, []);
 
   const accept = () => {
-    localStorage.setItem("cookieConsent", "true");
+    localStorage.setItem("cookieConsent", "accepted");
+    setShow(false);
+  };
+
+  const decline = () => {
+    localStorage.setItem("cookieConsent", "declined");
     setShow(false);
   };
 
@@ -28,31 +31,24 @@ export default function CookieConsent() {
           exit={{ y: 100, opacity: 0 }}
           className="fixed bottom-6 left-6 right-6 md:left-auto md:right-6 md:w-96 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 z-50 border dark:border-gray-700"
         >
-          <button onClick={() => setShow(false)} className="absolute top-4 right-4 p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+          <button onClick={decline} className="absolute top-4 right-4 p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
             <X className="w-4 h-4" />
           </button>
-          
           <div className="flex items-start gap-3 mb-4">
-            <Cookie className="w-6 h-6 text-primary-500 flex-shrink-0" />
+            <Cookie className="w-6 h-6 text-emerald-500 flex-shrink-0" />
             <div>
-              <h3 className="font-bold text-gray-900 dark:text-white mb-2">We use cookies</h3>
+              <h3 className="font-bold text-gray-900 dark:text-white mb-2">Cookie Notice</h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                We use cookies to improve your experience and analyze site traffic. By continuing, you agree to our use of cookies.
+                We use cookies and analytics to improve your experience. You can accept or decline. See our{" "}
+                <a href="/privacy" className="text-emerald-500 underline">Privacy Policy</a> for details.
               </p>
             </div>
           </div>
-          
           <div className="flex gap-3">
-            <button
-              onClick={accept}
-              className="flex-1 px-4 py-2 bg-primary-500 text-white rounded-lg font-semibold hover:bg-primary-600"
-            >
+            <button onClick={accept} className="flex-1 px-4 py-2 bg-emerald-500 text-white rounded-lg font-semibold hover:bg-emerald-600">
               Accept
             </button>
-            <button
-              onClick={() => setShow(false)}
-              className="px-4 py-2 border dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
-            >
+            <button onClick={decline} className="px-4 py-2 border dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
               Decline
             </button>
           </div>

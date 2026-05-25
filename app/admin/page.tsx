@@ -52,12 +52,14 @@ export default function AdminDashboard() {
 
   const fetchData = async () => {
     setLoading(true);
+    const token = localStorage.getItem("token");
+    const authHeaders = { Authorization: `Bearer ${token}` };
     try {
       const [statsRes, usersRes, productsRes, providersRes, ordersRes] = await Promise.all([
         fetch("/api/stats").then(r => r.json()),
-        fetch("/api/admin/users").then(r => r.json()).catch(() => []),
+        fetch("/api/admin/users", { headers: authHeaders }).then(r => r.json()).catch(() => []),
         fetch("/api/products").then(r => r.json()).catch(() => ({ products: [] })),
-        fetch("/api/admin/providers").then(r => r.json()).catch(() => []),
+        fetch("/api/admin/providers", { headers: authHeaders }).then(r => r.json()).catch(() => []),
         fetch("/api/orders").then(r => r.json()).catch(() => []),
       ]);
       setStats(statsRes);

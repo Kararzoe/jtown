@@ -49,10 +49,10 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">{t('aboutUs')}</h4>
             <ul className="space-y-2.5 text-sm">
-              <li><a href="#" className="hover:text-emerald-400 transition">{t('aboutUs')}</a></li>
-              <li><a href="#" className="hover:text-emerald-400 transition">{t('helpCenter')}</a></li>
-              <li><a href="#" className="hover:text-emerald-400 transition">{t('termsOfService')}</a></li>
-              <li><a href="#" className="hover:text-emerald-400 transition">{t('privacyPolicy')}</a></li>
+              <li><a href="/about" className="hover:text-emerald-400 transition">{t('aboutUs')}</a></li>
+              <li><a href="/privacy" className="hover:text-emerald-400 transition">{t('privacyPolicy')}</a></li>
+              <li><a href="/terms" className="hover:text-emerald-400 transition">{t('termsOfService')}</a></li>
+              <li><a href="https://forms.gle/QKsY1dsg9QUNm8Rv7" target="_blank" className="hover:text-emerald-400 transition">Feedback Form</a></li>
             </ul>
           </div>
 

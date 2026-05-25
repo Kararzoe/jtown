@@ -1,19 +1,15 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getUserIdFromRequest } from '@/lib/auth';
 
 export async function POST(request: Request) {
+  const userId = getUserIdFromRequest(request);
+  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user || user.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+
   try {
     const data = await request.json();
-
-    // Get or create a default admin user to attach the provider to
-    let adminUser = await prisma.user.findFirst({ where: { role: 'admin' } });
-    if (!adminUser) {
-      adminUser = await prisma.user.findFirst();
-    }
-    if (!adminUser) {
-      return NextResponse.json({ error: 'No users exist' }, { status: 400 });
-    }
-
     const provider = await prisma.serviceProvider.create({
       data: {
         serviceName: data.serviceName,
@@ -23,12 +19,11 @@ export async function POST(request: Request) {
         phone: data.phone,
         experience: data.experience || null,
         priceRange: data.priceRange || null,
-        userId: adminUser.id,
+        userId: userId,
         approved: true,
         verified: true,
       }
     });
-
     return NextResponse.json(provider);
   } catch (error) {
     console.error('Add provider error:', error);
