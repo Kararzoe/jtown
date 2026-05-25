@@ -14,20 +14,30 @@ export default function AdminDashboard() {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [auth, setAuth] = useState(false);
-  const [password, setPassword] = useState("");
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
 
   const [newProduct, setNewProduct] = useState({ title: "", description: "", price: "", category: "", stock: "1" });
   const [newProvider, setNewProvider] = useState({ serviceName: "", category: "", description: "", location: "", phone: "", experience: "", priceRange: "" });
 
-  const ADMIN_PASSWORD = "Ojonsman122.";
-
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === ADMIN_PASSWORD) {
-      setAuth(true);
+    setLoginError("");
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: loginEmail, password: loginPassword }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.token) throw new Error(data.error || "Login failed");
+      if (data.user?.role !== "admin") throw new Error("Access denied. Admin only.");
+      localStorage.setItem("token", data.token);
       localStorage.setItem("admin_auth", "true");
-    } else {
-      alert("Wrong password");
+      setAuth(true);
+    } catch (err: any) {
+      setLoginError(err.message);
     }
   };
 
@@ -119,11 +129,19 @@ export default function AdminDashboard() {
         <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
           <form onSubmit={handleLogin} className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl max-w-sm w-full">
             <h1 className="text-2xl font-bold mb-6 text-center">Admin Access</h1>
+            {loginError && <p className="text-red-500 text-sm mb-4 text-center">{loginError}</p>}
+            <input
+              type="email"
+              value={loginEmail}
+              onChange={(e) => setLoginEmail(e.target.value)}
+              placeholder="Admin email"
+              className="w-full px-4 py-3 border-2 rounded-xl mb-4 focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            />
             <input
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter admin password"
+              value={loginPassword}
+              onChange={(e) => setLoginPassword(e.target.value)}
+              placeholder="Password"
               className="w-full px-4 py-3 border-2 rounded-xl mb-4 focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             />
             <button type="submit" className="w-full py-3 bg-emerald-500 text-white rounded-xl font-bold hover:bg-emerald-600">
@@ -142,7 +160,7 @@ export default function AdminDashboard() {
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
-            <button onClick={() => { localStorage.removeItem("admin_auth"); setAuth(false); }} className="text-sm text-red-500 hover:underline">
+            <button onClick={() => { localStorage.removeItem("admin_auth"); localStorage.removeItem("token"); setAuth(false); }} className="text-sm text-red-500 hover:underline">
               Logout
             </button>
           </div>
