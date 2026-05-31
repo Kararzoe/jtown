@@ -1,7 +1,6 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect } from "react";
-import { api } from "@/lib/api";
 
 const AuthContext = createContext<any>(null);
 
@@ -11,77 +10,55 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token) {
-      api.getProfile().then(userData => {
-        setUser(userData);
-        setLoading(false);
-      }).catch(() => {
-        localStorage.removeItem("token");
-        setLoading(false);
-      });
-    } else {
-      setLoading(false);
+    const savedUser = localStorage.getItem("user");
+    if (token && savedUser) {
+      setUser(JSON.parse(savedUser));
     }
+    setLoading(false);
   }, []);
 
   const login = async (email: string, password: string) => {
-    const data = await api.login({ email, password });
-    if (data.token) {
-      localStorage.setItem("token", data.token);
-      setUser(data);
-      return data;
-    }
-    throw new Error(data.message || "Login failed");
-  };
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Invalid email or password");
+    if (!data.token) throw new Error("Login failed");
 
-  const sendLoginCode = async (email: string) => {
-    const data = await api.sendLoginCode(email);
-    if (!data.success) {
-      throw new Error(data.message || "Failed to send verification code");
-    }
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data.user));
+    setUser(data.user);
     return data;
   };
 
-  const verifyLoginCode = async (email: string, code: string) => {
-    const data = await api.verifyLoginCode(email, code);
-    if (data.token) {
-      localStorage.setItem("token", data.token);
-      setUser(data);
-      return data;
-    }
-    throw new Error(data.message || "Invalid verification code");
-  };
-
   const register = async (userData: any) => {
-    const data = await api.register(userData);
-    if (data.requiresVerification) {
-      return data;
-    }
-    if (data.token) {
-      localStorage.setItem("token", data.token);
-      setUser(data);
-      return data;
-    }
-    throw new Error(data.error || data.message || "Registration failed");
-  };
+    const res = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(userData),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Registration failed");
 
-  const verifySignup = async (email: string, code: string) => {
-    const data = await api.verifySignup(email, code);
     if (data.token) {
       localStorage.setItem("token", data.token);
-      setUser(data.user || data);
-      return data;
+      localStorage.setItem("user", JSON.stringify(data.user));
+      setUser(data.user);
     }
-    throw new Error(data.error || "Verification failed");
+    return data;
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("admin_auth");
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, loading, sendLoginCode, verifyLoginCode, verifySignup }}>
+    <AuthContext.Provider value={{ user, login, register, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

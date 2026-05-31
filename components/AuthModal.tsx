@@ -1,44 +1,35 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Mail, Lock, Phone, User as UserIcon, KeyRound } from "lucide-react";
+import { X, Mail, Lock, Phone, User as UserIcon } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function AuthModal({ isOpen, onClose }: any) {
   const [mode, setMode] = useState<"login" | "register">("login");
-  const [step, setStep] = useState<"credentials" | "verify">("credentials");
-  const [formData, setFormData] = useState({ email: "", password: "", name: "", phone: "", code: "" });
-  const { register, sendLoginCode, verifyLoginCode, verifySignup } = useAuth();
+  const [formData, setFormData] = useState({ email: "", password: "", name: "", phone: "" });
+  const { login, register } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setLoading(true);
+    setError("");
+
     try {
       if (mode === "login") {
-        if (step === "credentials") {
-          await sendLoginCode(formData.email);
-          setStep("verify");
-        } else {
-          await verifyLoginCode(formData.email, formData.code);
-          resetAndClose();
-        }
+        await login(formData.email, formData.password);
+        resetAndClose();
       } else {
-        if (step === "credentials") {
-          const res = await register(formData);
-          if (res.requiresVerification) {
-            setStep("verify");
-          } else {
-            resetAndClose();
-          }
-        } else {
-          await verifySignup(formData.email, formData.code);
-          resetAndClose();
+        if (formData.password.length < 6) {
+          throw new Error("Password must be at least 6 characters");
         }
+        await register(formData);
+        resetAndClose();
       }
-    } catch (error: any) {
-      alert(error.message || "Authentication failed");
+    } catch (err: any) {
+      setError(err.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -46,20 +37,13 @@ export default function AuthModal({ isOpen, onClose }: any) {
 
   const resetAndClose = () => {
     onClose();
-    setStep("credentials");
-    setFormData({ email: "", password: "", name: "", phone: "", code: "" });
+    setFormData({ email: "", password: "", name: "", phone: "" });
+    setError("");
   };
 
-  const handleBack = () => {
-    setStep("credentials");
-    setFormData({ ...formData, code: "" });
-  };
-
-  const getButtonText = () => {
-    if (loading) return "Please wait...";
-    if (step === "verify") return "Verify Code";
-    if (mode === "login") return "Send Verification Code";
-    return "Create Account";
+  const switchMode = () => {
+    setMode(mode === "login" ? "register" : "login");
+    setError("");
   };
 
   return (
@@ -70,7 +54,7 @@ export default function AuthModal({ isOpen, onClose }: any) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={onClose}
+            onClick={resetAndClose}
             className="fixed inset-0 bg-black/50 z-50 backdrop-blur-sm"
           />
           <motion.div
@@ -82,134 +66,107 @@ export default function AuthModal({ isOpen, onClose }: any) {
           >
             <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full p-6 shadow-2xl" style={{ pointerEvents: 'auto' }}>
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold">
-                  {step === "verify"
-                    ? "Verify Email"
-                    : mode === "login"
-                    ? "Welcome Back"
-                    : "Create Account"}
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {mode === "login" ? "Welcome Back" : "Create Account"}
                 </h2>
-                <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+                <button onClick={resetAndClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
+              {error && (
+                <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-red-600 dark:text-red-400 text-sm">
+                  {error}
+                </div>
+              )}
+
               <form onSubmit={handleSubmit} className="space-y-4">
-                {step === "verify" ? (
+                {mode === "register" && (
                   <>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                      We've sent a 6-digit code to <strong>{formData.email}</strong>
-                    </p>
                     <div>
-                      <label className="flex items-center gap-2 text-sm font-semibold mb-2">
-                        <KeyRound className="w-4 h-4" />
-                        Verification Code
+                      <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                        <UserIcon className="w-4 h-4" />
+                        Full Name
                       </label>
                       <input
                         type="text"
                         required
-                        maxLength={6}
-                        value={formData.code}
-                        onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                        className="w-full px-4 py-3 border-2 rounded-lg focus:border-primary-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 text-center text-2xl tracking-widest"
-                        placeholder="000000"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        placeholder="Your full name"
+                        className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:text-white"
                       />
                     </div>
-                    <button
-                      type="button"
-                      onClick={handleBack}
-                      className="text-sm text-primary-600 hover:underline"
-                    >
-                      ← Back
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    {mode === "register" && (
-                      <>
-                        <div>
-                          <label className="flex items-center gap-2 text-sm font-semibold mb-2">
-                            <UserIcon className="w-4 h-4" />
-                            Full Name
-                          </label>
-                          <input
-                            type="text"
-                            required
-                            value={formData.name}
-                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            className="w-full px-4 py-3 border-2 rounded-lg focus:border-primary-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600"
-                          />
-                        </div>
-                        <div>
-                          <label className="flex items-center gap-2 text-sm font-semibold mb-2">
-                            <Phone className="w-4 h-4" />
-                            Phone Number
-                          </label>
-                          <input
-                            type="tel"
-                            required
-                            value={formData.phone}
-                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                            className="w-full px-4 py-3 border-2 rounded-lg focus:border-primary-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600"
-                          />
-                        </div>
-                      </>
-                    )}
-
                     <div>
-                      <label className="flex items-center gap-2 text-sm font-semibold mb-2">
-                        <Mail className="w-4 h-4" />
-                        Email
+                      <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                        <Phone className="w-4 h-4" />
+                        Phone Number
                       </label>
                       <input
-                        type="email"
+                        type="tel"
                         required
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full px-4 py-3 border-2 rounded-lg focus:border-primary-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        placeholder="+234 800 000 0000"
+                        className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:text-white"
                       />
                     </div>
-
-                    {mode === "register" && (
-                      <div>
-                        <label className="flex items-center gap-2 text-sm font-semibold mb-2">
-                          <Lock className="w-4 h-4" />
-                          Password
-                        </label>
-                        <input
-                          type="password"
-                          required
-                          value={formData.password}
-                          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                          className="w-full px-4 py-3 border-2 rounded-lg focus:border-primary-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600"
-                        />
-                      </div>
-                    )}
                   </>
                 )}
+
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    <Mail className="w-4 h-4" />
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="your@email.com"
+                    className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    <Lock className="w-4 h-4" />
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    minLength={6}
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    placeholder={mode === "register" ? "Min 6 characters" : "Your password"}
+                    className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:text-white"
+                  />
+                </div>
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 bg-primary-500 text-white rounded-lg font-bold hover:bg-primary-600 disabled:opacity-50"
+                  className="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-bold hover:shadow-lg hover:shadow-emerald-500/25 disabled:opacity-50 transition-all"
                 >
-                  {getButtonText()}
+                  {loading ? "Please wait..." : mode === "login" ? "Sign In" : "Create Account"}
                 </button>
               </form>
 
-              <div className="mt-4 text-center text-sm">
+              <div className="mt-5 text-center text-sm text-gray-600 dark:text-gray-400">
                 {mode === "login" ? (
                   <p>
-                    Don't have an account?{" "}
-                    <button onClick={() => { setMode("register"); setStep("credentials"); }} className="text-primary-600 font-semibold">
+                    Don&apos;t have an account?{" "}
+                    <button onClick={switchMode} className="text-emerald-600 font-semibold hover:underline">
                       Sign up
                     </button>
                   </p>
                 ) : (
                   <p>
                     Already have an account?{" "}
-                    <button onClick={() => { setMode("login"); setStep("credentials"); }} className="text-primary-600 font-semibold">
-                      Login
+                    <button onClick={switchMode} className="text-emerald-600 font-semibold hover:underline">
+                      Sign in
                     </button>
                   </p>
                 )}

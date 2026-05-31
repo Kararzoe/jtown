@@ -109,7 +109,10 @@ export default function Navbar() {
             {user ? (
               <div className="relative group hidden md:block">
                 <button className="flex items-center gap-2 p-2 hover:bg-emerald-50 dark:hover:bg-gray-700 rounded-xl transition">
-                  <span className="text-2xl">{user.avatar}</span>
+                  <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                    {user.name?.charAt(0).toUpperCase()}
+                  </div>
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{user.name?.split(' ')[0]}</span>
                 </button>
                 <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
                   <div className="p-4 border-b dark:border-gray-700">
