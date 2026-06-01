@@ -19,6 +19,7 @@ export async function POST(request: Request) {
         phone: data.phone,
         experience: data.experience || null,
         priceRange: data.priceRange || null,
+        image: data.image || null,
         userId: userId,
         approved: true,
         verified: true,

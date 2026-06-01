@@ -87,6 +87,7 @@ model ServiceProvider {
   phone       String
   priceRange  String?
   experience  String?
+  image       String?
   rating      Float    @default(0)
   totalReviews Int     @default(0)
   verified    Boolean  @default(false)

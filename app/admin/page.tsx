@@ -19,7 +19,8 @@ export default function AdminDashboard() {
   const [loginError, setLoginError] = useState("");
 
   const [newProduct, setNewProduct] = useState({ title: "", description: "", price: "", category: "", stock: "1" });
-  const [newProvider, setNewProvider] = useState({ serviceName: "", category: "", description: "", location: "", phone: "", experience: "", priceRange: "" });
+  const [newProvider, setNewProvider] = useState({ serviceName: "", category: "", description: "", location: "", phone: "", experience: "", priceRange: "", image: "" });
+  const [uploading, setUploading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,6 +109,22 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+    try {
+      const res = await fetch("/api/upload", { method: "POST", body: formData });
+      const data = await res.json();
+      if (data.url) setNewProvider({ ...newProvider, image: data.url });
+    } catch (err) {
+      alert("Upload failed");
+    }
+    setUploading(false);
+  };
+
   const addProvider = async (e: React.FormEvent) => {
     e.preventDefault();
     const res = await fetch("/api/admin/providers/add", {
@@ -116,7 +133,7 @@ export default function AdminDashboard() {
       body: JSON.stringify(newProvider),
     });
     if (res.ok) {
-      setNewProvider({ serviceName: "", category: "", description: "", location: "", phone: "", experience: "", priceRange: "" });
+      setNewProvider({ serviceName: "", category: "", description: "", location: "", phone: "", experience: "", priceRange: "", image: "" });
       setTab("providers");
       fetchData();
     } else {
@@ -431,6 +448,12 @@ export default function AdminDashboard() {
                       <option value="electronics">Electronics</option>
                       <option value="food">Food</option>
                     </select>
+                    <div>
+                      <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 block">Business Photo</label>
+                      <input type="file" accept="image/*" onChange={handleImageUpload} className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                      {uploading && <p className="text-sm text-emerald-500 mt-1">Uploading...</p>}
+                      {newProvider.image && <img src={newProvider.image} alt="Preview" className="mt-2 w-32 h-32 object-cover rounded-xl" />}
+                    </div>
                     <button type="submit" className="w-full py-3 bg-emerald-500 text-white rounded-xl font-bold hover:bg-emerald-600">Add Provider</button>
                   </form>
                 </div>
