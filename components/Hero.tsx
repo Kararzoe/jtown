@@ -10,13 +10,15 @@ export default function Hero() {
   const [stats, setStats] = useState({ views: "—", businesses: "—", growth: "—" });
 
   useEffect(() => {
-    fetch("/api/stats")
+    fetch("https://jos-backend.onrender.com/api/admin/stats", {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    })
       .then(r => r.json())
       .then(data => {
         setStats({
-          views: (data.totalViews || 0).toLocaleString(),
-          businesses: ((data.users || 0) + (data.providers || 0)).toString(),
-          growth: (data.providers || 0) + " providers",
+          views: (data.totalProducts || 0).toLocaleString(),
+          businesses: (data.totalUsers || 0).toString(),
+          growth: (data.totalOrders || 0) + " orders",
         });
       })
       .catch(() => {});
