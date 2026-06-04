@@ -1,21 +1,39 @@
-const FRONTEND_URL = process.env.FRONTEND_URL || 'https://josmkt.com.ng';
-const EMAIL_API = FRONTEND_URL + '/api/auth/send-code';
+const https = require('https');
 
-const sendEmail = async (email, code, type) => {
-  try {
-    const res = await fetch(EMAIL_API, {
+const FRONTEND_URL = process.env.FRONTEND_URL || 'https://josmkt.com.ng';
+
+const sendEmail = (email, code, type) => {
+  return new Promise((resolve, reject) => {
+    const data = JSON.stringify({ email, code, type });
+    const url = new URL(FRONTEND_URL + '/api/auth/send-code');
+
+    const options = {
+      hostname: url.hostname,
+      port: 443,
+      path: url.pathname,
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, code, type })
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(data)
+      }
+    };
+
+    const req = https.request(options, (res) => {
+      let body = '';
+      res.on('data', (chunk) => body += chunk);
+      res.on('end', () => {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          resolve(JSON.parse(body));
+        } else {
+          reject(new Error(body || 'Email sending failed'));
+        }
+      });
     });
-    if (!res.ok) {
-      const data = await res.json();
-      throw new Error(data.error || 'Email sending failed');
-    }
-  } catch (error) {
-    console.error('Email send error:', error.message);
-    throw error;
-  }
+
+    req.on('error', (err) => reject(err));
+    req.write(data);
+    req.end();
+  });
 };
 
 exports.sendLoginCode = async (email, code) => {
