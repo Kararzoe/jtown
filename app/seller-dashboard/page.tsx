@@ -21,15 +21,19 @@ export default function SellerDashboard() {
   }, [user, activeTab]);
 
   const loadData = async () => {
-    if (activeTab === 'analytics') {
-      const data = await api.getSellerAnalytics();
-      setAnalytics(data);
-    } else if (activeTab === 'inventory') {
-      const data = await api.getMyProducts();
-      setProducts(data);
-    } else if (activeTab === 'shops') {
-      const data = await api.getShops();
-      setShops(data);
+    try {
+      if (activeTab === 'analytics') {
+        const data = await api.getSellerAnalytics();
+        if (data && !data.message) setAnalytics(data);
+      } else if (activeTab === 'inventory') {
+        const data = await api.getMyProducts();
+        setProducts(Array.isArray(data) ? data : []);
+      } else if (activeTab === 'shops') {
+        const data = await api.getShops();
+        setShops(Array.isArray(data) ? data : []);
+      }
+    } catch (err) {
+      console.error('Load data error:', err);
     }
   };
 
