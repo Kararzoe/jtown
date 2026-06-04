@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import { Users, Package, ShoppingCart, Wrench, Trash2, CheckCircle, XCircle, Eye } from "lucide-react";
 import Navbar from "@/components/Navbar";
 
+const API = 'https://jos-backend.onrender.com/api';
+
 export default function AdminDashboard() {
   const [tab, setTab] = useState<"overview" | "users" | "products" | "providers" | "orders" | "addProduct" | "addProvider">("overview");
   const [stats, setStats] = useState({ users: 0, products: 0, orders: 0, providers: 0 });
@@ -26,14 +28,14 @@ export default function AdminDashboard() {
     e.preventDefault();
     setLoginError("");
     try {
-      const res = await fetch("/api/auth/login", {
+      const res = await fetch(`${API}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: loginEmail, password: loginPassword }),
       });
       const data = await res.json();
-      if (!res.ok || !data.token) throw new Error(data.error || "Login failed");
-      if (data.user?.role !== "admin") throw new Error("Access denied. Admin only.");
+      if (!res.ok || !data.token) throw new Error(data.message || "Login failed");
+      if (data.role !== "admin") throw new Error("Access denied. Admin only.");
       localStorage.setItem("token", data.token);
       localStorage.setItem("admin_auth", "true");
       setAuth(true);
@@ -57,15 +59,15 @@ export default function AdminDashboard() {
     const authHeaders = { Authorization: `Bearer ${token}` };
     try {
       const [statsRes, usersRes, productsRes, providersRes, ordersRes] = await Promise.all([
-        fetch("/api/stats").then(r => r.json()),
-        fetch("/api/admin/users", { headers: authHeaders }).then(r => r.json()).catch(() => []),
-        fetch("/api/products").then(r => r.json()).catch(() => ({ products: [] })),
-        fetch("/api/admin/providers", { headers: authHeaders }).then(r => r.json()).catch(() => []),
-        fetch("/api/orders").then(r => r.json()).catch(() => []),
+        fetch(`${API}/admin/stats`, { headers: authHeaders }).then(r => r.json()).catch(() => ({ totalUsers: 0, totalProducts: 0, totalOrders: 0 })),
+        fetch(`${API}/admin/users`, { headers: authHeaders }).then(r => r.json()).catch(() => []),
+        fetch(`${API}/products`).then(r => r.json()).catch(() => []),
+        fetch(`${API}/services/all`, { headers: authHeaders }).then(r => r.json()).catch(() => []),
+        fetch(`${API}/orders/seller-orders`, { headers: authHeaders }).then(r => r.json()).catch(() => []),
       ]);
-      setStats(statsRes);
+      setStats({ users: statsRes.totalUsers || 0, products: statsRes.totalProducts || 0, orders: statsRes.totalOrders || 0, providers: Array.isArray(providersRes) ? providersRes.length : 0 });
       setUsers(Array.isArray(usersRes) ? usersRes : []);
-      setProducts(Array.isArray(productsRes.products) ? productsRes.products : Array.isArray(productsRes) ? productsRes : []);
+      setProducts(Array.isArray(productsRes) ? productsRes : []);
       setProviders(Array.isArray(providersRes) ? providersRes : []);
       setOrders(Array.isArray(ordersRes) ? ordersRes : []);
     } catch (e) {
@@ -76,26 +78,28 @@ export default function AdminDashboard() {
 
   const deleteUser = async (id: string) => {
     if (!confirm("Delete this user?")) return;
-    await fetch(`/api/admin/users/${id}`, { method: "DELETE" });
-    setUsers(users.filter(u => u.id !== id));
+    const token = localStorage.getItem("token");
+    await fetch(`${API}/admin/users/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+    fetchData();
   };
 
   const deleteProduct = async (id: string) => {
     if (!confirm("Delete this product?")) return;
     const token = localStorage.getItem("token");
-    await fetch(`/api/products/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
-    setProducts(products.filter(p => p.id !== id));
+    await fetch(`${API}/products/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+    fetchData();
   };
 
   const approveProvider = async (id: string) => {
-    await fetch(`/api/admin/providers/${id}/approve`, { method: "PATCH" });
-    setProviders(providers.map(p => p.id === id ? { ...p, approved: true } : p));
+    const token = localStorage.getItem("token");
+    await fetch(`${API}/services/${id}/status`, { method: "PATCH", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ status: "approved" }) });
+    fetchData();
   };
 
   const addProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
-    const res = await fetch("/api/products", {
+    const res = await fetch(`${API}/products/draft`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       body: JSON.stringify({ ...newProduct, price: parseFloat(newProduct.price), stock: parseInt(newProduct.stock), images: [] }),
@@ -105,7 +109,8 @@ export default function AdminDashboard() {
       setTab("products");
       fetchData();
     } else {
-      alert("Failed to add product");
+      const data = await res.json();
+      alert(data.message || "Failed to add product");
     }
   };
 
@@ -114,11 +119,12 @@ export default function AdminDashboard() {
     if (!file) return;
     setUploading(true);
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("images", file);
     try {
-      const res = await fetch("/api/upload", { method: "POST", body: formData });
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API}/products`, { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: formData });
       const data = await res.json();
-      if (data.url) setNewProvider({ ...newProvider, image: data.url });
+      if (data.images?.[0]) setNewProvider({ ...newProvider, image: data.images[0] });
     } catch (err) {
       alert("Upload failed");
     }
@@ -127,17 +133,19 @@ export default function AdminDashboard() {
 
   const addProvider = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await fetch("/api/admin/providers/add", {
+    const token = localStorage.getItem("token");
+    const res = await fetch(`${API}/services/apply`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       body: JSON.stringify(newProvider),
     });
-    if (res.ok) {
+    const data = await res.json();
+    if (res.ok && data._id) {
       setNewProvider({ serviceName: "", category: "", description: "", location: "", phone: "", experience: "", priceRange: "", image: "" });
       setTab("providers");
       fetchData();
     } else {
-      alert("Failed to add provider");
+      alert(data.message || "Failed to add provider");
     }
   };
 
