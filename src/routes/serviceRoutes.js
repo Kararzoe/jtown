@@ -12,7 +12,7 @@ const {
 const router = express.Router();
 
 router.get('/category/:category', getProvidersByCategory);
-router.post('/apply', protect, applyAsProvider);
+router.post('/apply', protect, restrictTo('admin'), applyAsProvider);
 router.get('/my-applications', protect, getMyApplications);
 router.get('/all', protect, restrictTo('admin'), getAllApplications);
 router.patch('/:id/status', protect, restrictTo('admin'), updateApplicationStatus);
