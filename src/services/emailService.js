@@ -2,14 +2,19 @@ const FRONTEND_URL = process.env.FRONTEND_URL || 'https://josmkt.com.ng';
 const EMAIL_API = FRONTEND_URL + '/api/auth/send-code';
 
 const sendEmail = async (email, code, type) => {
-  const res = await fetch(EMAIL_API, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, code, type })
-  });
-  if (!res.ok) {
-    const data = await res.json();
-    throw new Error(data.error || 'Email sending failed');
+  try {
+    const res = await fetch(EMAIL_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, code, type })
+    });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || 'Email sending failed');
+    }
+  } catch (error) {
+    console.error('Email send error:', error.message);
+    throw error;
   }
 };
 

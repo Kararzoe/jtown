@@ -1,10 +1,11 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const { sendWelcomeEmail, sendSignupCode, sendLoginCode: sendLoginCodeEmail } = require('../services/emailService');
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
 };
+
+const getEmailService = () => require('../services/emailService');
 
 exports.register = async (req, res) => {
   try {
@@ -35,7 +36,11 @@ exports.register = async (req, res) => {
       });
     }
 
-    await sendSignupCode(email, code);
+    try {
+      await getEmailService().sendSignupCode(email, code);
+    } catch (emailErr) {
+      console.error('Email failed:', emailErr.message);
+    }
 
     res.status(201).json({
       success: true,
@@ -66,7 +71,7 @@ exports.verifySignup = async (req, res) => {
     await user.save();
 
     const token = generateToken(user._id);
-    sendWelcomeEmail(email, user.name);
+    try { getEmailService().sendWelcomeEmail(email, user.name); } catch(e) {}
 
     res.json({
       success: true,
@@ -187,9 +192,9 @@ exports.sendLoginCode = async (req, res) => {
     await user.save();
 
     try {
-      await sendLoginCodeEmail(email, code);
+      await getEmailService().sendLoginCode(email, code);
     } catch (emailError) {
-      console.error('Email send failed:', emailError);
+      console.error('Email send failed:', emailError.message);
       return res.status(500).json({ message: 'Failed to send email: ' + emailError.message });
     }
 
