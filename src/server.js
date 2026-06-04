@@ -24,10 +24,7 @@ const io = new Server(server, {
 
 connectDB();
 
-app.use(cors({
-  origin: ['http://localhost:3000', 'https://josmkt.com.ng', 'https://www.josmkt.com.ng'],
-  credentials: true
-}));
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
