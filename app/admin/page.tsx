@@ -439,22 +439,14 @@ export default function AdminDashboard() {
                     </div>
                     <select required value={newProvider.category} onChange={(e) => setNewProvider({ ...newProvider, category: e.target.value })} className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                       <option value="">Select category</option>
-                      <option value="plumbing">Plumbing</option>
-                      <option value="electrical">Electricians</option>
-                      <option value="ac">AC Installation</option>
-                      <option value="baking">Bakers & Catering</option>
-                      <option value="painting">Painting</option>
-                      <option value="mechanic">Auto Mechanic</option>
-                      <option value="barbing">Barbing & Salon</option>
-                      <option value="carpentry">Carpentry</option>
-                      <option value="tailoring">Tailoring</option>
-                      <option value="photography">Photography</option>
-                      <option value="tech">Tech & Repairs</option>
-                      <option value="logistics">Logistics & Moving</option>
-                      <option value="cleaning">Cleaning</option>
-                      <option value="fashion">Fashion</option>
                       <option value="electronics">Electronics</option>
+                      <option value="fashion">Fashion</option>
+                      <option value="home">Home & Properties</option>
                       <option value="food">Food</option>
+                      <option value="phones">Phones</option>
+                      <option value="gadgets">Gadgets</option>
+                      <option value="sports">Sports</option>
+                      <option value="books">Books & Education</option>
                     </select>
                     <div>
                       <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 block">Business Photo</label>
