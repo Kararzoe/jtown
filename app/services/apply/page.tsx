@@ -49,10 +49,10 @@ export default function ApplyServicePage() {
       if (res._id) {
         setSubmitted(true);
       } else {
-        alert(res.message || "Failed to submit application");
+        alert(res.message || res.error || "Failed to submit application");
       }
-    } catch {
-      alert("Something went wrong");
+    } catch (err: any) {
+      alert(err.message || "Something went wrong");
     }
     setLoading(false);
   };
