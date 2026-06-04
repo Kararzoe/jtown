@@ -3,7 +3,6 @@ import Categories from "@/components/Categories";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import TrendingBanner from "@/components/TrendingBanner";
-import JosMarketplace from "@/components/JosMarketplace";
 import ScrollToTop from "@/components/ScrollToTop";
 import FAQ from "@/components/FAQ";
 import CookieConsent from "@/components/CookieConsent";
@@ -15,7 +14,6 @@ export default function Home() {
       <TrendingBanner />
       <Hero />
       <Categories />
-      <JosMarketplace />
       <FAQ />
       <Footer />
       <a
