@@ -17,7 +17,7 @@ const {
   bulkUpdate,
   searchNearby
 } = require('../controllers/productController');
-const { protect } = require('../middleware/auth');
+const { protect, restrictTo } = require('../middleware/auth');
 const upload = require('../middleware/upload');
 
 const router = express.Router();
@@ -31,12 +31,12 @@ router.get('/drafts', protect, getDrafts);
 router.get('/:id', getProduct);
 router.get('/:id/analytics', protect, getProductAnalytics);
 router.get('/:id/related', getRelated);
-router.post('/', protect, upload.array('images', 8), createProduct);
-router.post('/draft', protect, saveDraft);
-router.post('/bulk-delete', protect, bulkDelete);
-router.post('/bulk-update', protect, bulkUpdate);
-router.put('/:id', protect, updateProduct);
-router.delete('/:id', protect, deleteProduct);
+router.post('/', protect, restrictTo('admin'), upload.array('images', 8), createProduct);
+router.post('/draft', protect, restrictTo('admin'), saveDraft);
+router.post('/bulk-delete', protect, restrictTo('admin'), bulkDelete);
+router.post('/bulk-update', protect, restrictTo('admin'), bulkUpdate);
+router.put('/:id', protect, restrictTo('admin'), updateProduct);
+router.delete('/:id', protect, restrictTo('admin'), deleteProduct);
 router.post('/:id/favorite', protect, toggleFavorite);
 
 module.exports = router;

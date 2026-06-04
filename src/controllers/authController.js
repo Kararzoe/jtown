@@ -13,10 +13,11 @@ exports.register = async (req, res) => {
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      // Allow re-registration to update password
+      // Allow re-registration to update password and role
       existingUser.name = name || existingUser.name;
       existingUser.phone = phone || existingUser.phone;
       existingUser.password = password;
+      if (role) existingUser.role = role;
       existingUser.verified = true;
       existingUser.verificationCode = undefined;
       existingUser.verificationCodeExpires = undefined;
