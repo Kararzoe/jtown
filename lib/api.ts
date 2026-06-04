@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://jos-backend.onrender.com/api';
 
 const getToken = () => {
   if (typeof window !== 'undefined') {
@@ -347,7 +347,7 @@ export const api = {
     headers: headers()
   }).then(r => r.json()),
 
-  getServiceProviders: (category: string) => fetch(`${API_URL}/services?category=${category}`).then(r => r.json()),
+  getServiceProviders: (category: string) => fetch(`${API_URL}/services/category/${category}`).then(r => r.json()),
 
   applyAsProvider: (data: any) => fetch(`${API_URL}/services/apply`, {
     method: 'POST',
