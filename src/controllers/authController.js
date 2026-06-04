@@ -11,41 +11,43 @@ exports.register = async (req, res) => {
   try {
     const { name, email, phone, password, role } = req.body;
 
-    const userExists = await User.findOne({ email, verified: true });
-    if (userExists) {
-      return res.status(400).json({ message: 'User already exists' });
-    }
-
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-
-    // Update existing unverified user or create new
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      existingUser.name = name;
-      existingUser.phone = phone;
+      // Allow re-registration to update password
+      existingUser.name = name || existingUser.name;
+      existingUser.phone = phone || existingUser.phone;
       existingUser.password = password;
-      existingUser.verified = false;
-      existingUser.verificationCode = code;
-      existingUser.verificationCodeExpires = Date.now() + 600000;
+      existingUser.verified = true;
+      existingUser.verificationCode = undefined;
+      existingUser.verificationCodeExpires = undefined;
       await existingUser.save();
-    } else {
-      await User.create({
-        name, email, phone, password, role,
-        verificationCode: code,
-        verificationCodeExpires: Date.now() + 600000
+
+      const token = generateToken(existingUser._id);
+      return res.status(200).json({
+        success: true,
+        token,
+        _id: existingUser._id,
+        name: existingUser.name,
+        email: existingUser.email,
+        phone: existingUser.phone,
+        role: existingUser.role
       });
     }
 
-    try {
-      await getEmailService().sendSignupCode(email, code);
-    } catch (emailErr) {
-      console.error('Email failed:', emailErr.message);
-    }
+    const user = await User.create({
+      name, email, phone, password, role: role || 'buyer',
+      verified: true
+    });
 
+    const token = generateToken(user._id);
     res.status(201).json({
       success: true,
-      requiresVerification: true,
-      message: 'Verification code sent to your email'
+      token,
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      role: user.role
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
