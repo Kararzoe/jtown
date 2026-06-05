@@ -134,18 +134,24 @@ export default function AdminDashboard() {
   const addProvider = async (e: React.FormEvent) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
-    const res = await fetch(`${API}/services/apply`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify(newProvider),
-    });
-    const data = await res.json();
-    if (res.ok && data._id) {
-      setNewProvider({ serviceName: "", category: "", description: "", location: "", phone: "", experience: "", priceRange: "", image: "" });
-      setTab("providers");
-      fetchData();
-    } else {
-      alert(data.message || "Failed to add provider");
+    if (!token) { alert("Not logged in. Please login again."); return; }
+    try {
+      const res = await fetch(`${API}/services/apply`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify(newProvider),
+      });
+      const data = await res.json();
+      if (data._id) {
+        alert("Provider added successfully!");
+        setNewProvider({ serviceName: "", category: "", description: "", location: "", phone: "", experience: "", priceRange: "", image: "" });
+        setTab("providers");
+        fetchData();
+      } else {
+        alert("Error: " + (data.message || JSON.stringify(data)));
+      }
+    } catch (err: any) {
+      alert("Network error: " + err.message);
     }
   };
 
