@@ -75,7 +75,7 @@ export default function ServiceProviders({ category }: { category: string }) {
               <div className="flex items-start justify-between mb-3">
                 <div>
                   <h3 className="font-bold text-lg">{provider.serviceName}</h3>
-                  <p className="text-sm text-gray-500">{provider.user?.name}</p>
+                  <p className="text-sm text-gray-500">{provider.location}</p>
                 </div>
                 <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
                   Verified
