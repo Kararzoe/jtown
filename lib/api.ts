@@ -1,4 +1,4 @@
-const API_URL = 'https://jos-backend.onrender.com/api';
+const API_URL = 'https://josmkt-com-ng-335845.hostingersite.com/api';
 
 const getToken = () => {
   if (typeof window !== 'undefined') {
