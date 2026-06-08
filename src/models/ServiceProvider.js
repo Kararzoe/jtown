@@ -9,6 +9,7 @@ const serviceProviderSchema = new mongoose.Schema({
   location: { type: String, required: true },
   experience: { type: String },
   priceRange: { type: String },
+  image: { type: String, default: '' },
   status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
   rating: { type: Number, default: 0 },
   totalReviews: { type: Number, default: 0 },
