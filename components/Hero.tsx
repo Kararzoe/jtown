@@ -10,7 +10,7 @@ export default function Hero() {
   const [stats, setStats] = useState({ views: "—", businesses: "—", growth: "—" });
 
   useEffect(() => {
-    fetch("https://jos-backend.onrender.com/api/admin/stats", {
+    fetch("https://josmkt-com-ng-335845.hostingersite.com/api/admin/stats", {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
     })
       .then(r => r.json())

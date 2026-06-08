@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect } from "react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://jos-backend.onrender.com/api";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://josmkt-com-ng-335845.hostingersite.com/api";
 const AuthContext = createContext<any>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {

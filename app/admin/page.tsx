@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Users, Package, ShoppingCart, Wrench, Trash2, CheckCircle, XCircle, Eye } from "lucide-react";
 import Navbar from "@/components/Navbar";
 
-const API = 'https://jos-backend.onrender.com/api';
+const API = 'https://josmkt-com-ng-335845.hostingersite.com/api';
 
 export default function AdminDashboard() {
   const [tab, setTab] = useState<"overview" | "users" | "products" | "providers" | "orders" | "addProduct" | "addProvider">("overview");
