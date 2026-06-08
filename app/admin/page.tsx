@@ -96,6 +96,13 @@ export default function AdminDashboard() {
     fetchData();
   };
 
+  const deleteProvider = async (id: string) => {
+    if (!confirm("Delete this provider?")) return;
+    const token = localStorage.getItem("token");
+    await fetch(`${API}/services/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+    fetchData();
+  };
+
   const addProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
@@ -310,22 +317,29 @@ export default function AdminDashboard() {
               {tab === "providers" && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {providers.map((provider) => (
-                    <div key={provider.id} className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm">
+                    <div key={provider._id} className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm">
                       <div className="flex justify-between items-start mb-3">
                         <div>
                           <h3 className="font-bold text-gray-900 dark:text-white">{provider.serviceName}</h3>
                           <p className="text-sm text-gray-500">{provider.category} • {provider.location}</p>
                         </div>
-                        {provider.approved ? (
-                          <span className="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs rounded-full font-medium">Approved</span>
-                        ) : (
-                          <button onClick={() => approveProvider(provider.id)} className="px-3 py-1 bg-emerald-500 text-white text-xs rounded-full font-medium hover:bg-emerald-600">
-                            Approve
+                        <div className="flex items-center gap-2">
+                          {provider.status === "approved" ? (
+                            <span className="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs rounded-full font-medium">Approved</span>
+                          ) : (
+                            <button onClick={() => approveProvider(provider._id)} className="px-3 py-1 bg-emerald-500 text-white text-xs rounded-full font-medium hover:bg-emerald-600">
+                              Approve
+                            </button>
+                          )}
+                          <button onClick={() => deleteProvider(provider._id)} className="text-red-500 hover:text-red-700">
+                            <Trash2 className="w-4 h-4" />
                           </button>
-                        )}
+                        </div>
                       </div>
                       <p className="text-sm text-gray-500">{provider.description}</p>
                       <p className="text-sm text-gray-400 mt-2">📞 {provider.phone}</p>
+                      {provider.experience && <p className="text-sm text-gray-400">🕐 {provider.experience}</p>}
+                      {provider.priceRange && <p className="text-sm text-gray-400">💰 {provider.priceRange}</p>}
                     </div>
                   ))}
                   {providers.length === 0 && <p className="col-span-full text-center py-8 text-gray-500">No service providers yet</p>}
