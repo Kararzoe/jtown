@@ -24,6 +24,19 @@ export default function AdminDashboard() {
   const [newProvider, setNewProvider] = useState({ serviceName: "", category: "", description: "", location: "", phone: "", experience: "", priceRange: "", image: "" });
   const [uploading, setUploading] = useState(false);
 
+  const uploadImage = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append("images", file);
+    const token = localStorage.getItem("token");
+    const res = await fetch(`${API}/products`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    });
+    const data = await res.json();
+    return data.images?.[0] || "";
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError("");

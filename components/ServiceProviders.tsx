@@ -73,9 +73,18 @@ export default function ServiceProviders({ category }: { category: string }) {
               className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow hover:shadow-lg transition-all border border-gray-100 dark:border-gray-700"
             >
               <div className="flex items-start justify-between mb-3">
-                <div>
-                  <h3 className="font-bold text-lg">{provider.serviceName}</h3>
-                  <p className="text-sm text-gray-500">{provider.location}</p>
+                <div className="flex items-center gap-3">
+                  {provider.image ? (
+                    <img src={provider.image} alt={provider.serviceName} className="w-12 h-12 rounded-full object-cover border-2 border-emerald-200" />
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold text-lg">
+                      {provider.serviceName?.charAt(0)}
+                    </div>
+                  )}
+                  <div>
+                    <h3 className="font-bold text-lg">{provider.serviceName}</h3>
+                    <p className="text-sm text-gray-500">{provider.location}</p>
+                  </div>
                 </div>
                 <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
                   Verified
