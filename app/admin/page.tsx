@@ -470,8 +470,8 @@ export default function AdminDashboard() {
                       <input type="text" placeholder="Experience (e.g. 5 years)" value={newProvider.experience} onChange={(e) => setNewProvider({ ...newProvider, experience: e.target.value })} className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
                       <input type="text" placeholder="Price range (e.g. ₦5,000 - ₦50,000)" value={newProvider.priceRange} onChange={(e) => setNewProvider({ ...newProvider, priceRange: e.target.value })} className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
                     </div>
-                    <select required value={newProvider.category} onChange={(e) => setNewProvider({ ...newProvider, category: e.target.value })} className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                      <option value="">Select category</option>
+                    <select value={newProvider.category} onChange={(e) => setNewProvider({ ...newProvider, category: e.target.value })} className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                      <option value="">Select category or type below</option>
                       <option value="plumbing">Plumbing</option>
                       <option value="electrical">Electricians</option>
                       <option value="ac">AC Installation</option>
@@ -489,6 +489,7 @@ export default function AdminDashboard() {
                       <option value="pets">Pets</option>
                       <option value="fitness">Fitness</option>
                     </select>
+                    <input type="text" placeholder="Or type a custom category" value={newProvider.category} onChange={(e) => setNewProvider({ ...newProvider, category: e.target.value })} className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white mt-2" />
                     <div>
                       <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 block">Business Photo</label>
                       <input type="file" accept="image/*" onChange={handleImageUpload} className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
