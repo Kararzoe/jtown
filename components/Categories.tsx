@@ -14,7 +14,7 @@ const categories = [
   { key: "mechanicService", icon: Car, color: "from-red-500 to-pink-600", slug: "mechanic" },
   { key: "barbingService", icon: Scissors, color: "from-emerald-500 to-teal-600", slug: "barbing" },
   { key: "carpentryService", icon: Hammer, color: "from-yellow-600 to-amber-600", slug: "carpentry" },
-  { key: "tailoringService", icon: Shirt, color: "from-indigo-500 to-purple-600", slug: "tailoring" },
+  { key: "fashionDesignService", icon: Shirt, color: "from-indigo-500 to-purple-600", slug: "tailoring", label: "Fashion Design" },
   { key: "photographyService", icon: Camera, color: "from-rose-500 to-red-600", slug: "photography" },
   { key: "techService", icon: Laptop, color: "from-gray-600 to-gray-800", slug: "tech" },
   { key: "logisticsService", icon: Truck, color: "from-green-500 to-emerald-600", slug: "logistics" },
@@ -84,7 +84,7 @@ export default function Categories() {
                     <div className={`w-12 h-12 md:w-14 md:h-14 mx-auto mb-4 rounded-xl bg-gradient-to-br ${category.color} flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg`}>
                       <Icon className="w-6 h-6 md:w-7 md:h-7 text-white" />
                     </div>
-                    <h3 className="text-center font-semibold text-sm md:text-base text-gray-900 dark:text-white">{t(category.key)}</h3>
+                    <h3 className="text-center font-semibold text-sm md:text-base text-gray-900 dark:text-white">{(category as any).label || t(category.key)}</h3>
                     <p className="text-center text-xs text-gray-400 mt-1 hidden md:block">{t('explore')}</p>
                   </div>
                 </motion.div>
