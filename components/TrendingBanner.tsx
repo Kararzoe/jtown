@@ -32,7 +32,8 @@ export default function TrendingBanner() {
             <Sparkles className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
             <h3 className="text-xs md:text-sm font-semibold text-center">{deals[current].title}</h3>
             <a
-              href="/become-seller"
+              href="https://forms.gle/QKsY1dsg9QUNm8Rv7"
+              target="_blank"
               className="hidden sm:block px-4 py-1 bg-white/20 backdrop-blur-sm text-white rounded-full font-medium hover:bg-white/30 text-xs border border-white/30 transition"
             >
               Get Started
