@@ -2,15 +2,6 @@ const ServiceProvider = require('../models/ServiceProvider');
 
 exports.applyAsProvider = async (req, res) => {
   try {
-    const existing = await ServiceProvider.findOne({
-      user: req.user._id,
-      category: req.body.category,
-      status: { $in: ['pending', 'approved'] }
-    });
-    if (existing) {
-      return res.status(400).json({ message: 'You already have an active application for this category' });
-    }
-
     const provider = await ServiceProvider.create({
       user: req.user._id,
       ...req.body
