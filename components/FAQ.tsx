@@ -19,8 +19,10 @@ export default function FAQ() {
   ];
 
   return (
-    <section className="py-20 px-4 bg-white dark:bg-gray-900">
-      <div className="max-w-3xl mx-auto">
+    <section className="py-20 px-4 bg-white dark:bg-gray-900 relative overflow-hidden">
+      {/* Animated background */}
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-br from-emerald-200/30 to-teal-200/30 rounded-full blur-3xl animate-blob animation-delay-2000" />
+      <div className="max-w-3xl mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

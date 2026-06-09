@@ -28,8 +28,13 @@ export default function Categories() {
   const { t } = useLanguage();
 
   return (
-    <section id="services" className="py-20 px-4 bg-white dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto">
+    <section id="services" className="py-20 px-4 bg-white dark:bg-gray-900 relative overflow-hidden">
+      {/* Animated background blobs */}
+      <div className="absolute top-0 left-0 w-72 h-72 bg-emerald-300/20 rounded-full blur-3xl animate-blob" />
+      <div className="absolute top-40 right-0 w-72 h-72 bg-teal-300/20 rounded-full blur-3xl animate-blob animation-delay-2000" />
+      <div className="absolute bottom-0 left-1/2 w-72 h-72 bg-cyan-300/20 rounded-full blur-3xl animate-blob animation-delay-4000" />
+
+      <div className="max-w-7xl mx-auto relative z-10">
         <div className="text-center mb-14">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

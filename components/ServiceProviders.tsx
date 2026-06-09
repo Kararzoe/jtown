@@ -70,8 +70,11 @@ export default function ServiceProviders({ category }: { category: string }) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.05 }}
-              className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow hover:shadow-lg transition-all border border-gray-100 dark:border-gray-700"
+              whileHover={{ scale: 1.02 }}
+              className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow hover:shadow-xl transition-all border border-gray-100 dark:border-gray-700 hover:border-emerald-300 dark:hover:border-emerald-600 relative overflow-hidden group"
             >
+              {/* Animated gradient accent */}
+              <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 animate-gradient opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-3">
                   {provider.image ? (
