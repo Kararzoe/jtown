@@ -1,28 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Search, Rocket, Eye, TrendingUp, Zap } from "lucide-react";
+import { Search, Zap } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useEffect, useState } from "react";
 
 export default function Hero() {
   const { t } = useLanguage();
-  const [stats, setStats] = useState({ views: "—", businesses: "—", growth: "—" });
-
-  useEffect(() => {
-    fetch("https://josmkt-com-ng-335845.hostingersite.com/api/admin/stats", {
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-    })
-      .then(r => r.json())
-      .then(data => {
-        setStats({
-          views: (data.totalProducts || 0).toLocaleString(),
-          businesses: (data.totalUsers || 0).toString(),
-          growth: (data.totalOrders || 0) + " orders",
-        });
-      })
-      .catch(() => {});
-  }, []);
 
   return (
     <section className="relative min-h-[85vh] flex items-center bg-gradient-to-br from-gray-900 via-emerald-950 to-gray-900 overflow-hidden">
@@ -104,7 +87,7 @@ export default function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
-            className="flex flex-wrap justify-center gap-3 mb-12"
+            className="flex flex-wrap justify-center gap-3"
           >
             {[t('plumbing'), t('electricians'), t('acRepair'), t('bakers')].map((tag) => (
               <motion.button
@@ -115,25 +98,6 @@ export default function Hero() {
               >
                 {tag}
               </motion.button>
-            ))}
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1 }}
-            className="grid grid-cols-3 gap-6 max-w-lg mx-auto"
-          >
-            {[
-              { icon: Eye, value: stats.views, label: t('monthlyViews') },
-              { icon: Rocket, value: stats.businesses, label: t('businesses') },
-              { icon: TrendingUp, value: stats.growth, label: t('growthRate') },
-            ].map((stat) => (
-              <div key={stat.label} className="text-center">
-                <stat.icon className="w-5 h-5 text-emerald-400 mx-auto mb-1" />
-                <p className="text-2xl font-bold text-white">{stat.value}</p>
-                <p className="text-xs text-gray-400">{stat.label}</p>
-              </div>
             ))}
           </motion.div>
         </motion.div>
