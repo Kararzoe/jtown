@@ -140,7 +140,8 @@ export default function AdminDashboard() {
     setUploading(true);
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", "ml_default");
+    formData.append("upload_preset", "jos_marketplace");
+    formData.append("cloud_name", "dfye3j2bs");
     try {
       const res = await fetch("https://api.cloudinary.com/v1_1/dfye3j2bs/image/upload", {
         method: "POST",
@@ -150,7 +151,7 @@ export default function AdminDashboard() {
       if (data.secure_url) {
         setNewProvider({ ...newProvider, image: data.secure_url });
       } else {
-        alert("Upload failed");
+        alert("Upload failed: " + (data.error?.message || "Unknown error"));
       }
     } catch (err) {
       alert("Upload failed");
