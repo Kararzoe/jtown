@@ -139,12 +139,19 @@ export default function AdminDashboard() {
     if (!file) return;
     setUploading(true);
     const formData = new FormData();
-    formData.append("images", file);
+    formData.append("file", file);
+    formData.append("upload_preset", "ml_default");
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API}/products`, { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: formData });
+      const res = await fetch("https://api.cloudinary.com/v1_1/dfye3j2bs/image/upload", {
+        method: "POST",
+        body: formData,
+      });
       const data = await res.json();
-      if (data.images?.[0]) setNewProvider({ ...newProvider, image: data.images[0] });
+      if (data.secure_url) {
+        setNewProvider({ ...newProvider, image: data.secure_url });
+      } else {
+        alert("Upload failed");
+      }
     } catch (err) {
       alert("Upload failed");
     }
