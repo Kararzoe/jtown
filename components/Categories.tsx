@@ -28,6 +28,7 @@ const categories = [
   { key: "rentals", icon: Home, color: "from-emerald-500 to-green-600", slug: "rentals", label: "Rentals" },
   { key: "mason", icon: Brick, color: "from-stone-500 to-gray-600", slug: "mason", label: "Mason" },
   { key: "phoneAccessories", icon: Laptop, color: "from-blue-400 to-indigo-500", slug: "phone-accessories", label: "Phone Accessories" },
+  { key: "legalSolicitors", icon: GraduationCap, color: "from-slate-600 to-gray-700", slug: "legal", label: "Legal & Solicitors" },
 ];
 
 export default function Categories() {

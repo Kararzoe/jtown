@@ -511,6 +511,7 @@ export default function AdminDashboard() {
                       <option value="rentals">Rentals</option>
                       <option value="mason">Mason</option>
                       <option value="phone-accessories">Phone Accessories</option>
+                      <option value="legal">Legal & Solicitors</option>
                     </select>
                     <input type="text" placeholder="Or type a custom category" value={newProvider.category} onChange={(e) => setNewProvider({ ...newProvider, category: e.target.value })} className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white mt-2" />
                     <div>
