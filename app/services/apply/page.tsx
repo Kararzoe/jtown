@@ -1,33 +1,27 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, CheckCircle, Send } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import { useSearchParams } from "next/navigation";
-import { api } from "@/lib/api";
+import { CheckCircle, Send, Store } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-const serviceCategories: Record<string, string[]> = {
-  electronics: ["Phone Repair", "Laptop Repair", "TV Repair", "Electrical Installation", "CCTV Installation", "Solar Installation"],
-  fashion: ["Tailoring", "Fashion Design", "Shoe Making", "Laundry & Dry Cleaning", "Hair Styling", "Makeup Artist"],
-  home: ["Plumbing", "Painting", "Carpentry", "Interior Design", "Cleaning Service", "Fumigation"],
-  food: ["Catering", "Baking", "Event Decoration", "Food Delivery", "Meal Prep Service"],
-  phones: ["Phone Repair", "Screen Replacement", "Software Fix", "Phone Accessories"],
-  gadgets: ["Gadget Repair", "Computer Networking", "Printer Repair", "Console Repair"],
-  sports: ["Personal Training", "Sports Coaching", "Gym Instructor", "Physiotherapy"],
-  books: ["Tutoring", "Assignment Help", "Translation", "Proofreading"],
-};
+const API = "https://josmkt-com-ng-335845.hostingersite.com/api";
 
-export default function ApplyServicePage() {
-  const { user } = useAuth();
-  const searchParams = useSearchParams();
+const categories = [
+  "plumbing", "electrical", "ac", "furniture", "catering", "painting",
+  "mechanic", "barbing", "carpentry", "fashion-design", "shoemaking",
+  "photography", "tech", "logistics", "laundry", "education",
+  "perfumery", "makeup", "event-planning", "rentals", "mason",
+  "phone-accessories", "legal", "housing-agent", "e-wallet"
+];
+
+export default function GetStartedPage() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
-    category: "",
     serviceName: "",
+    category: "",
     description: "",
     phone: "",
     location: "",
@@ -35,24 +29,23 @@ export default function ApplyServicePage() {
     priceRange: "",
   });
 
-  useEffect(() => {
-    const cat = searchParams.get("category");
-    if (cat) setForm((f) => ({ ...f, category: cat }));
-  }, [searchParams]);
-
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    if (!user) return alert("Please login first");
     setLoading(true);
     try {
-      const res = await api.applyAsProvider(form);
-      if (res._id) {
+      const res = await fetch(`${API}/services/apply-public`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (data._id || data.success) {
         setSubmitted(true);
       } else {
-        alert(res.message || res.error || "Failed to submit application");
+        alert(data.message || "Failed to submit. Please try again.");
       }
-    } catch (err: any) {
-      alert(err.message || "Something went wrong");
+    } catch {
+      alert("Network error. Please check your connection and try again.");
     }
     setLoading(false);
   };
@@ -67,12 +60,12 @@ export default function ApplyServicePage() {
             animate={{ scale: 1, opacity: 1 }}
             className="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-md w-full text-center shadow-xl"
           >
-            <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+            <CheckCircle className="w-16 h-16 text-emerald-500 mx-auto mb-4" />
             <h2 className="text-2xl font-bold mb-2">Application Submitted!</h2>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Your service provider application is under review. You'll be notified once approved.
+              Your business registration is under review. We'll contact you once approved and your profile will be live on JosMKT.
             </p>
-            <a href="/" className="inline-block px-6 py-3 bg-primary-500 text-white rounded-lg font-semibold hover:bg-primary-600">
+            <a href="/" className="inline-block px-6 py-3 bg-emerald-500 text-white rounded-xl font-semibold hover:bg-emerald-600">
               Back to Home
             </a>
           </motion.div>
@@ -85,97 +78,94 @@ export default function ApplyServicePage() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-10 px-4">
         <div className="max-w-2xl mx-auto">
-          <button onClick={() => window.history.back()} className="flex items-center gap-2 text-gray-600 hover:text-primary-600 mb-6">
-            <ArrowLeft className="w-5 h-5" /> Back
-          </button>
-
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <h1 className="text-3xl font-bold mb-2">Apply as Service Provider</h1>
-            <p className="text-gray-600 dark:text-gray-400 mb-8">
-              Offer your services to thousands of customers on Jos Marketplace
-            </p>
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
+                <Store className="w-4 h-4" />
+                Register Your Business
+              </div>
+              <h1 className="text-3xl md:text-4xl font-bold mb-3">Get Started on JosMKT</h1>
+              <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
+                List your service or business and get discovered by thousands of customers in Jos
+              </p>
+            </div>
 
-            <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg space-y-5">
+            <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 shadow-lg space-y-5">
               <div>
-                <label className="block text-sm font-semibold mb-2">Category</label>
+                <label className="block text-sm font-semibold mb-2">Business / Service Name *</label>
+                <input
+                  type="text"
+                  required
+                  value={form.serviceName}
+                  onChange={(e) => setForm({ ...form, serviceName: e.target.value })}
+                  placeholder="e.g. Bright Plumbing Services"
+                  className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-2">Category *</label>
                 <select
                   required
                   value={form.category}
-                  onChange={(e) => setForm({ ...form, category: e.target.value, serviceName: "" })}
-                  className="w-full px-4 py-3 border-2 rounded-lg focus:border-primary-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600"
+                  onChange={(e) => setForm({ ...form, category: e.target.value })}
+                  className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600"
                 >
-                  <option value="">Select a category</option>
-                  {Object.keys(serviceCategories).map((cat) => (
-                    <option key={cat} value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
+                  <option value="">Select your category</option>
+                  {categories.map((cat) => (
+                    <option key={cat} value={cat}>{cat.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase())}</option>
                   ))}
                 </select>
               </div>
 
-              {form.category && (
-                <div>
-                  <label className="block text-sm font-semibold mb-2">Service Type</label>
-                  <select
-                    required
-                    value={form.serviceName}
-                    onChange={(e) => setForm({ ...form, serviceName: e.target.value })}
-                    className="w-full px-4 py-3 border-2 rounded-lg focus:border-primary-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600"
-                  >
-                    <option value="">Select your service</option>
-                    {serviceCategories[form.category]?.map((s) => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
-                </div>
-              )}
-
               <div>
-                <label className="block text-sm font-semibold mb-2">Description</label>
+                <label className="block text-sm font-semibold mb-2">Describe your business *</label>
                 <textarea
                   required
-                  rows={3}
+                  rows={4}
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  placeholder="Describe your service and experience..."
-                  className="w-full px-4 py-3 border-2 rounded-lg focus:border-primary-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600"
+                  placeholder="Tell customers what you do, what makes you special..."
+                  className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold mb-2">Phone Number</label>
+                  <label className="block text-sm font-semibold mb-2">Phone / WhatsApp *</label>
                   <input
                     type="tel"
                     required
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    placeholder="+234..."
-                    className="w-full px-4 py-3 border-2 rounded-lg focus:border-primary-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600"
+                    placeholder="e.g. 08012345678"
+                    className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold mb-2">Location</label>
+                  <label className="block text-sm font-semibold mb-2">Location *</label>
                   <input
                     type="text"
                     required
                     value={form.location}
                     onChange={(e) => setForm({ ...form, location: e.target.value })}
-                    placeholder="e.g. Bukuru, Jos"
-                    className="w-full px-4 py-3 border-2 rounded-lg focus:border-primary-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600"
+                    placeholder="e.g. Terminus, Jos"
+                    className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-semibold mb-2">Experience</label>
                   <input
                     type="text"
                     value={form.experience}
                     onChange={(e) => setForm({ ...form, experience: e.target.value })}
-                    placeholder="e.g. 5 years"
-                    className="w-full px-4 py-3 border-2 rounded-lg focus:border-primary-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600"
+                    placeholder="e.g. 3 years"
+                    className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600"
                   />
                 </div>
                 <div>
@@ -185,7 +175,7 @@ export default function ApplyServicePage() {
                     value={form.priceRange}
                     onChange={(e) => setForm({ ...form, priceRange: e.target.value })}
                     placeholder="e.g. ₦5,000 - ₦50,000"
-                    className="w-full px-4 py-3 border-2 rounded-lg focus:border-primary-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600"
+                    className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600"
                   />
                 </div>
               </div>
@@ -193,11 +183,15 @@ export default function ApplyServicePage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 bg-primary-500 text-white rounded-lg font-bold hover:bg-primary-600 disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-bold hover:shadow-lg hover:shadow-emerald-500/25 disabled:opacity-50 flex items-center justify-center gap-2 text-lg transition-all"
               >
                 <Send className="w-5 h-5" />
                 {loading ? "Submitting..." : "Submit Application"}
               </button>
+
+              <p className="text-center text-xs text-gray-400">
+                Your application will be reviewed within 24 hours. Once approved, your business will be visible to thousands.
+              </p>
             </form>
           </motion.div>
         </div>

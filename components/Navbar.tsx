@@ -66,9 +66,7 @@ export default function Navbar() {
               </a>
             ))}
             <a
-              href="https://forms.gle/QKsY1dsg9QUNm8Rv7"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/services/apply"
               className="ml-2 px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-full font-semibold text-sm hover:shadow-lg hover:shadow-emerald-500/25 hover:scale-105 transition-all duration-300 flex items-center gap-2"
             >
               <Megaphone className="w-4 h-4" />
@@ -176,7 +174,7 @@ export default function Navbar() {
                 <LanguageSelector />
                 <DarkModeToggle />
               </div>
-              <a href="https://forms.gle/QKsY1dsg9QUNm8Rv7" target="_blank" className="mx-2 mt-2 px-4 py-3 bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-xl font-semibold text-center flex items-center justify-center gap-2">
+              <a href="/services/apply" className="mx-2 mt-2 px-4 py-3 bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-xl font-semibold text-center flex items-center justify-center gap-2">
                 <Megaphone className="w-4 h-4" />
                 {t('sell')}
               </a>
