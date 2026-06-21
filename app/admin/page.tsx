@@ -340,9 +340,18 @@ export default function AdminDashboard() {
                   {providers.map((provider) => (
                     <div key={provider._id} className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm">
                       <div className="flex justify-between items-start mb-3">
-                        <div>
-                          <h3 className="font-bold text-gray-900 dark:text-white">{provider.serviceName}</h3>
-                          <p className="text-sm text-gray-500">{provider.category} • {provider.location}</p>
+                        <div className="flex items-center gap-3">
+                          {provider.image ? (
+                            <img src={provider.image} alt={provider.serviceName} className="w-14 h-14 rounded-xl object-cover border-2 border-emerald-200" />
+                          ) : (
+                            <div className="w-14 h-14 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold text-xl">
+                              {provider.serviceName?.charAt(0)}
+                            </div>
+                          )}
+                          <div>
+                            <h3 className="font-bold text-gray-900 dark:text-white">{provider.serviceName}</h3>
+                            <p className="text-sm text-gray-500">{provider.category} • {provider.location}</p>
+                          </div>
                         </div>
                         <div className="flex items-center gap-2">
                           {provider.status === "approved" ? (
