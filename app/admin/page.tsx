@@ -492,19 +492,24 @@ export default function AdminDashboard() {
                       <option value="plumbing">Plumbing</option>
                       <option value="electrical">Electricians</option>
                       <option value="ac">AC Installation</option>
-                      <option value="baking">Bakers & Catering</option>
+                      <option value="furniture">Furniture</option>
+                      <option value="catering">Catering & Food</option>
                       <option value="painting">Painting</option>
                       <option value="mechanic">Auto Mechanic</option>
                       <option value="barbing">Barbing & Salon</option>
                       <option value="carpentry">Carpentry</option>
-                      <option value="tailoring">Tailoring</option>
+                      <option value="fashion-design">Fashion Design</option>
+                      <option value="shoemaking">Shoe Making</option>
                       <option value="photography">Photography</option>
                       <option value="tech">Tech & Repairs</option>
-                      <option value="logistics">Logistics & Moving</option>
-                      <option value="cleaning">Cleaning</option>
-                      <option value="childcare">Childcare</option>
-                      <option value="pets">Pets</option>
-                      <option value="fitness">Fitness</option>
+                      <option value="logistics">Logistics</option>
+                      <option value="laundry">Laundry & Cleaning</option>
+                      <option value="education">Education</option>
+                      <option value="perfumery">Perfumery</option>
+                      <option value="makeup">Make Up</option>
+                      <option value="event-planning">Event Planning</option>
+                      <option value="rentals">Rentals</option>
+                      <option value="mason">Mason</option>
                     </select>
                     <input type="text" placeholder="Or type a custom category" value={newProvider.category} onChange={(e) => setNewProvider({ ...newProvider, category: e.target.value })} className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white mt-2" />
                     <div>

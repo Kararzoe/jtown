@@ -1,27 +1,32 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Wrench, Zap, Flame, CakeSlice, Paintbrush, Car, Scissors, Hammer, ShowerHead, Shirt, Camera, Laptop, Truck, Baby, Dog, Dumbbell } from "lucide-react";
+import { Wrench, Zap, Flame, CakeSlice, Paintbrush, Car, Scissors, Hammer, ShowerHead, Shirt, Camera, Laptop, Truck, Sofa, GraduationCap, Sparkles, Calendar, Home, Brick } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const categories = [
-  { key: "plumbingService", icon: ShowerHead, color: "from-blue-500 to-indigo-600", slug: "plumbing" },
-  { key: "electricalService", icon: Zap, color: "from-amber-500 to-orange-600", slug: "electrical" },
-  { key: "acService", icon: Flame, color: "from-cyan-500 to-blue-600", slug: "ac" },
-  { key: "bakingService", icon: CakeSlice, color: "from-pink-500 to-rose-600", slug: "baking" },
-  { key: "paintingService", icon: Paintbrush, color: "from-purple-500 to-violet-600", slug: "painting" },
-  { key: "mechanicService", icon: Car, color: "from-red-500 to-pink-600", slug: "mechanic" },
-  { key: "barbingService", icon: Scissors, color: "from-emerald-500 to-teal-600", slug: "barbing" },
-  { key: "carpentryService", icon: Hammer, color: "from-yellow-600 to-amber-600", slug: "carpentry" },
-  { key: "fashionDesignService", icon: Shirt, color: "from-indigo-500 to-purple-600", slug: "tailoring", label: "Fashion Design" },
-  { key: "photographyService", icon: Camera, color: "from-rose-500 to-red-600", slug: "photography" },
-  { key: "techService", icon: Laptop, color: "from-gray-600 to-gray-800", slug: "tech" },
-  { key: "logisticsService", icon: Truck, color: "from-green-500 to-emerald-600", slug: "logistics" },
-  { key: "cleaningService", icon: Wrench, color: "from-teal-500 to-cyan-600", slug: "cleaning" },
-  { key: "childcareService", icon: Baby, color: "from-sky-400 to-blue-500", slug: "childcare" },
-  { key: "petsService", icon: Dog, color: "from-orange-500 to-amber-600", slug: "pets" },
-  { key: "fitnessService", icon: Dumbbell, color: "from-lime-500 to-green-600", slug: "fitness" },
+  { key: "plumbing", icon: ShowerHead, color: "from-blue-500 to-indigo-600", slug: "plumbing", label: "Plumbing" },
+  { key: "electrical", icon: Zap, color: "from-amber-500 to-orange-600", slug: "electrical", label: "Electricians" },
+  { key: "ac", icon: Flame, color: "from-cyan-500 to-blue-600", slug: "ac", label: "AC Installation" },
+  { key: "furniture", icon: Sofa, color: "from-yellow-600 to-amber-600", slug: "furniture", label: "Furniture" },
+  { key: "catering", icon: CakeSlice, color: "from-pink-500 to-rose-600", slug: "catering", label: "Catering & Food" },
+  { key: "painting", icon: Paintbrush, color: "from-purple-500 to-violet-600", slug: "painting", label: "Painting" },
+  { key: "mechanic", icon: Car, color: "from-red-500 to-pink-600", slug: "mechanic", label: "Auto Mechanic" },
+  { key: "barbing", icon: Scissors, color: "from-emerald-500 to-teal-600", slug: "barbing", label: "Barbing & Salon" },
+  { key: "carpentry", icon: Hammer, color: "from-yellow-600 to-amber-600", slug: "carpentry", label: "Carpentry" },
+  { key: "fashionDesign", icon: Shirt, color: "from-indigo-500 to-purple-600", slug: "fashion-design", label: "Fashion Design" },
+  { key: "shoemaking", icon: Wrench, color: "from-orange-500 to-amber-600", slug: "shoemaking", label: "Shoe Making" },
+  { key: "photography", icon: Camera, color: "from-rose-500 to-red-600", slug: "photography", label: "Photography" },
+  { key: "tech", icon: Laptop, color: "from-gray-600 to-gray-800", slug: "tech", label: "Tech & Repairs" },
+  { key: "logistics", icon: Truck, color: "from-green-500 to-emerald-600", slug: "logistics", label: "Logistics" },
+  { key: "laundry", icon: Wrench, color: "from-teal-500 to-cyan-600", slug: "laundry", label: "Laundry & Cleaning" },
+  { key: "education", icon: GraduationCap, color: "from-sky-400 to-blue-500", slug: "education", label: "Education" },
+  { key: "perfumery", icon: Sparkles, color: "from-pink-400 to-purple-500", slug: "perfumery", label: "Perfumery" },
+  { key: "makeup", icon: Sparkles, color: "from-rose-400 to-pink-500", slug: "makeup", label: "Make Up" },
+  { key: "eventPlanning", icon: Calendar, color: "from-violet-500 to-purple-600", slug: "event-planning", label: "Event Planning" },
+  { key: "rentals", icon: Home, color: "from-emerald-500 to-green-600", slug: "rentals", label: "Rentals" },
+  { key: "mason", icon: Brick, color: "from-stone-500 to-gray-600", slug: "mason", label: "Mason" },
 ];
 
 export default function Categories() {
