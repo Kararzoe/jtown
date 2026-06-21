@@ -13,12 +13,15 @@ const {
 
 const router = express.Router();
 
+// Specific routes FIRST
+router.get('/all', protect, restrictTo('admin'), getAllApplications);
+router.get('/my-applications', protect, getMyApplications);
 router.get('/category/:category', getProvidersByCategory);
-router.get('/:id', getProviderById);
 router.post('/apply', protect, restrictTo('admin'), applyAsProvider);
 router.post('/apply-public', applyPublic);
-router.get('/my-applications', protect, getMyApplications);
-router.get('/all', protect, restrictTo('admin'), getAllApplications);
+
+// Dynamic :id routes LAST
+router.get('/:id', getProviderById);
 router.patch('/:id/status', protect, restrictTo('admin'), updateApplicationStatus);
 router.delete('/:id', protect, restrictTo('admin'), deleteApplication);
 
