@@ -14,12 +14,14 @@ exports.applyAsProvider = async (req, res) => {
 
 exports.applyPublic = async (req, res) => {
   try {
-    const { serviceName, category, description, phone, location, experience, priceRange } = req.body;
+    const { serviceName, category, description, phone, location, experience, priceRange, image, gallery } = req.body;
     if (!serviceName || !category || !description || !phone || !location) {
       return res.status(400).json({ message: 'Please fill all required fields' });
     }
     const provider = await ServiceProvider.create({
       serviceName, category, description, phone, location, experience, priceRange,
+      image: image || '',
+      gallery: gallery || [],
       status: 'pending'
     });
     res.status(201).json(provider);
