@@ -76,7 +76,7 @@ export default function ServiceProviders({ category }: { category: string }) {
               {/* Animated gradient accent */}
               <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 animate-gradient opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-3">
+                <a href={`/provider/${provider._id}`} className="flex items-center gap-3 hover:opacity-80 transition">
                   {provider.image ? (
                     <img src={provider.image} alt={provider.serviceName} className="w-12 h-12 rounded-full object-cover border-2 border-emerald-200" />
                   ) : (
@@ -88,7 +88,7 @@ export default function ServiceProviders({ category }: { category: string }) {
                     <h3 className="font-bold text-lg">{provider.serviceName}</h3>
                     <p className="text-sm text-gray-500">{provider.location}</p>
                   </div>
-                </div>
+                </a>
                 <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
                   Verified
                 </span>

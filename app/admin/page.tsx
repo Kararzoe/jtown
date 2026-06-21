@@ -21,7 +21,7 @@ export default function AdminDashboard() {
   const [loginError, setLoginError] = useState("");
 
   const [newProduct, setNewProduct] = useState({ title: "", description: "", price: "", category: "", stock: "1" });
-  const [newProvider, setNewProvider] = useState({ serviceName: "", category: "", description: "", location: "", phone: "", experience: "", priceRange: "", image: "" });
+  const [newProvider, setNewProvider] = useState({ serviceName: "", category: "", description: "", location: "", phone: "", experience: "", priceRange: "", image: "", gallery: [] as string[] });
   const [uploading, setUploading] = useState(false);
 
   const uploadImage = async (file: File): Promise<string> => {
@@ -172,7 +172,7 @@ export default function AdminDashboard() {
       const data = await res.json();
       if (data._id) {
         alert("Provider added successfully!");
-        setNewProvider({ serviceName: "", category: "", description: "", location: "", phone: "", experience: "", priceRange: "", image: "" });
+        setNewProvider({ serviceName: "", category: "", description: "", location: "", phone: "", experience: "", priceRange: "", image: "", gallery: [] });
         setTab("providers");
         fetchData();
       } else {
@@ -514,10 +514,37 @@ export default function AdminDashboard() {
                     </select>
                     <input type="text" placeholder="Or type a custom category" value={newProvider.category} onChange={(e) => setNewProvider({ ...newProvider, category: e.target.value })} className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white mt-2" />
                     <div>
-                      <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 block">Business Photo</label>
+                      <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 block">Business Photo / Logo</label>
                       <input type="file" accept="image/*" onChange={handleImageUpload} className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
                       {uploading && <p className="text-sm text-emerald-500 mt-1">Uploading...</p>}
                       {newProvider.image && <img src={newProvider.image} alt="Preview" className="mt-2 w-32 h-32 object-cover rounded-xl" />}
+                    </div>
+                    <div>
+                      <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 block">Gallery Photos (work samples)</label>
+                      <input type="file" accept="image/*" multiple onChange={async (e) => {
+                        const files = e.target.files;
+                        if (!files) return;
+                        setUploading(true);
+                        const urls: string[] = [];
+                        for (let i = 0; i < files.length; i++) {
+                          const formData = new FormData();
+                          formData.append("file", files[i]);
+                          formData.append("upload_preset", "jos_marketplace");
+                          formData.append("cloud_name", "dfye3j2bs");
+                          const res = await fetch("https://api.cloudinary.com/v1_1/dfye3j2bs/image/upload", { method: "POST", body: formData });
+                          const data = await res.json();
+                          if (data.secure_url) urls.push(data.secure_url);
+                        }
+                        setNewProvider({ ...newProvider, gallery: [...newProvider.gallery, ...urls] });
+                        setUploading(false);
+                      }} className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                      {newProvider.gallery.length > 0 && (
+                        <div className="flex gap-2 mt-2 flex-wrap">
+                          {newProvider.gallery.map((url, i) => (
+                            <img key={i} src={url} alt={`Gallery ${i}`} className="w-20 h-20 object-cover rounded-lg" />
+                          ))}
+                        </div>
+                      )}
                     </div>
                     <button type="submit" className="w-full py-3 bg-emerald-500 text-white rounded-xl font-bold hover:bg-emerald-600">Add Provider</button>
                   </form>
