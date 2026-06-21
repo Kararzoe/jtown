@@ -34,7 +34,8 @@ export default function TrendingBanner() {
             <a
               href="https://forms.gle/QKsY1dsg9QUNm8Rv7"
               target="_blank"
-              className="hidden sm:block px-4 py-1 bg-white/20 backdrop-blur-sm text-white rounded-full font-medium hover:bg-white/30 text-xs border border-white/30 transition"
+              rel="noopener noreferrer"
+              className="px-3 md:px-4 py-1 bg-white/20 backdrop-blur-sm text-white rounded-full font-medium hover:bg-white/30 text-xs border border-white/30 transition whitespace-nowrap"
             >
               Get Started
             </a>
