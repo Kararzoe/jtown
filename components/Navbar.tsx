@@ -68,6 +68,7 @@ export default function Navbar() {
             <a
               href="https://forms.gle/QKsY1dsg9QUNm8Rv7"
               target="_blank"
+              rel="noopener noreferrer"
               className="ml-2 px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-full font-semibold text-sm hover:shadow-lg hover:shadow-emerald-500/25 hover:scale-105 transition-all duration-300 flex items-center gap-2"
             >
               <Megaphone className="w-4 h-4" />
