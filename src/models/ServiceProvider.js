@@ -10,6 +10,7 @@ const serviceProviderSchema = new mongoose.Schema({
   experience: { type: String },
   priceRange: { type: String },
   image: { type: String, default: '' },
+  gallery: [{ type: String }],
   status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
   rating: { type: Number, default: 0 },
   totalReviews: { type: Number, default: 0 },

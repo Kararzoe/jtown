@@ -3,6 +3,7 @@ const { protect, restrictTo } = require('../middleware/auth');
 const {
   applyAsProvider,
   getProvidersByCategory,
+  getProviderById,
   getMyApplications,
   getAllApplications,
   updateApplicationStatus,
@@ -12,6 +13,7 @@ const {
 const router = express.Router();
 
 router.get('/category/:category', getProvidersByCategory);
+router.get('/:id', getProviderById);
 router.post('/apply', protect, restrictTo('admin'), applyAsProvider);
 router.get('/my-applications', protect, getMyApplications);
 router.get('/all', protect, restrictTo('admin'), getAllApplications);
