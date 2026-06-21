@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Wrench, Zap, Flame, CakeSlice, Paintbrush, Car, Scissors, Hammer, ShowerHead, Shirt, Camera, Laptop, Truck, Sofa, GraduationCap, Sparkles, Calendar, Home, Brick } from "lucide-react";
+import { Wrench, Zap, Flame, CakeSlice, Paintbrush, Car, Scissors, Hammer, ShowerHead, Shirt, Camera, Laptop, Truck, Sofa, GraduationCap, Sparkles, Calendar, Home, HardHat } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -26,7 +26,7 @@ const categories = [
   { key: "makeup", icon: Sparkles, color: "from-rose-400 to-pink-500", slug: "makeup", label: "Make Up" },
   { key: "eventPlanning", icon: Calendar, color: "from-violet-500 to-purple-600", slug: "event-planning", label: "Event Planning" },
   { key: "rentals", icon: Home, color: "from-emerald-500 to-green-600", slug: "rentals", label: "Rentals" },
-  { key: "mason", icon: Brick, color: "from-stone-500 to-gray-600", slug: "mason", label: "Mason" },
+  { key: "mason", icon: HardHat, color: "from-stone-500 to-gray-600", slug: "mason", label: "Mason" },
   { key: "phoneAccessories", icon: Laptop, color: "from-blue-400 to-indigo-500", slug: "phone-accessories", label: "Phone Accessories" },
   { key: "legalSolicitors", icon: GraduationCap, color: "from-slate-600 to-gray-700", slug: "legal", label: "Legal & Solicitors" },
 ];
