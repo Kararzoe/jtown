@@ -12,6 +12,22 @@ exports.applyAsProvider = async (req, res) => {
   }
 };
 
+exports.applyPublic = async (req, res) => {
+  try {
+    const { serviceName, category, description, phone, location, experience, priceRange } = req.body;
+    if (!serviceName || !category || !description || !phone || !location) {
+      return res.status(400).json({ message: 'Please fill all required fields' });
+    }
+    const provider = await ServiceProvider.create({
+      serviceName, category, description, phone, location, experience, priceRange,
+      status: 'pending'
+    });
+    res.status(201).json(provider);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 exports.getProviderById = async (req, res) => {
   try {
     const provider = await ServiceProvider.findById(req.params.id)

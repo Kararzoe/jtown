@@ -2,6 +2,7 @@ const express = require('express');
 const { protect, restrictTo } = require('../middleware/auth');
 const {
   applyAsProvider,
+  applyPublic,
   getProvidersByCategory,
   getProviderById,
   getMyApplications,
@@ -15,6 +16,7 @@ const router = express.Router();
 router.get('/category/:category', getProvidersByCategory);
 router.get('/:id', getProviderById);
 router.post('/apply', protect, restrictTo('admin'), applyAsProvider);
+router.post('/apply-public', applyPublic);
 router.get('/my-applications', protect, getMyApplications);
 router.get('/all', protect, restrictTo('admin'), getAllApplications);
 router.patch('/:id/status', protect, restrictTo('admin'), updateApplicationStatus);

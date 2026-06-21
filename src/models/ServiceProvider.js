@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const serviceProviderSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   category: { type: String, required: true },
   serviceName: { type: String, required: true },
   description: { type: String, required: true },
