@@ -27,6 +27,7 @@ const categories = [
   { key: "eventPlanning", icon: Calendar, color: "from-violet-500 to-purple-600", slug: "event-planning", label: "Event Planning" },
   { key: "rentals", icon: Home, color: "from-emerald-500 to-green-600", slug: "rentals", label: "Rentals" },
   { key: "mason", icon: Brick, color: "from-stone-500 to-gray-600", slug: "mason", label: "Mason" },
+  { key: "phoneAccessories", icon: Laptop, color: "from-blue-400 to-indigo-500", slug: "phone-accessories", label: "Phone Accessories" },
 ];
 
 export default function Categories() {
