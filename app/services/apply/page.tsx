@@ -19,6 +19,7 @@ const categories = [
 export default function GetStartedPage() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [form, setForm] = useState({
     serviceName: "",
     category: "",
@@ -27,7 +28,19 @@ export default function GetStartedPage() {
     location: "",
     experience: "",
     priceRange: "",
+    image: "",
+    gallery: [] as string[],
   });
+
+  const uploadImage = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "jos_marketplace");
+    formData.append("cloud_name", "dfye3j2bs");
+    const res = await fetch("https://api.cloudinary.com/v1_1/dfye3j2bs/image/upload", { method: "POST", body: formData });
+    const data = await res.json();
+    return data.secure_url || "";
+  };
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -180,9 +193,57 @@ export default function GetStartedPage() {
                 </div>
               </div>
 
+              <div>
+                <label className="block text-sm font-semibold mb-2">Business Logo / Photo</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    setUploading(true);
+                    const url = await uploadImage(file);
+                    if (url) setForm({ ...form, image: url });
+                    setUploading(false);
+                  }}
+                  className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600"
+                />
+                {uploading && <p className="text-sm text-emerald-500 mt-1">Uploading...</p>}
+                {form.image && <img src={form.image} alt="Preview" className="mt-2 w-24 h-24 object-cover rounded-xl" />}
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-2">Work Samples / Gallery (optional)</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={async (e) => {
+                    const files = e.target.files;
+                    if (!files) return;
+                    setUploading(true);
+                    const urls: string[] = [];
+                    for (let i = 0; i < files.length; i++) {
+                      const url = await uploadImage(files[i]);
+                      if (url) urls.push(url);
+                    }
+                    setForm({ ...form, gallery: [...form.gallery, ...urls] });
+                    setUploading(false);
+                  }}
+                  className="w-full px-4 py-3 border-2 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600"
+                />
+                {form.gallery.length > 0 && (
+                  <div className="flex gap-2 mt-2 flex-wrap">
+                    {form.gallery.map((url, i) => (
+                      <img key={i} src={url} alt={`Gallery ${i}`} className="w-20 h-20 object-cover rounded-lg" />
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || uploading}
                 className="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-bold hover:shadow-lg hover:shadow-emerald-500/25 disabled:opacity-50 flex items-center justify-center gap-2 text-lg transition-all"
               >
                 <Send className="w-5 h-5" />
