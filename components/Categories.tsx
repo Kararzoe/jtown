@@ -29,6 +29,7 @@ const categories = [
   { key: "mason", icon: HardHat, color: "from-stone-500 to-gray-600", slug: "mason", label: "Mason" },
   { key: "phoneAccessories", icon: Laptop, color: "from-blue-400 to-indigo-500", slug: "phone-accessories", label: "Phone Accessories" },
   { key: "legalSolicitors", icon: GraduationCap, color: "from-slate-600 to-gray-700", slug: "legal", label: "Legal & Solicitors" },
+  { key: "housingAgent", icon: Home, color: "from-sky-500 to-blue-600", slug: "housing-agent", label: "Housing Agent" },
 ];
 
 export default function Categories() {
