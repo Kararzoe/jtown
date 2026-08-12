@@ -11,6 +11,15 @@ export default defineNuxtConfig({
     preset: 'vercel'
   },
 
+  runtimeConfig: {
+    public: {
+      supabase: {
+        url: process.env.NUXT_PUBLIC_SUPABASE_URL || '',
+        key: process.env.NUXT_PUBLIC_SUPABASE_KEY || '',
+      }
+    }
+  },
+
   supabase: {
     redirectOptions: {
       login: '/login',
