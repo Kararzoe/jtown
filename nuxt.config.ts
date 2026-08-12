@@ -11,16 +11,9 @@ export default defineNuxtConfig({
     preset: 'vercel'
   },
 
-  runtimeConfig: {
-    public: {
-      supabase: {
-        url: process.env.NUXT_PUBLIC_SUPABASE_URL || '',
-        key: process.env.NUXT_PUBLIC_SUPABASE_KEY || '',
-      }
-    }
-  },
-
   supabase: {
+    url: 'https://mtqggkguwshvpdbiwbup.supabase.co',
+    key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10cWdna2d1d3NodnBkYml3YnVwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0NDc2OTgsImV4cCI6MjEwMjAyMzY5OH0.aMM3xSkpT7jHOrGZDcROtL1T5JGQcOrGa5ebruqAjMY',
     redirectOptions: {
       login: '/login',
       callback: '/confirm',
