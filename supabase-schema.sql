@@ -88,8 +88,14 @@ create table messages (
 create or replace function handle_new_user()
 returns trigger as $$
 begin
-  insert into profiles (id, full_name, email)
-  values (new.id, new.raw_user_meta_data->>'full_name', new.email);
+  insert into profiles (id, full_name, email, phone)
+  values (
+    new.id,
+    coalesce(new.raw_user_meta_data->>'full_name', ''),
+    new.email,
+    coalesce(new.raw_user_meta_data->>'phone', '')
+  )
+  on conflict (id) do nothing;
   return new;
 end;
 $$ language plpgsql security definer;
@@ -109,7 +115,9 @@ alter table messages enable row level security;
 
 -- RLS Policies
 create policy "Public profiles" on profiles for select using (true);
+create policy "Insert own profile" on profiles for insert with check (auth.uid() = id);
 create policy "Update own profile" on profiles for update using (auth.uid() = id);
+create policy "Delete own profile" on profiles for delete using (auth.uid() = id);
 
 create policy "Public products" on products for select using (status = 'active');
 create policy "Sellers manage products" on products for all using (auth.uid() = seller_id);

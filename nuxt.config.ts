@@ -34,12 +34,5 @@ export default defineNuxtConfig({
         '/qr',
       ]
     }
-  },
-
-  runtimeConfig: {
-    public: {
-      supabaseUrl: process.env.SUPABASE_URL,
-      supabaseKey: process.env.SUPABASE_KEY
-    }
   }
 })
