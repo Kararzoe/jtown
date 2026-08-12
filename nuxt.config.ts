@@ -1,11 +1,11 @@
 export default defineNuxtConfig({
-  modules: ['@nuxt/eslint', '@nuxt/ui', '@nuxtjs/supabase'],
+  modules: ['@nuxt/ui', '@nuxtjs/supabase'],
 
-  devtools: { enabled: true },
+  devtools: { enabled: false },
 
   css: ['~/assets/css/main.css'],
 
-  compatibilityDate: '2026-06-30',
+  compatibilityDate: '2025-01-01',
 
   nitro: {
     preset: 'vercel'
