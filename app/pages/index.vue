@@ -2,131 +2,199 @@
 const supabase = useSupabaseClient()
 const products = ref<any[]>([])
 const loading = ref(true)
+const currentBanner = ref(0)
+const openFaq = ref<number | null>(null)
+
+const banners = [
+  { text: '🚀 Register your business on JosMKT — Get discovered by thousands in Jos!', bg: 'from-emerald-600 to-teal-600' },
+  { text: '📍 Find trusted plumbers, electricians, bakers & more in Jos', bg: 'from-purple-600 to-indigo-600' },
+  { text: '📢 List your service for FREE — Start getting customers today', bg: 'from-amber-600 to-orange-600' },
+]
 
 const categories = [
-  { name: 'Electronics', icon: '📱', color: 'bg-blue-100', href: '/category/electronics' },
-  { name: 'Fashion', icon: '👗', color: 'bg-pink-100', href: '/category/fashion' },
-  { name: 'Food', icon: '🍎', color: 'bg-orange-100', href: '/category/food' },
-  { name: 'Home', icon: '🏠', color: 'bg-purple-100', href: '/category/home' },
-  { name: 'Sports', icon: '⚽', color: 'bg-green-100', href: '/category/sports' },
-  { name: 'Automotive', icon: '🚗', color: 'bg-yellow-100', href: '/category/automotive' },
-  { name: 'Books', icon: '📚', color: 'bg-red-100', href: '/category/books' },
-  { name: 'Services', icon: '🔧', color: 'bg-gray-100', href: '/category/services' },
+  { label: 'Plumbing', icon: '🔧', slug: 'plumbing' },
+  { label: 'Electricians', icon: '⚡', slug: 'electrical' },
+  { label: 'AC Installation', icon: '❄️', slug: 'ac' },
+  { label: 'Furniture', icon: '🛋️', slug: 'furniture' },
+  { label: 'Catering & Food', icon: '🍰', slug: 'catering' },
+  { label: 'Painting', icon: '🎨', slug: 'painting' },
+  { label: 'Auto Mechanic', icon: '🚗', slug: 'mechanic' },
+  { label: 'Barbing & Salon', icon: '✂️', slug: 'barbing' },
+  { label: 'Carpentry', icon: '🔨', slug: 'carpentry' },
+  { label: 'Fashion Design', icon: '👗', slug: 'fashion-design' },
+  { label: 'Shoe Making', icon: '👟', slug: 'shoemaking' },
+  { label: 'Photography', icon: '📷', slug: 'photography' },
+  { label: 'Tech & Repairs', icon: '💻', slug: 'tech' },
+  { label: 'Logistics', icon: '🚚', slug: 'logistics' },
+  { label: 'Laundry & Cleaning', icon: '🧺', slug: 'laundry' },
+  { label: 'Education', icon: '🎓', slug: 'education' },
+  { label: 'Perfumery', icon: '✨', slug: 'perfumery' },
+  { label: 'Make Up', icon: '💄', slug: 'makeup' },
+  { label: 'Event Planning', icon: '📅', slug: 'event-planning' },
+  { label: 'Rentals', icon: '🏠', slug: 'rentals' },
+  { label: 'Mason', icon: '🧱', slug: 'mason' },
+  { label: 'Phone Accessories', icon: '📱', slug: 'phone-accessories' },
+  { label: 'Legal & Solicitors', icon: '⚖️', slug: 'legal' },
+  { label: 'Housing Agent', icon: '🏡', slug: 'housing-agent' },
+  { label: 'E-Wallet Services', icon: '💳', slug: 'e-wallet' },
 ]
 
 const stats = [
-  { label: 'Active Users', value: '50,000+', icon: 'i-lucide-users' },
-  { label: 'Products Listed', value: '100,000+', icon: 'i-lucide-package' },
-  { label: 'Orders Completed', value: '25,000+', icon: 'i-lucide-shopping-bag' },
-  { label: 'Success Rate', value: '98%', icon: 'i-lucide-trending-up' },
+  { label: 'Monthly Views', value: '50,000+', icon: 'i-lucide-eye' },
+  { label: 'Businesses Listed', value: '1,000+', icon: 'i-lucide-store' },
+  { label: 'Growth Rate', value: '98%', icon: 'i-lucide-trending-up' },
+  { label: 'Happy Customers', value: '25,000+', icon: 'i-lucide-users' },
+]
+
+const howItWorks = [
+  { icon: '👤', title: 'Create Your Profile', desc: 'Sign up and set up your business or service profile in minutes' },
+  { icon: '📢', title: 'Choose a Promo Plan', desc: 'Pick a visibility package that fits your budget and goals' },
+  { icon: '👁️', title: 'Get Discovered', desc: 'Your business gets seen by thousands of active buyers in Jos' },
+  { icon: '📈', title: 'Grow & Scale', desc: 'Track results, get reviews, and watch your business grow' },
+]
+
+const trust = [
+  { icon: 'i-lucide-shield', title: 'Verified Sellers', desc: 'All sellers are verified before listing' },
+  { icon: 'i-lucide-check-circle', title: 'Quality Assured', desc: 'Products checked for authenticity' },
+  { icon: 'i-lucide-lock', title: 'Secure Contacts', desc: 'Your information is protected' },
+  { icon: 'i-lucide-users', title: 'Community Trust', desc: 'Ratings from real buyers' },
+]
+
+const faqs = [
+  { q: 'How does JosMKT boost my business visibility?', a: 'We list your business on our platform seen by thousands of active buyers in Jos. Our promotion packages include featured listings, social media shoutouts, and targeted ads.' },
+  { q: 'What promotion packages are available?', a: 'We offer Basic (free listing), Standard (featured placement + social media), and Premium (full promotion suite with analytics). Contact us for custom packages.' },
+  { q: 'How do I list my business or service?', a: "Click 'Get Started' in the navigation, fill out your business profile, and choose a promotion plan. Your listing goes live within 24 hours." },
+  { q: 'Is there a free option?', a: 'Yes! Our Basic listing is completely free. You can upgrade anytime to get more visibility and promotion features.' },
+  { q: 'Can I track how my business is performing?', a: 'Absolutely! Our dashboard shows views, clicks, inquiries, and engagement metrics so you can measure your growth.' },
+  { q: 'What areas does JosMKT cover?', a: 'We cover all areas in Jos including Bukuru, Rayfield, Terminus, Lamingo, and surrounding areas in Plateau State.' },
 ]
 
 onMounted(async () => {
   const { data } = await supabase.from('products').select('*, seller:profiles(*)').eq('status', 'active').limit(8)
   products.value = data || []
   loading.value = false
+  setInterval(() => { currentBanner.value = (currentBanner.value + 1) % banners.length }, 4000)
 })
 </script>
 
 <template>
   <div>
-    <!-- Hero -->
-    <section class="hero-gradient min-h-[85vh] flex items-center px-4 relative overflow-hidden">
-      <div class="absolute inset-0 overflow-hidden pointer-events-none">
-        <div class="absolute top-20 right-10 w-72 h-72 bg-primary-200/30 rounded-full blur-3xl animate-float" />
-        <div class="absolute bottom-20 left-10 w-96 h-96 bg-green-200/20 rounded-full blur-3xl animate-float" style="animation-delay: 1s" />
+    <!-- Trending Banner -->
+    <div :class="`bg-gradient-to-r ${banners[currentBanner].bg} py-2.5 px-4 transition-all duration-500`">
+      <div class="max-w-7xl mx-auto flex items-center justify-center gap-3 text-white">
+        <UIcon name="i-lucide-sparkles" class="w-4 h-4 flex-shrink-0" />
+        <p class="text-xs md:text-sm font-semibold text-center">{{ banners[currentBanner].text }}</p>
+        <NuxtLink to="/become-seller" class="px-3 py-1 bg-white/20 backdrop-blur-sm text-white rounded-full font-medium hover:bg-white/30 text-xs border border-white/30 transition whitespace-nowrap">
+          Get Started
+        </NuxtLink>
       </div>
+    </div>
 
-      <div class="max-w-7xl mx-auto w-full relative z-10">
-        <div class="grid md:grid-cols-2 gap-12 items-center">
-          <div class="animate-fade-left">
-            <div class="inline-flex items-center gap-2 px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-semibold mb-6">
-              <UIcon name="i-lucide-zap" class="w-4 h-4" />
-              #1 Marketplace in Jos
-            </div>
-            <h1 class="text-4xl md:text-6xl font-black text-gray-900 leading-tight mb-6">
-              Buy & Sell
-              <span class="gradient-text block">Anything in Jos</span>
-            </h1>
-            <p class="text-lg text-gray-600 mb-8 leading-relaxed">
-              Connect with thousands of buyers and sellers across Jos, Plateau State. Find the best deals on electronics, fashion, food, and more.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4 mb-8">
-              <div class="flex-1 relative">
-                <UInput placeholder="Search products, categories..." size="xl" icon="i-lucide-search" class="w-full" @keyup.enter="(e: any) => navigateTo(`/products?search=${e.target.value}`)" />
-              </div>
-              <UButton size="xl" color="primary" icon="i-lucide-search" class="animate-pulse-glow">
-                Search
-              </UButton>
-            </div>
-            <div class="flex flex-wrap gap-2">
-              <span class="text-sm text-gray-500">Trending:</span>
-              <UBadge v-for="tag in ['iPhone 15', 'Rice', 'Laptop', 'Shoes']" :key="tag" variant="soft" color="primary" class="cursor-pointer hover:bg-primary-100" @click="navigateTo(`/products?search=${tag}`)">
-                {{ tag }}
-              </UBadge>
+    <!-- Hero -->
+    <section class="relative min-h-[85vh] flex items-center bg-gradient-to-br from-gray-900 via-emerald-950 to-gray-900 overflow-hidden">
+      <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover opacity-30">
+        <source src="/7669651-hd_1920_1080_25fps.mp4" type="video/mp4" />
+      </video>
+      <div class="absolute inset-0 bg-gradient-to-b from-gray-900/70 via-emerald-900/40 to-gray-900/80" />
+
+      <div class="max-w-7xl mx-auto relative z-10 px-4 py-20 w-full">
+        <div class="text-center">
+          <div class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/20 border border-emerald-500/30 rounded-full text-emerald-300 text-sm font-medium mb-8 backdrop-blur-sm">
+            <UIcon name="i-lucide-zap" class="w-4 h-4" />
+            Your #1 Site to Find Professional Service Providers in Jos
+          </div>
+
+          <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
+            Find the
+            <span class="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent"> Right Help</span>
+            <br />When You
+            <span class="bg-gradient-to-r from-amber-400 to-orange-300 bg-clip-text text-transparent"> Need It</span>
+          </h1>
+
+          <p class="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed">
+            Plumbers, electricians, bakers, mechanics & more — find trusted service providers in Jos, fast.
+          </p>
+
+          <div class="max-w-2xl mx-auto mb-10">
+            <div class="relative">
+              <UInput
+                placeholder="Search for a service... e.g. plumber, electrician"
+                size="xl"
+                icon="i-lucide-search"
+                class="w-full"
+                @keyup.enter="(e: any) => navigateTo(`/products?search=${e.target.value}`)"
+              />
             </div>
           </div>
 
-          <div class="hidden md:grid grid-cols-2 gap-4 animate-fade-right">
-            <div v-for="(cat, i) in categories.slice(0, 4)" :key="cat.name"
-              class="card-hover rounded-2xl p-6 text-center cursor-pointer shadow-md"
-              :class="[cat.color, i % 2 === 1 ? 'mt-8' : '']"
-              @click="navigateTo(cat.href)"
+          <div class="flex flex-wrap justify-center gap-3">
+            <span class="text-gray-400 text-sm">Popular:</span>
+            <button
+              v-for="tag in ['Plumbing', 'Electricians', 'AC Repair', 'Bakers']"
+              :key="tag"
+              class="px-5 py-2.5 bg-white/10 backdrop-blur-sm text-white rounded-full border border-white/20 hover:bg-emerald-500/20 hover:border-emerald-400/40 transition-all text-sm font-medium"
+              @click="navigateTo(`/products?search=${tag}`)"
             >
-              <div class="text-4xl mb-3">{{ cat.icon }}</div>
-              <p class="font-semibold text-gray-800">{{ cat.name }}</p>
-            </div>
+              {{ tag }}
+            </button>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Stats -->
-    <section class="py-16 bg-primary-600">
+    <section class="py-16 bg-emerald-600">
       <div class="max-w-7xl mx-auto px-4">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div v-for="stat in stats" :key="stat.label" class="text-center text-white">
-            <UIcon :name="stat.icon" class="w-8 h-8 mx-auto mb-3 text-primary-200" />
+            <UIcon :name="stat.icon" class="w-8 h-8 mx-auto mb-3 text-emerald-200" />
             <p class="text-3xl font-black mb-1">{{ stat.value }}</p>
-            <p class="text-primary-200 text-sm">{{ stat.label }}</p>
+            <p class="text-emerald-200 text-sm">{{ stat.label }}</p>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Categories -->
-    <section id="categories" class="py-16 px-4 bg-gray-50 dark:bg-gray-900">
-      <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-12">
-          <h2 class="text-3xl md:text-4xl font-black text-gray-900 dark:text-white mb-4">Browse Categories</h2>
-          <p class="text-gray-600 dark:text-gray-400">Find exactly what you're looking for</p>
+    <section id="services" class="py-20 px-4 bg-white dark:bg-gray-900 relative overflow-hidden">
+      <div class="absolute top-0 left-0 w-72 h-72 bg-emerald-300/20 rounded-full blur-3xl" />
+      <div class="absolute bottom-0 right-0 w-72 h-72 bg-teal-300/20 rounded-full blur-3xl" />
+
+      <div class="max-w-7xl mx-auto relative z-10">
+        <div class="text-center mb-14">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
+            Our Services
+          </div>
+          <h2 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+            Find a <span class="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">Service Provider</span>
+          </h2>
+          <p class="text-gray-500 dark:text-gray-400 text-lg max-w-xl mx-auto">Trusted professionals in Jos ready to get the job done</p>
         </div>
-        <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-4">
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
           <NuxtLink
             v-for="cat in categories"
-            :key="cat.name"
-            :to="cat.href"
-            class="card-hover rounded-2xl p-4 text-center shadow-sm"
-            :class="cat.color"
+            :key="cat.slug"
+            :to="`/products?category=${cat.slug}`"
+            class="group bg-white dark:bg-gray-800 rounded-2xl p-5 md:p-7 shadow-sm hover:shadow-xl transition-all border border-gray-100 dark:border-gray-700 hover:border-emerald-200 dark:hover:border-emerald-700"
           >
-            <div class="text-3xl mb-2">{{ cat.icon }}</div>
-            <p class="text-xs font-semibold text-gray-700">{{ cat.name }}</p>
+            <div class="text-3xl md:text-4xl mx-auto mb-4 text-center group-hover:scale-110 transition-transform duration-300">{{ cat.icon }}</div>
+            <h3 class="text-center font-semibold text-sm md:text-base text-gray-900 dark:text-white">{{ cat.label }}</h3>
+            <p class="text-center text-xs text-gray-400 mt-1 hidden md:block">Explore →</p>
           </NuxtLink>
         </div>
       </div>
     </section>
 
     <!-- Featured Products -->
-    <section id="products" class="py-16 px-4">
+    <section class="py-16 px-4 bg-gray-50 dark:bg-gray-800">
       <div class="max-w-7xl mx-auto">
         <div class="flex items-center justify-between mb-12">
           <div>
-            <h2 class="text-3xl md:text-4xl font-black text-gray-900 dark:text-white mb-2">Featured Products</h2>
-            <p class="text-gray-600 dark:text-gray-400">Discover amazing deals from local sellers</p>
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">Featured Listings</h2>
+            <p class="text-gray-600 dark:text-gray-400">Discover amazing services from local providers</p>
           </div>
-          <UButton to="/products" variant="outline" color="primary" trailing-icon="i-lucide-arrow-right">
-            View All
-          </UButton>
+          <UButton to="/products" variant="outline" color="primary" trailing-icon="i-lucide-arrow-right">View All</UButton>
         </div>
 
         <div v-if="loading" class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
@@ -139,6 +207,13 @@ onMounted(async () => {
           </div>
         </div>
 
+        <div v-else-if="products.length === 0" class="text-center py-16">
+          <div class="text-6xl mb-4">🏪</div>
+          <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">No listings yet</h3>
+          <p class="text-gray-500 mb-6">Be the first to list your service or product</p>
+          <UButton to="/upload-product" color="primary" size="lg">List Your Service</UButton>
+        </div>
+
         <div v-else class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           <ProductCard v-for="product in products" :key="product.id" :product="product" />
         </div>
@@ -146,31 +221,93 @@ onMounted(async () => {
     </section>
 
     <!-- How It Works -->
-    <section class="py-16 px-4 bg-gray-50 dark:bg-gray-900">
-      <div class="max-w-7xl mx-auto text-center">
-        <h2 class="text-3xl md:text-4xl font-black mb-12">How It Works</h2>
-        <div class="grid md:grid-cols-3 gap-8">
-          <div v-for="(step, i) in [
-            { icon: '🔍', title: 'Browse Products', desc: 'Search and discover thousands of products from local sellers' },
-            { icon: '💬', title: 'Contact Seller', desc: 'Chat directly with sellers via WhatsApp or our built-in chat' },
-            { icon: '🤝', title: 'Make a Deal', desc: 'Agree on price and arrange delivery or pickup' }
-          ]" :key="i" class="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-md card-hover">
-            <div class="text-5xl mb-4">{{ step.icon }}</div>
-            <div class="w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center font-bold mx-auto mb-4">{{ i + 1 }}</div>
-            <h3 class="text-xl font-bold mb-2">{{ step.title }}</h3>
-            <p class="text-gray-600 dark:text-gray-400">{{ step.desc }}</p>
+    <section class="py-20 px-4 bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-14">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
+            Simple Process
+          </div>
+          <h2 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">How It Works</h2>
+          <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto">Four simple steps to boost your business visibility</p>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+          <div v-for="(step, i) in howItWorks" :key="i" class="relative text-center">
+            <div class="relative inline-block mb-4">
+              <div class="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg text-3xl">
+                {{ step.icon }}
+              </div>
+              <div class="absolute -top-2 -right-2 w-7 h-7 bg-gray-900 dark:bg-white rounded-full flex items-center justify-center text-white dark:text-gray-900 font-bold text-xs shadow-md">
+                {{ i + 1 }}
+              </div>
+            </div>
+            <h3 class="font-bold text-sm md:text-lg mb-2 text-gray-900 dark:text-white">{{ step.title }}</h3>
+            <p class="text-xs md:text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{{ step.desc }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trust Section -->
+    <section class="py-16 px-4 bg-white dark:bg-gray-900">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">Shop with Confidence</h2>
+          <p class="text-gray-600 dark:text-gray-400">Your safety is our priority</p>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          <div v-for="f in trust" :key="f.title" class="text-center p-4 md:p-6 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+            <div class="w-12 h-12 md:w-16 md:h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
+              <UIcon :name="f.icon" class="w-6 h-6 md:w-8 md:h-8 text-emerald-600" />
+            </div>
+            <h3 class="font-bold text-sm md:text-lg mb-2 text-gray-900 dark:text-white">{{ f.title }}</h3>
+            <p class="text-xs md:text-sm text-gray-600 dark:text-gray-400">{{ f.desc }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="py-20 px-4 bg-white dark:bg-gray-900">
+      <div class="max-w-3xl mx-auto">
+        <div class="text-center mb-14">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
+            Frequently Asked Questions
+          </div>
+          <h2 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">Frequently Asked Questions</h2>
+          <p class="text-gray-500 dark:text-gray-400">Everything you need to know about our services</p>
+        </div>
+
+        <div class="space-y-3">
+          <div
+            v-for="(faq, i) in faqs"
+            :key="i"
+            class="border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden hover:border-emerald-200 dark:hover:border-emerald-700 transition-colors"
+          >
+            <button
+              class="w-full px-6 py-4 flex items-center justify-between hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10 transition"
+              @click="openFaq = openFaq === i ? null : i"
+            >
+              <span class="font-semibold text-left text-gray-900 dark:text-white text-sm md:text-base">{{ faq.q }}</span>
+              <div :class="`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors ${openFaq === i ? 'bg-emerald-500 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-400'}`">
+                <UIcon :name="openFaq === i ? 'i-lucide-minus' : 'i-lucide-plus'" class="w-4 h-4" />
+              </div>
+            </button>
+            <div v-if="openFaq === i" class="px-6 pb-4 text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+              {{ faq.a }}
+            </div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- CTA -->
-    <section class="py-16 px-4 bg-primary-600 text-white text-center">
+    <section class="py-16 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-center">
       <div class="max-w-3xl mx-auto">
-        <h2 class="text-3xl md:text-4xl font-black mb-4">Start Selling Today</h2>
-        <p class="text-primary-100 mb-8 text-lg">Join thousands of sellers and reach customers across Jos</p>
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Ready to Grow Your Business?</h2>
+        <p class="text-emerald-100 mb-8 text-lg">Join thousands of service providers and reach customers across Jos</p>
         <UButton to="/become-seller" size="xl" color="white" class="font-bold">
-          Become a Seller
+          Get Started Free
         </UButton>
       </div>
     </section>
