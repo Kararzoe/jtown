@@ -56,7 +56,7 @@ const navLinks = [
             <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300" />
           </NuxtLink>
           <NuxtLink to="/become-seller" class="px-4 py-2 bg-primary-600 text-white rounded-xl font-semibold hover:bg-primary-700 transition-all hover:scale-105">
-            Sell Now
+            Get Started
           </NuxtLink>
         </div>
 
@@ -150,7 +150,7 @@ const navLinks = [
               <ClientOnly><UColorModeButton /></ClientOnly>
             </div>
             <NuxtLink to="/become-seller" class="mx-2 px-4 py-2 bg-primary-600 text-white rounded-xl font-semibold text-center" @click="isOpen = false">
-              Sell Now
+              Get Started
             </NuxtLink>
           </div>
         </div>
