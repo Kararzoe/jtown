@@ -41,9 +41,10 @@
           <h4 class="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Company</h4>
           <ul class="space-y-2.5 text-sm">
             <li><NuxtLink to="/about" class="hover:text-emerald-400 transition">About Us</NuxtLink></li>
+            <li><NuxtLink to="/contact" class="hover:text-emerald-400 transition">Contact Us</NuxtLink></li>
             <li><NuxtLink to="/privacy" class="hover:text-emerald-400 transition">Privacy Policy</NuxtLink></li>
             <li><NuxtLink to="/terms" class="hover:text-emerald-400 transition">Terms of Service</NuxtLink></li>
-            <li><a href="https://forms.gle/QKsY1dsg9QUNm8Rv7" target="_blank" class="hover:text-emerald-400 transition">Feedback Form</a></li>
+            <li><NuxtLink to="/trending" class="hover:text-emerald-400 transition">Trending</NuxtLink></li>
             <li><NuxtLink to="/become-seller" class="hover:text-emerald-400 transition">Become a Seller</NuxtLink></li>
           </ul>
         </div>

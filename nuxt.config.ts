@@ -29,6 +29,9 @@ export default defineNuxtConfig({
         '/privacy',
         '/terms',
         '/contact',
+        '/trending',
+        '/provider/*',
+        '/qr',
       ]
     }
   },

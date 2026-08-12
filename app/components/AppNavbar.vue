@@ -28,7 +28,8 @@ const logout = async () => {
 const navLinks = [
   { label: 'Home', to: '/' },
   { label: 'Products', to: '/products' },
-  { label: 'Categories', to: '/#categories' },
+  { label: 'Services', to: '/services' },
+  { label: 'Trending', to: '/trending' },
 ]
 </script>
 
@@ -88,6 +89,7 @@ const navLinks = [
             <UDropdownMenu :items="[[
               { label: 'Dashboard', icon: 'i-lucide-layout-dashboard', to: '/dashboard' },
               { label: 'Profile', icon: 'i-lucide-user-circle', to: '/profile' },
+              { label: 'Messages', icon: 'i-lucide-message-square', to: '/chat' },
               { label: 'Seller Dashboard', icon: 'i-lucide-store', to: '/seller-dashboard' },
               { label: 'Orders', icon: 'i-lucide-package', to: '/orders' },
               { label: 'Wishlist', icon: 'i-lucide-heart', to: '/wishlist' },
