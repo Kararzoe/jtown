@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const supabase = useSupabaseClient()
+const { t } = useLanguage()
 const products = ref<any[]>([])
 const loading = ref(true)
 const currentBanner = ref(0)
@@ -48,28 +49,28 @@ const stats = [
   { label: 'Happy Customers', value: '25,000+', icon: 'i-lucide-users' },
 ]
 
-const howItWorks = [
-  { icon: '👤', title: 'Create Your Profile', desc: 'Sign up and set up your business or service profile in minutes' },
-  { icon: '📢', title: 'Choose a Promo Plan', desc: 'Pick a visibility package that fits your budget and goals' },
-  { icon: '👁️', title: 'Get Discovered', desc: 'Your business gets seen by thousands of active buyers in Jos' },
-  { icon: '📈', title: 'Grow & Scale', desc: 'Track results, get reviews, and watch your business grow' },
-]
+const howItWorks = computed(() => [
+  { icon: '👤', title: t('step1Title'), desc: t('step1Desc') },
+  { icon: '📢', title: t('step2Title'), desc: t('step2Desc') },
+  { icon: '👁️', title: t('step3Title'), desc: t('step3Desc') },
+  { icon: '📈', title: t('step4Title'), desc: t('step4Desc') },
+])
 
-const trust = [
-  { icon: 'i-lucide-shield', title: 'Verified Sellers', desc: 'All sellers are verified before listing' },
-  { icon: 'i-lucide-check-circle', title: 'Quality Assured', desc: 'Products checked for authenticity' },
-  { icon: 'i-lucide-lock', title: 'Secure Contacts', desc: 'Your information is protected' },
-  { icon: 'i-lucide-users', title: 'Community Trust', desc: 'Ratings from real buyers' },
-]
+const trust = computed(() => [
+  { icon: 'i-lucide-shield', title: t('verifiedSellers'), desc: t('verifiedSellersDesc') },
+  { icon: 'i-lucide-check-circle', title: t('qualityAssured'), desc: t('qualityAssuredDesc') },
+  { icon: 'i-lucide-lock', title: t('secureContacts'), desc: t('secureContactsDesc') },
+  { icon: 'i-lucide-users', title: t('communityTrust'), desc: t('communityTrustDesc') },
+])
 
-const faqs = [
-  { q: 'How does JosMKT boost my business visibility?', a: 'We list your business on our platform seen by thousands of active buyers in Jos. Our promotion packages include featured listings, social media shoutouts, and targeted ads.' },
-  { q: 'What promotion packages are available?', a: 'We offer Basic (free listing), Standard (featured placement + social media), and Premium (full promotion suite with analytics). Contact us for custom packages.' },
-  { q: 'How do I list my business or service?', a: "Click 'Get Started' in the navigation, fill out your business profile, and choose a promotion plan. Your listing goes live within 24 hours." },
-  { q: 'Is there a free option?', a: 'Yes! Our Basic listing is completely free. You can upgrade anytime to get more visibility and promotion features.' },
-  { q: 'Can I track how my business is performing?', a: 'Absolutely! Our dashboard shows views, clicks, inquiries, and engagement metrics so you can measure your growth.' },
-  { q: 'What areas does JosMKT cover?', a: 'We cover all areas in Jos including Bukuru, Rayfield, Terminus, Lamingo, and surrounding areas in Plateau State.' },
-]
+const faqs = computed(() => [
+  { q: t('faq1Q'), a: t('faq1A') },
+  { q: t('faq2Q'), a: t('faq2A') },
+  { q: t('faq3Q'), a: t('faq3A') },
+  { q: t('faq4Q'), a: t('faq4A') },
+  { q: t('faq5Q'), a: t('faq5A') },
+  { q: t('faq6Q'), a: t('faq6A') },
+])
 
 onMounted(async () => {
   const { data } = await supabase.from('products').select('*, seller:profiles(*)').eq('status', 'active').limit(8)
@@ -103,24 +104,24 @@ onMounted(async () => {
         <div class="text-center">
           <div class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/20 border border-emerald-500/30 rounded-full text-emerald-300 text-sm font-medium mb-8 backdrop-blur-sm">
             <UIcon name="i-lucide-zap" class="w-4 h-4" />
-            Your #1 Site to Find Professional Service Providers in Jos
+            {{ t('tagline') }}
           </div>
 
           <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-            Find the
-            <span class="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent"> Right Help</span>
-            <br />When You
-            <span class="bg-gradient-to-r from-amber-400 to-orange-300 bg-clip-text text-transparent"> Need It</span>
+            {{ t('heroTitle1') }}
+            <span class="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent"> {{ t('heroHighlight1') }}</span>
+            <br />{{ t('heroTitle2') }}
+            <span class="bg-gradient-to-r from-amber-400 to-orange-300 bg-clip-text text-transparent"> {{ t('heroHighlight2') }}</span>
           </h1>
 
           <p class="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed">
-            Plumbers, electricians, bakers, mechanics & more — find trusted service providers in Jos, fast.
+            {{ t('heroDescription') }}
           </p>
 
           <div class="max-w-2xl mx-auto mb-10">
             <div class="relative">
               <UInput
-                placeholder="Search for a service... e.g. plumber, electrician"
+                :placeholder="t('searchPlaceholder')"
                 size="xl"
                 icon="i-lucide-search"
                 class="w-full"
@@ -130,12 +131,12 @@ onMounted(async () => {
           </div>
 
           <div class="flex flex-wrap justify-center gap-3">
-            <span class="text-gray-400 text-sm">Popular:</span>
+            <span class="text-gray-400 text-sm">{{ t('popular') }}:</span>
             <button
-              v-for="tag in ['Plumbing', 'Electricians', 'AC Repair', 'Bakers']"
+              v-for="tag in [t('plumbing'), t('electricians'), t('acRepair'), t('bakers')]"
               :key="tag"
               class="px-5 py-2.5 bg-white/10 backdrop-blur-sm text-white rounded-full border border-white/20 hover:bg-emerald-500/20 hover:border-emerald-400/40 transition-all text-sm font-medium"
-              @click="navigateTo(`/products?search=${tag}`)"
+              @click="navigateTo(`/services?category=${tag.toLowerCase()}`)"
             >
               {{ tag }}
             </button>
@@ -165,12 +166,12 @@ onMounted(async () => {
       <div class="max-w-7xl mx-auto relative z-10">
         <div class="text-center mb-14">
           <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
-            Our Services
+            {{ t('ourServices') }}
           </div>
           <h2 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-            Find a <span class="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">Service Provider</span>
+            {{ t('findA') }} <span class="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">{{ t('findServiceProvider') }}</span>
           </h2>
-          <p class="text-gray-500 dark:text-gray-400 text-lg max-w-xl mx-auto">Trusted professionals in Jos ready to get the job done</p>
+          <p class="text-gray-500 dark:text-gray-400 text-lg max-w-xl mx-auto">{{ t('trustedProfessionals') }}</p>
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
@@ -193,10 +194,10 @@ onMounted(async () => {
       <div class="max-w-7xl mx-auto">
         <div class="flex items-center justify-between mb-12">
           <div>
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">Featured Listings</h2>
-            <p class="text-gray-600 dark:text-gray-400">Discover amazing services from local providers</p>
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">{{ t('featuredListings') }}</h2>
+            <p class="text-gray-600 dark:text-gray-400">{{ t('discoverServices') }}</p>
           </div>
-          <UButton to="/products" variant="outline" color="primary" trailing-icon="i-lucide-arrow-right">View All</UButton>
+          <UButton to="/products" variant="outline" color="primary" trailing-icon="i-lucide-arrow-right">{{ t('viewAll') }}</UButton>
         </div>
 
         <div v-if="loading" class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
@@ -211,9 +212,9 @@ onMounted(async () => {
 
         <div v-else-if="products.length === 0" class="text-center py-16">
           <div class="text-6xl mb-4">🏪</div>
-          <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">No listings yet</h3>
-          <p class="text-gray-500 mb-6">Be the first to list your service or product</p>
-          <UButton to="/upload-product" color="primary" size="lg">List Your Service</UButton>
+          <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">{{ t('noListingsYet') }}</h3>
+          <p class="text-gray-500 mb-6">{{ t('beFirstToList') }}</p>
+          <UButton to="/upload-product" color="primary" size="lg">{{ t('listYourService') }}</UButton>
         </div>
 
         <div v-else class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
@@ -227,10 +228,10 @@ onMounted(async () => {
       <div class="max-w-7xl mx-auto">
         <div class="text-center mb-14">
           <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
-            Simple Process
+            {{ t('simpleProcess') }}
           </div>
-          <h2 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">How It Works</h2>
-          <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto">Four simple steps to boost your business visibility</p>
+          <h2 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">{{ t('howItWorks') }}</h2>
+          <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto">{{ t('fourSteps') }}</p>
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
@@ -254,8 +255,8 @@ onMounted(async () => {
     <section class="py-16 px-4 bg-white dark:bg-gray-900">
       <div class="max-w-7xl mx-auto">
         <div class="text-center mb-12">
-          <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">Shop with Confidence</h2>
-          <p class="text-gray-600 dark:text-gray-400">Your safety is our priority</p>
+          <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">{{ t('shopWithConfidence') }}</h2>
+          <p class="text-gray-600 dark:text-gray-400">{{ t('safetyPriority') }}</p>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           <div v-for="f in trust" :key="f.title" class="text-center p-4 md:p-6 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition">
@@ -274,10 +275,10 @@ onMounted(async () => {
       <div class="max-w-3xl mx-auto">
         <div class="text-center mb-14">
           <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
-            Frequently Asked Questions
+            {{ t('faqTitle') }}
           </div>
-          <h2 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">Frequently Asked Questions</h2>
-          <p class="text-gray-500 dark:text-gray-400">Everything you need to know about our services</p>
+          <h2 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">{{ t('faqTitle') }}</h2>
+          <p class="text-gray-500 dark:text-gray-400">{{ t('faqSubtitle') }}</p>
         </div>
 
         <div class="space-y-3">
@@ -306,11 +307,9 @@ onMounted(async () => {
     <!-- CTA -->
     <section class="py-16 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-center">
       <div class="max-w-3xl mx-auto">
-        <h2 class="text-3xl md:text-4xl font-bold mb-4">Ready to Grow Your Business?</h2>
-        <p class="text-emerald-100 mb-8 text-lg">Join thousands of service providers and reach customers across Jos</p>
-        <UButton to="/become-seller" size="xl" color="white" class="font-bold">
-          Get Started Free
-        </UButton>
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">{{ t('readyToGrow') }}</h2>
+        <p class="text-emerald-100 mb-8 text-lg">{{ t('joinThousands') }}</p>
+        <UButton to="/become-seller" size="xl" color="white" class="font-bold">{{ t('getStartedFree') }}</UButton>
       </div>
     </section>
   </div>

@@ -5,6 +5,13 @@ const router = useRouter()
 const isOpen = ref(false)
 const searchOpen = ref(false)
 const searchQuery = ref('')
+const { currentLang, setLang } = useLanguage()
+
+const languages = [
+  { label: 'English', value: 'en', flag: '🇬🇧' },
+  { label: 'Hausa', value: 'ha', flag: '🇳🇬' },
+  { label: 'Pidgin', value: 'pcm', flag: '🇳🇬' },
+]
 
 const handleSearch = () => {
   if (searchQuery.value.trim()) {
@@ -56,6 +63,20 @@ const navLinks = [
         <div class="flex items-center gap-1 md:gap-2">
           <!-- Search -->
           <UButton icon="i-lucide-search" variant="ghost" color="neutral" @click="searchOpen = !searchOpen" />
+
+          <!-- Language Selector -->
+          <ClientOnly>
+            <UDropdownMenu :items="[[
+              { label: '🇬🇧 English', onSelect: () => setLang('en') },
+              { label: '🇳🇬 Hausa', onSelect: () => setLang('ha') },
+              { label: '🇳🇬 Pidgin', onSelect: () => setLang('pcm') },
+            ]]">
+              <UButton variant="ghost" color="neutral" size="sm">
+                {{ languages.find(l => l.value === currentLang)?.flag }}
+                <span class="hidden md:inline ml-1 text-xs">{{ languages.find(l => l.value === currentLang)?.label }}</span>
+              </UButton>
+            </UDropdownMenu>
+          </ClientOnly>
 
           <!-- Dark Mode -->
           <ClientOnly>
