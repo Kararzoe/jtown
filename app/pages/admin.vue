@@ -48,11 +48,56 @@ const updateOrderStatus = async (id: string, status: string) => {
   toast.add({ title: 'Order updated', color: 'success' })
 }
 
+// Service providers from Render backend
+const serviceProviders = ref<any[]>([])
+const loadingServices = ref(false)
+
+const loadServiceProviders = async () => {
+  loadingServices.value = true
+  try {
+    const data = await $fetch<any[]>('https://jos-backend.onrender.com/api/services/all', {
+      headers: { Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}` }
+    })
+    serviceProviders.value = Array.isArray(data) ? data : []
+  } catch {
+    // fallback - try without auth since admin is checking
+    serviceProviders.value = []
+  }
+  loadingServices.value = false
+}
+
+const updateServiceStatus = async (id: string, status: string) => {
+  try {
+    await $fetch(`https://jos-backend.onrender.com/api/services/${id}/status`, {
+      method: 'PATCH',
+      body: { status }
+    })
+    const s = serviceProviders.value.find(s => s._id === id)
+    if (s) s.status = status
+    toast.add({ title: `Provider ${status}`, color: 'success' })
+  } catch {
+    toast.add({ title: 'Failed to update', color: 'error' })
+  }
+}
+
+const deleteServiceProvider = async (id: string) => {
+  try {
+    await $fetch(`https://jos-backend.onrender.com/api/services/${id}`, { method: 'DELETE' })
+    serviceProviders.value = serviceProviders.value.filter(s => s._id !== id)
+    toast.add({ title: 'Provider deleted', color: 'success' })
+  } catch {
+    toast.add({ title: 'Failed to delete', color: 'error' })
+  }
+}
+
+watch(tab, (val) => { if (val === 'services') loadServiceProviders() })
+
 const tabs = [
   { label: 'Overview', value: 'overview', icon: 'i-lucide-layout-dashboard' },
   { label: 'Users', value: 'users', icon: 'i-lucide-users' },
   { label: 'Products', value: 'products', icon: 'i-lucide-package' },
   { label: 'Orders', value: 'orders', icon: 'i-lucide-shopping-bag' },
+  { label: 'Service Providers', value: 'services', icon: 'i-lucide-wrench' },
 ]
 
 const statCards = computed(() => [
@@ -170,6 +215,40 @@ const statCards = computed(() => [
               <UButton icon="i-lucide-eye" variant="ghost" size="xs" />
             </NuxtLink>
             <UButton icon="i-lucide-trash" variant="ghost" color="error" size="xs" @click="deleteProduct(p.id)" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Service Providers Tab -->
+      <div v-else-if="tab === 'services'">
+        <div class="flex justify-between items-center mb-4">
+          <p class="text-sm text-gray-500">All service provider applications from the backend</p>
+          <UButton icon="i-lucide-refresh-cw" size="xs" variant="outline" @click="loadServiceProviders">Refresh</UButton>
+        </div>
+        <div v-if="loadingServices" class="space-y-3">
+          <div v-for="i in 4" :key="i" class="skeleton h-20 rounded-xl" />
+        </div>
+        <div v-else-if="serviceProviders.length === 0" class="text-center py-12 text-gray-500">
+          <p>No service providers found</p>
+          <p class="text-xs mt-1">Make sure the Render backend is running</p>
+        </div>
+        <div v-else class="space-y-3">
+          <div v-for="s in serviceProviders" :key="s._id" class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full overflow-hidden bg-emerald-100 flex-shrink-0 flex items-center justify-center">
+              <img v-if="s.image" :src="s.image" class="w-full h-full object-cover" />
+              <span v-else class="text-emerald-600 font-bold">{{ s.serviceName?.charAt(0) }}</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="font-bold truncate">{{ s.serviceName }}</p>
+              <p class="text-sm text-gray-500">{{ s.category }} · {{ s.location }}</p>
+              <p class="text-xs text-gray-400">{{ s.phone }}</p>
+            </div>
+            <UBadge :color="s.status === 'approved' ? 'success' : s.status === 'rejected' ? 'error' : 'warning'" size="sm">{{ s.status }}</UBadge>
+            <div class="flex gap-1">
+              <UButton v-if="s.status !== 'approved'" size="xs" color="success" @click="updateServiceStatus(s._id, 'approved')">Approve</UButton>
+              <UButton v-if="s.status !== 'rejected'" size="xs" color="warning" variant="outline" @click="updateServiceStatus(s._id, 'rejected')">Reject</UButton>
+              <UButton size="xs" color="error" variant="ghost" icon="i-lucide-trash" @click="deleteServiceProvider(s._id)" />
+            </div>
           </div>
         </div>
       </div>
