@@ -4,17 +4,23 @@ const user = useSupabaseUser()
 const supabase = useSupabaseClient()
 const orders = ref<any[]>([])
 const favorites = ref<any[]>([])
+const profile = ref<any>(null)
 const loading = ref(true)
 
 onMounted(async () => {
-  const [{ data: o }, { data: f }] = await Promise.all([
+  const [{ data: o }, { data: f }, { data: p }] = await Promise.all([
     supabase.from('orders').select('*, product:products(*)').eq('buyer_id', user.value?.id).order('created_at', { ascending: false }).limit(5),
-    supabase.from('favorites').select('*, product:products(*)').eq('user_id', user.value?.id).limit(5)
+    supabase.from('favorites').select('*, product:products(*)').eq('user_id', user.value?.id).limit(5),
+    supabase.from('profiles').select('*').eq('id', user.value?.id).single()
   ])
   orders.value = o || []
   favorites.value = f || []
+  profile.value = p
   loading.value = false
 })
+
+const displayName = computed(() => profile.value?.full_name || user.value?.user_metadata?.full_name || user.value?.email?.split('@')[0] || 'User')
+const isAdmin = computed(() => user.value?.email === 'kararzoe@gmail.com' || user.value?.user_metadata?.role === 'admin')
 
 const stats = computed(() => [
   { label: 'Orders', value: orders.value.length, icon: 'i-lucide-package', color: 'bg-blue-500' },
@@ -26,9 +32,15 @@ const stats = computed(() => [
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
     <div class="max-w-7xl mx-auto">
-      <div class="mb-8 animate-fade-up">
-        <h1 class="text-3xl font-black text-gray-900 dark:text-white mb-1">Welcome back! 👋</h1>
-        <p class="text-gray-600 dark:text-gray-400">{{ user?.email }}</p>
+      <div class="mb-8 animate-fade-up flex items-center gap-4">
+        <div class="w-14 h-14 rounded-full overflow-hidden bg-primary-100 dark:bg-primary-900/30 ring-4 ring-primary-500/20 flex-shrink-0">
+          <img v-if="profile?.avatar_url" :src="profile.avatar_url" alt="Avatar" class="w-full h-full object-cover" />
+          <div v-else class="w-full h-full flex items-center justify-center text-2xl">👤</div>
+        </div>
+        <div>
+          <h1 class="text-3xl font-black text-gray-900 dark:text-white mb-1">Welcome back, {{ displayName }}! 👋</h1>
+          <p class="text-gray-600 dark:text-gray-400">{{ user?.email }}</p>
+        </div>
       </div>
 
       <div class="grid grid-cols-3 gap-4 md:gap-6 mb-8">
@@ -67,7 +79,10 @@ const stats = computed(() => [
             <UButton to="/orders" variant="outline" color="neutral" block icon="i-lucide-package" class="justify-start">All Orders</UButton>
             <UButton to="/upload-product" variant="outline" color="neutral" block icon="i-lucide-plus" class="justify-start">Upload Product</UButton>
             <UButton to="/seller-dashboard" variant="outline" color="neutral" block icon="i-lucide-store" class="justify-start">Seller Dashboard</UButton>
-            <UButton to="/profile" variant="outline" color="neutral" block icon="i-lucide-settings" class="justify-start">Edit Profile</UButton>
+            <UButton to="/compare" variant="outline" color="neutral" block icon="i-lucide-scale" class="justify-start">Compare Products</UButton>
+            <UButton to="/saved-searches" variant="outline" color="neutral" block icon="i-lucide-bookmark" class="justify-start">Saved Searches</UButton>
+            <UButton to="/profile" variant="outline" color="neutral" block icon="i-lucide-user-circle" class="justify-start">Edit Profile</UButton>
+            <UButton v-if="isAdmin" to="/admin" color="error" variant="outline" block icon="i-lucide-shield" class="justify-start">Admin Dashboard</UButton>
           </div>
         </div>
       </div>
