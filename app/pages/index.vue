@@ -270,6 +270,12 @@ onMounted(async () => {
       </div>
     </section>
 
+    <!-- Testimonials -->
+    <TestimonialsSection />
+
+    <!-- Newsletter -->
+    <NewsletterSection />
+
     <!-- FAQ -->
     <section class="py-20 px-4 bg-white dark:bg-gray-900">
       <div class="max-w-3xl mx-auto">

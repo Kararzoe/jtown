@@ -98,7 +98,61 @@ const tabs = [
   { label: 'Products', value: 'products', icon: 'i-lucide-package' },
   { label: 'Orders', value: 'orders', icon: 'i-lucide-shopping-bag' },
   { label: 'Service Providers', value: 'services', icon: 'i-lucide-wrench' },
+  { label: '+ Add Provider', value: 'addProvider', icon: 'i-lucide-plus-circle' },
 ]
+
+const CLOUDINARY = 'https://api.cloudinary.com/v1_1/dfye3j2bs/image/upload'
+const newProvider = reactive({ serviceName: '', category: '', description: '', phone: '', location: '', experience: '', priceRange: '', image: '', gallery: [] as string[] })
+const uploading = ref(false)
+
+const uploadImage = async (file: File): Promise<string> => {
+  const fd = new FormData()
+  fd.append('file', file)
+  fd.append('upload_preset', 'jos_marketplace')
+  const res = await fetch(CLOUDINARY, { method: 'POST', body: fd })
+  const data = await res.json()
+  return data.secure_url || ''
+}
+
+const handleLogoUpload = async (e: Event) => {
+  const file = (e.target as HTMLInputElement).files?.[0]
+  if (!file) return
+  uploading.value = true
+  newProvider.image = await uploadImage(file)
+  uploading.value = false
+}
+
+const handleGalleryUpload = async (e: Event) => {
+  const files = (e.target as HTMLInputElement).files
+  if (!files) return
+  uploading.value = true
+  for (const file of Array.from(files)) {
+    const url = await uploadImage(file)
+    if (url) newProvider.gallery.push(url)
+  }
+  uploading.value = false
+}
+
+const submitProvider = async () => {
+  try {
+    const data = await $fetch<any>('https://jos-backend.onrender.com/api/services/apply-public', {
+      method: 'POST',
+      body: newProvider
+    })
+    if (data._id || data.success) {
+      toast.add({ title: 'Provider added!', color: 'success' })
+      Object.assign(newProvider, { serviceName: '', category: '', description: '', phone: '', location: '', experience: '', priceRange: '', image: '', gallery: [] })
+      tab.value = 'services'
+      loadServiceProviders()
+    } else {
+      toast.add({ title: data.message || 'Failed', color: 'error' })
+    }
+  } catch {
+    toast.add({ title: 'Network error', color: 'error' })
+  }
+}
+
+const serviceCategories = ['plumbing','electrical','ac','furniture','catering','painting','mechanic','barbing','carpentry','fashion-design','shoemaking','photography','tech','logistics','laundry','education','perfumery','makeup','event-planning','rentals','mason','phone-accessories','legal','housing-agent','e-wallet']
 
 const statCards = computed(() => [
   { label: 'Total Users', value: stats.value.users, icon: 'i-lucide-users', color: 'bg-blue-500' },
@@ -271,6 +325,41 @@ const statCards = computed(() => [
             @update:model-value="updateOrderStatus(o.id, $event)"
           />
         </div>
+      </div>
+      <!-- Add Provider Tab -->
+      <div v-else-if="tab === 'addProvider'" class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md max-w-2xl">
+        <h3 class="font-black text-xl mb-6">Add Service Provider</h3>
+        <form class="space-y-4" @submit.prevent="submitProvider">
+          <UInput v-model="newProvider.serviceName" required placeholder="Business / Service name" size="lg" />
+          <UTextarea v-model="newProvider.description" required placeholder="Description" :rows="3" />
+          <div class="grid grid-cols-2 gap-4">
+            <UInput v-model="newProvider.phone" required placeholder="Phone number" />
+            <UInput v-model="newProvider.location" placeholder="Location (e.g. Terminus, Jos)" />
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <UInput v-model="newProvider.experience" placeholder="Experience (e.g. 5 years)" />
+            <UInput v-model="newProvider.priceRange" placeholder="Price range (e.g. ₦5k - ₦50k)" />
+          </div>
+          <USelect
+            v-model="newProvider.category"
+            :items="serviceCategories.map(c => ({ label: c.replace(/-/g,'  ').replace(/\b\w/g, l => l.toUpperCase()), value: c }))"
+            placeholder="Select category"
+          />
+          <div>
+            <p class="text-sm font-semibold mb-2">Business Logo / Photo</p>
+            <input type="file" accept="image/*" class="w-full text-sm" @change="handleLogoUpload" />
+            <p v-if="uploading" class="text-xs text-emerald-500 mt-1">Uploading...</p>
+            <img v-if="newProvider.image" :src="newProvider.image" class="mt-2 w-24 h-24 object-cover rounded-xl" />
+          </div>
+          <div>
+            <p class="text-sm font-semibold mb-2">Gallery / Work Samples</p>
+            <input type="file" accept="image/*" multiple class="w-full text-sm" @change="handleGalleryUpload" />
+            <div v-if="newProvider.gallery.length" class="flex gap-2 mt-2 flex-wrap">
+              <img v-for="(url, i) in newProvider.gallery" :key="i" :src="url" class="w-16 h-16 object-cover rounded-lg" />
+            </div>
+          </div>
+          <UButton type="submit" color="primary" size="lg" block :loading="uploading">Add Provider</UButton>
+        </form>
       </div>
     </div>
   </div>
