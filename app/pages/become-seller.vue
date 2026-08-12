@@ -1,66 +1,175 @@
 <script setup lang="ts">
 const toast = useToast()
-const form = reactive({ shopName: '', name: '', phone: '', email: '', location: '', category: '' })
+const submitted = ref(false)
+const loading = ref(false)
+const uploading = ref(false)
 
-const submit = () => {
-  const msg = `New Seller Application:\nShop: ${form.shopName}\nName: ${form.name}\nPhone: ${form.phone}\nEmail: ${form.email}\nLocation: ${form.location}\nCategory: ${form.category}`
-  window.open(`https://wa.me/2349043832380?text=${encodeURIComponent(msg)}`, '_blank')
-  toast.add({ title: 'Application sent!', color: 'success' })
+const API = 'https://jos-backend.onrender.com/api'
+const CLOUDINARY = 'https://api.cloudinary.com/v1_1/dfye3j2bs/image/upload'
+
+const form = reactive({
+  serviceName: '',
+  category: '',
+  description: '',
+  phone: '',
+  location: '',
+  experience: '',
+  priceRange: '',
+  image: '',
+  gallery: [] as string[],
+})
+
+const categories = [
+  'plumbing', 'electrical', 'ac', 'furniture', 'catering', 'painting',
+  'mechanic', 'barbing', 'carpentry', 'fashion-design', 'shoemaking',
+  'photography', 'tech', 'logistics', 'laundry', 'education',
+  'perfumery', 'makeup', 'event-planning', 'rentals', 'mason',
+  'phone-accessories', 'legal', 'housing-agent', 'e-wallet'
+]
+
+const locations = ['Bukuru', 'Rayfield', 'Terminus', 'Sukuwa', 'Lamingo', 'Hwolshe', 'Tudun Wada', 'Nassarawa', 'Old Airport', 'Polo', 'British', 'Other']
+
+const uploadImage = async (file: File): Promise<string> => {
+  const fd = new FormData()
+  fd.append('file', file)
+  fd.append('upload_preset', 'jos_marketplace')
+  fd.append('cloud_name', 'dfye3j2bs')
+  const res = await fetch(CLOUDINARY, { method: 'POST', body: fd })
+  const data = await res.json()
+  return data.secure_url || ''
+}
+
+const onLogoChange = async (e: Event) => {
+  const file = (e.target as HTMLInputElement).files?.[0]
+  if (!file) return
+  uploading.value = true
+  form.image = await uploadImage(file)
+  uploading.value = false
+}
+
+const onGalleryChange = async (e: Event) => {
+  const files = (e.target as HTMLInputElement).files
+  if (!files) return
+  uploading.value = true
+  for (let i = 0; i < files.length; i++) {
+    const url = await uploadImage(files[i])
+    if (url) form.gallery.push(url)
+  }
+  uploading.value = false
+}
+
+const submit = async () => {
+  loading.value = true
+  try {
+    const data: any = await $fetch(`${API}/services/apply-public`, {
+      method: 'POST',
+      body: form,
+    })
+    if (data._id || data.success) {
+      submitted.value = true
+    } else {
+      toast.add({ title: data.message || 'Failed to submit', color: 'error' })
+    }
+  } catch (e: any) {
+    toast.add({ title: 'Network error. Please try again.', color: 'error' })
+  }
+  loading.value = false
 }
 </script>
 
 <template>
-  <div class="min-h-screen hero-gradient py-16 px-4">
-    <div class="max-w-3xl mx-auto">
-      <div class="text-center mb-12 animate-fade-up">
-        <div class="w-20 h-20 bg-primary-600 rounded-full flex items-center justify-center mx-auto mb-6">
-          <UIcon name="i-lucide-store" class="w-10 h-10 text-white" />
+  <div class="min-h-screen bg-gradient-to-br from-emerald-50 to-white dark:from-gray-900 dark:to-gray-800 py-10 px-4">
+    <div class="max-w-2xl mx-auto">
+
+      <!-- Success -->
+      <div v-if="submitted" class="flex items-center justify-center min-h-[60vh]">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-md w-full text-center shadow-xl">
+          <UIcon name="i-lucide-check-circle" class="w-16 h-16 text-emerald-500 mx-auto mb-4" />
+          <h2 class="text-2xl font-bold mb-2">Application Submitted!</h2>
+          <p class="text-gray-600 dark:text-gray-400 mb-6">
+            Your business registration is under review. We'll contact you once approved and your profile will be live on JosMKT.
+          </p>
+          <UButton to="/" color="primary" size="lg">Back to Home</UButton>
         </div>
-        <h1 class="text-4xl font-black text-gray-900 mb-4">Start Selling on Jos Marketplace</h1>
-        <p class="text-gray-600 text-lg">Join thousands of sellers and reach customers across Jos</p>
       </div>
 
-      <UCard class="shadow-xl animate-fade-up">
-        <form class="space-y-5" @submit.prevent="submit">
-          <div class="grid md:grid-cols-2 gap-4">
-            <UFormField label="Shop Name *">
-              <UInput v-model="form.shopName" placeholder="e.g. TechHub Store" size="lg" class="w-full" required />
-            </UFormField>
-            <UFormField label="Your Name *">
-              <UInput v-model="form.name" placeholder="Full name" size="lg" class="w-full" required />
-            </UFormField>
+      <!-- Form -->
+      <div v-else>
+        <div class="text-center mb-8">
+          <div class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
+            <UIcon name="i-lucide-store" class="w-4 h-4" />
+            Register Your Business
           </div>
-          <div class="grid md:grid-cols-2 gap-4">
-            <UFormField label="Phone *">
-              <UInput v-model="form.phone" placeholder="+234 800 000 0000" size="lg" class="w-full" required />
-            </UFormField>
-            <UFormField label="Email *">
-              <UInput v-model="form.email" type="email" placeholder="your@email.com" size="lg" class="w-full" required />
-            </UFormField>
-          </div>
-          <div class="grid md:grid-cols-2 gap-4">
-            <UFormField label="Location">
-              <USelect v-model="form.location" :options="['Bukuru','Rayfield','Terminus','Lamingo','Angwan Rogo']" size="lg" class="w-full" />
-            </UFormField>
-            <UFormField label="Category">
-              <USelect v-model="form.category" :options="['Electronics','Fashion','Food','Home','Sports','Other']" size="lg" class="w-full" />
-            </UFormField>
-          </div>
-          <UButton type="submit" color="primary" size="xl" block icon="i-lucide-send">Submit Application</UButton>
-          <p class="text-center text-sm text-gray-500">We'll review and contact you within 24 hours</p>
-        </form>
-      </UCard>
-
-      <div class="mt-12 grid md:grid-cols-3 gap-6 text-center">
-        <div v-for="item in [
-          { icon: '📦', title: 'List Products', desc: 'Add unlimited products' },
-          { icon: '💬', title: 'Connect with Buyers', desc: 'Direct communication' },
-          { icon: '💰', title: 'Grow Your Business', desc: 'Reach thousands daily' }
-        ]" :key="item.title" class="bg-white rounded-2xl p-6 shadow-md card-hover">
-          <div class="text-4xl mb-3">{{ item.icon }}</div>
-          <h3 class="font-bold mb-1">{{ item.title }}</h3>
-          <p class="text-sm text-gray-600">{{ item.desc }}</p>
+          <h1 class="text-3xl md:text-4xl font-bold mb-3 text-gray-900 dark:text-white">Get Started on JosMKT</h1>
+          <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto">List your service or business and get discovered by thousands of customers in Jos</p>
         </div>
+
+        <form class="bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 shadow-lg space-y-5" @submit.prevent="submit">
+
+          <UFormField label="Business / Service Name *">
+            <UInput v-model="form.serviceName" placeholder="e.g. Bright Plumbing Services" required class="w-full" />
+          </UFormField>
+
+          <UFormField label="Category *">
+            <USelect
+              v-model="form.category"
+              :items="categories.map(c => ({ label: c.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()), value: c }))"
+              placeholder="Select your category"
+              required
+              class="w-full"
+            />
+          </UFormField>
+
+          <UFormField label="Describe your business *">
+            <UTextarea v-model="form.description" placeholder="Tell customers what you do, what makes you special..." :rows="4" required class="w-full" />
+          </UFormField>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <UFormField label="Phone / WhatsApp *">
+              <UInput v-model="form.phone" type="tel" placeholder="e.g. 08012345678" required class="w-full" />
+            </UFormField>
+            <UFormField label="Location *">
+              <USelect
+                v-model="form.location"
+                :items="locations"
+                placeholder="Select location"
+                required
+                class="w-full"
+              />
+            </UFormField>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <UFormField label="Experience">
+              <UInput v-model="form.experience" placeholder="e.g. 3 years" class="w-full" />
+            </UFormField>
+            <UFormField label="Price Range">
+              <UInput v-model="form.priceRange" placeholder="e.g. ₦5,000 - ₦50,000" class="w-full" />
+            </UFormField>
+          </div>
+
+          <!-- Logo Upload -->
+          <UFormField label="Business Logo / Photo">
+            <input type="file" accept="image/*" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 text-sm" @change="onLogoChange" />
+            <p v-if="uploading" class="text-sm text-emerald-500 mt-1">Uploading...</p>
+            <img v-if="form.image" :src="form.image" alt="Preview" class="mt-2 w-24 h-24 object-cover rounded-xl" />
+          </UFormField>
+
+          <!-- Gallery Upload -->
+          <UFormField label="Work Samples / Gallery (optional)">
+            <input type="file" accept="image/*" multiple class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 text-sm" @change="onGalleryChange" />
+            <div v-if="form.gallery.length" class="flex gap-2 mt-2 flex-wrap">
+              <img v-for="(url, i) in form.gallery" :key="i" :src="url" class="w-20 h-20 object-cover rounded-lg" />
+            </div>
+          </UFormField>
+
+          <UButton type="submit" size="xl" block :loading="loading || uploading" class="bg-gradient-to-r from-emerald-500 to-teal-500 font-bold text-lg">
+            <UIcon name="i-lucide-send" class="w-5 h-5 mr-2" />
+            {{ loading ? 'Submitting...' : 'Submit Application' }}
+          </UButton>
+
+          <p class="text-center text-xs text-gray-400">Your application will be reviewed within 24 hours. Once approved, your business will be visible to thousands.</p>
+        </form>
       </div>
     </div>
   </div>

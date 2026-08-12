@@ -39,6 +39,8 @@ const categories = [
   { label: 'E-Wallet Services', icon: '💳', slug: 'e-wallet' },
 ]
 
+const categoryHref = (slug: string) => `/services?category=${slug}`
+
 const stats = [
   { label: 'Monthly Views', value: '50,000+', icon: 'i-lucide-eye' },
   { label: 'Businesses Listed', value: '1,000+', icon: 'i-lucide-store' },
@@ -175,7 +177,7 @@ onMounted(async () => {
           <NuxtLink
             v-for="cat in categories"
             :key="cat.slug"
-            :to="`/products?category=${cat.slug}`"
+            :to="categoryHref(cat.slug)"
             class="group bg-white dark:bg-gray-800 rounded-2xl p-5 md:p-7 shadow-sm hover:shadow-xl transition-all border border-gray-100 dark:border-gray-700 hover:border-emerald-200 dark:hover:border-emerald-700"
           >
             <div class="text-3xl md:text-4xl mx-auto mb-4 text-center group-hover:scale-110 transition-transform duration-300">{{ cat.icon }}</div>
