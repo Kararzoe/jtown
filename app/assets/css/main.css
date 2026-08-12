@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 
+@variant dark (&:where(.dark, .dark *));
+
 :root {
   --color-primary: #16a34a;
   --color-primary-50: #f0fdf4;
@@ -61,6 +63,11 @@ body {
   animation: shimmer 1.5s infinite;
 }
 
+.dark .skeleton {
+  background: linear-gradient(90deg, #1f2937 25%, #374151 50%, #1f2937 75%);
+  background-size: 200% 100%;
+}
+
 .card-hover {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -80,8 +87,17 @@ body {
   background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #ffffff 100%);
 }
 
+.dark .hero-gradient {
+  background: linear-gradient(135deg, #052e16 0%, #14532d 50%, #0a0a14 100%);
+}
+
 .glass {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.dark .glass {
+  background: rgba(10, 10, 20, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
