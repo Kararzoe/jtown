@@ -93,7 +93,7 @@ onMounted(async () => {
     <!-- Hero -->
     <section class="relative min-h-[85vh] flex items-center bg-gradient-to-br from-gray-900 via-emerald-950 to-gray-900 overflow-hidden">
       <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover opacity-30">
-        <source src="/7669651-hd_1920_1080_25fps.mp4" type="video/mp4" />
+        <source :src="'/7669651-hd_1920_1080_25fps.mp4'" type="video/mp4" />
       </video>
       <div class="absolute inset-0 bg-gradient-to-b from-gray-900/70 via-emerald-900/40 to-gray-900/80" />
 
