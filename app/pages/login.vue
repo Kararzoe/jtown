@@ -29,7 +29,7 @@ const submit = async () => {
         password: form.password,
         options: {
           data: { full_name: form.name, phone: form.phone },
-          emailRedirectTo: 'https://jtown-git-main-hamrds-projects.vercel.app/confirm'
+          emailRedirectTo: 'https://josmkt.com.ng/confirm'
         }
       })
       if (error) throw error
