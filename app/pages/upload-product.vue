@@ -1,5 +1,5 @@
 <script setup lang="ts">
-definePageMeta({ middleware: 'auth' })
+definePageMeta({ layout: 'default' })
 const user = useSupabaseUser()
 const supabase = useSupabaseClient()
 const toast = useToast()

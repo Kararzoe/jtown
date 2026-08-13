@@ -1,5 +1,5 @@
 <script setup lang="ts">
-definePageMeta({ middleware: 'auth' })
+definePageMeta({ layout: 'default' })
 const router = useRouter()
 
 interface SavedSearch { id: string; query: string; filters: Record<string, any>; savedAt: string }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-definePageMeta({ middleware: 'auth' })
+definePageMeta({ layout: 'default' })
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
 const products = ref<any[]>([])
