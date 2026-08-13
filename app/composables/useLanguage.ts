@@ -34,6 +34,12 @@ const translations = {
     secureContacts: 'Secure Contacts', secureContactsDesc: 'Your information is protected',
     communityTrust: 'Community Trust', communityTrustDesc: 'Ratings from real buyers',
     registerBusiness: 'Register Your Business', joinThousands: 'Join thousands of service providers and reach customers across Jos',
+    servicesTitle: 'Services', verifiedPros: 'Verified professionals ready to help you',
+    selectCategory: 'Select a Category', selectCategoryDesc: 'Choose a service category above to see providers',
+    noProviders: 'No providers yet', noProvidersDesc: 'No service providers in this category yet',
+    beFirstToApply: 'Be the first to apply', areYouProvider: 'Are you a service provider?',
+    listBusinessDesc: 'List your business and get discovered by thousands in Jos',
+    call: 'Call', whatsapp: 'WhatsApp', experience: 'experience', allServices: 'All Services',
   },
   ha: {
     home: 'Gida', services: 'Ayyuka', products: 'Kayayyaki', sell: 'Fara',
@@ -68,6 +74,12 @@ const translations = {
     secureContacts: 'Sadarwa Mai Aminci', secureContactsDesc: 'Bayanan ku suna kariya',
     communityTrust: 'Amincin Al\'umma', communityTrustDesc: "Ra'ayoyi daga masu saye na gaske",
     registerBusiness: 'Yi Rajistan Kasuwancin ku', joinThousands: 'Ku shiga tare da dubban masu bayar da sabis a Jos',
+    servicesTitle: 'Ayyuka', verifiedPros: 'Ƙwararru masu aminci da suke shirye su taimaka muku',
+    selectCategory: 'Zaɓi Nau\'i', selectCategoryDesc: 'Zaɓi nau\'in sabis a sama don ganin masu bayarwa',
+    noProviders: 'Babu masu bayarwa har yanzu', noProvidersDesc: 'Babu masu bayar da sabis a wannan nau\'in har yanzu',
+    beFirstToApply: 'Ku zama na farko', areYouProvider: 'Kuna mai bayar da sabis?',
+    listBusinessDesc: 'Jera kasuwancin ku kuma dubban mutane a Jos za su same ku',
+    call: 'Kira', whatsapp: 'WhatsApp', experience: 'ƙwarewa', allServices: 'Duk Ayyuka',
   },
   pcm: {
     home: 'Home', services: 'Services', products: 'Products', sell: 'Start Now',
@@ -102,6 +114,12 @@ const translations = {
     secureContacts: 'Secure Contacts', secureContactsDesc: 'Your information dey protected',
     communityTrust: 'Community Trust', communityTrustDesc: 'Ratings from real buyers',
     registerBusiness: 'Register Your Business', joinThousands: 'Join thousands of service providers for Jos',
+    servicesTitle: 'Services', verifiedPros: 'Verified professionals for Jos wey ready to help you',
+    selectCategory: 'Pick Category', selectCategoryDesc: 'Choose service category for top to see providers',
+    noProviders: 'No providers yet', noProvidersDesc: 'No service providers for this category yet',
+    beFirstToApply: 'Be the first to apply', areYouProvider: 'You be service provider?',
+    listBusinessDesc: 'List your business and thousands of people for Jos go find you',
+    call: 'Call', whatsapp: 'WhatsApp', experience: 'experience', allServices: 'All Services',
   }
 }
 

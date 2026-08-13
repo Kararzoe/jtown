@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const supabase = useSupabaseClient()
+const { t } = useLanguage()
 const route = useRoute()
 const router = useRouter()
 const category = ref((route.query.category as string) || '')
@@ -66,9 +67,9 @@ const categoryLabel = computed(() => categories.find(c => c.slug === category.va
         <UButton icon="i-lucide-arrow-left" variant="ghost" color="neutral" @click="router.back()" />
         <div>
           <h1 class="text-3xl font-bold text-gray-900 dark:text-white capitalize">
-            {{ category ? categoryLabel + ' Services' : 'All Services' }}
+            {{ category ? categoryLabel + ' ' + t('servicesTitle') : t('allServices') }}
           </h1>
-          <p class="text-gray-500 text-sm">Verified professionals ready to help you</p>
+          <p class="text-gray-500 text-sm">{{ t('verifiedPros') }}</p>
         </div>
       </div>
 
@@ -106,16 +107,16 @@ const categoryLabel = computed(() => categories.find(c => c.slug === category.va
       <!-- No category selected -->
       <div v-else-if="!category" class="text-center py-20">
         <div class="text-6xl mb-4">🔧</div>
-        <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Select a Category</h3>
-        <p class="text-gray-500">Choose a service category above to see providers</p>
+        <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">{{ t('selectCategory') }}</h3>
+        <p class="text-gray-500">{{ t('selectCategoryDesc') }}</p>
       </div>
 
       <!-- Empty -->
       <div v-else-if="providers.length === 0" class="text-center py-16">
         <div class="text-6xl mb-4">🔍</div>
-        <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">No providers yet</h3>
-        <p class="text-gray-500 mb-6">No service providers in this category yet</p>
-        <UButton to="/become-seller" color="primary" size="lg">Be the first to apply</UButton>
+        <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">{{ t('noProviders') }}</h3>
+        <p class="text-gray-500 mb-6">{{ t('noProvidersDesc') }}</p>
+        <UButton to="/become-seller" color="primary" size="lg">{{ t('beFirstToApply') }}</UButton>
       </div>
 
       <!-- Providers Grid -->
@@ -150,7 +151,7 @@ const categoryLabel = computed(() => categories.find(c => c.slug === category.va
             </div>
             <div v-if="provider.experience" class="flex items-center gap-2">
               <UIcon name="i-lucide-clock" class="w-4 h-4 text-emerald-500" />
-              {{ provider.experience }} experience
+              {{ provider.experience }} {{ t('experience') }}
             </div>
             <div v-if="provider.price_range" class="flex items-center gap-2">
               <span class="text-emerald-500 font-bold text-xs">₦</span>
@@ -172,14 +173,14 @@ const categoryLabel = computed(() => categories.find(c => c.slug === category.va
               :href="`tel:${provider.phone}`"
               class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 bg-emerald-500 text-white rounded-xl text-sm font-semibold hover:bg-emerald-600 transition"
             >
-              <UIcon name="i-lucide-phone" class="w-4 h-4" /> Call
+              <UIcon name="i-lucide-phone" class="w-4 h-4" /> {{ t('call') }}
             </a>
             <a
               :href="`https://wa.me/${provider.phone?.replace(/[^0-9]/g, '')}?text=Hi, I found you on JosMKT. I need your ${provider.service_name} service`"
               target="_blank"
               class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 bg-green-500 text-white rounded-xl text-sm font-semibold hover:bg-green-600 transition"
             >
-              <UIcon name="i-lucide-message-circle" class="w-4 h-4" /> WhatsApp
+              <UIcon name="i-lucide-message-circle" class="w-4 h-4" /> {{ t('whatsapp') }}
             </a>
           </div>
         </div>
@@ -187,9 +188,9 @@ const categoryLabel = computed(() => categories.find(c => c.slug === category.va
 
       <!-- CTA -->
       <div class="mt-12 text-center bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl p-8 text-white">
-        <h3 class="text-2xl font-bold mb-2">Are you a service provider?</h3>
-        <p class="text-emerald-100 mb-6">List your business and get discovered by thousands in Jos</p>
-        <UButton to="/become-seller" color="white" size="lg" class="font-bold">Register Your Business</UButton>
+        <h3 class="text-2xl font-bold mb-2">{{ t('areYouProvider') }}</h3>
+        <p class="text-emerald-100 mb-6">{{ t('listBusinessDesc') }}</p>
+        <UButton to="/become-seller" color="white" size="lg" class="font-bold">{{ t('registerBusiness') }}</UButton>
       </div>
     </div>
   </div>
