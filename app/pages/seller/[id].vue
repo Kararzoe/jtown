@@ -38,8 +38,8 @@ onMounted(async () => {
             </div>
             <p class="text-gray-600 mb-4">{{ seller.shop_description }}</p>
             <div class="flex gap-3">
-              <UButton color="success" icon="i-lucide-message-circle" @click="() => window.open(`https://wa.me/${seller.phone}`, '_blank')">Contact</UButton>
-              <UButton variant="outline" color="primary" icon="i-lucide-phone" @click="() => window.open(`tel:${seller.phone}`)">Call</UButton>
+              <UButton color="success" icon="i-lucide-message-circle" @click="navigateTo(`https://wa.me/${seller.phone}`, { external: true, open: { target: '_blank' } })">Contact</UButton>
+              <UButton variant="outline" color="primary" icon="i-lucide-phone" @click="navigateTo(`tel:${seller.phone}`, { external: true })">Call</UButton>
             </div>
           </div>
         </div>

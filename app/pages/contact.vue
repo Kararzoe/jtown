@@ -4,7 +4,7 @@ const sent = ref(false)
 
 const handleSubmit = () => {
   const text = `Name: ${form.name}\nEmail: ${form.email}\nMessage: ${form.message}`
-  window.open(`https://wa.me/2349043832380?text=${encodeURIComponent(text)}`, '_blank')
+  navigateTo(`https://wa.me/2349043832380?text=${encodeURIComponent(text)}`, { external: true, open: { target: '_blank' } })
   sent.value = true
 }
 </script>

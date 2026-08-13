@@ -91,10 +91,10 @@ const toggleFav = async () => {
             </div>
 
             <div class="flex gap-3">
-              <UButton color="success" size="lg" icon="i-lucide-message-circle" class="flex-1" @click="() => window.open(`https://wa.me/${product.seller?.phone}?text=Hi, I'm interested in ${product.title}`, '_blank')">
+              <UButton color="success" size="lg" icon="i-lucide-message-circle" class="flex-1" @click="navigateTo(`https://wa.me/${product.seller?.phone}?text=Hi, I'm interested in ${product.title}`, { external: true, open: { target: '_blank' } })">
                 WhatsApp Seller
               </UButton>
-              <UButton variant="outline" color="primary" size="lg" icon="i-lucide-phone" @click="() => window.open(`tel:${product.seller?.phone}`)" />
+              <UButton variant="outline" color="primary" size="lg" icon="i-lucide-phone" @click="navigateTo(`tel:${product.seller?.phone}`, { external: true })" />
             </div>
           </div>
         </div>

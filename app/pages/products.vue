@@ -34,8 +34,8 @@ onMounted(loadProducts)
       <!-- Filters -->
       <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm mb-6 flex flex-wrap gap-3">
         <UInput v-model="search" placeholder="Search products..." icon="i-lucide-search" class="flex-1 min-w-48" @keyup.enter="loadProducts" />
-        <USelect v-model="category" :options="['All', ...categories]" placeholder="Category" class="w-40" />
-        <USelect v-model="sortBy" :options="[{label:'Newest', value:'newest'},{label:'Price: Low', value:'price_low'},{label:'Price: High', value:'price_high'}]" class="w-40" />
+        <USelect v-model="category" :items="['All', ...categories]" placeholder="Category" class="w-40" />
+        <USelect v-model="sortBy" :items="[{label:'Newest', value:'newest'},{label:'Price: Low', value:'price_low'},{label:'Price: High', value:'price_high'}]" class="w-40" />
         <UButton color="primary" icon="i-lucide-search" @click="loadProducts">Search</UButton>
       </div>
 
