@@ -84,6 +84,27 @@ create table messages (
   created_at timestamptz default now()
 );
 
+-- Service Providers table
+create table service_providers (
+  id uuid default gen_random_uuid() primary key,
+  service_name text not null,
+  category text not null,
+  description text not null,
+  phone text not null,
+  location text not null,
+  experience text,
+  price_range text,
+  image text default '',
+  gallery text[] default '{}',
+  status text default 'pending',
+  created_at timestamptz default now()
+);
+
+alter table service_providers enable row level security;
+create policy "Public read approved providers" on service_providers for select using (status = 'approved');
+create policy "Anyone can apply" on service_providers for insert with check (true);
+create policy "Admin manages providers" on service_providers for all using (true);
+
 -- Auto create profile on signup
 create or replace function handle_new_user()
 returns trigger as $$

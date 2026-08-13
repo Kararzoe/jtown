@@ -48,42 +48,34 @@ const updateOrderStatus = async (id: string, status: string) => {
   toast.add({ title: 'Order updated', color: 'success' })
 }
 
-// Service providers from Render backend
+// Service providers from Supabase
 const serviceProviders = ref<any[]>([])
 const loadingServices = ref(false)
 
 const loadServiceProviders = async () => {
   loadingServices.value = true
-  try {
-    const data = await $fetch<any[]>('https://jos-backend.onrender.com/api/services/all')
-    serviceProviders.value = Array.isArray(data) ? data : []
-  } catch {
-    // fallback - try without auth since admin is checking
-    serviceProviders.value = []
-  }
+  const { data } = await supabase.from('service_providers').select('*').order('created_at', { ascending: false })
+  serviceProviders.value = data || []
   loadingServices.value = false
 }
 
 const updateServiceStatus = async (id: string, status: string) => {
-  try {
-    await $fetch(`https://jos-backend.onrender.com/api/services/${id}/status`, {
-      method: 'PATCH',
-      body: { status }
-    })
-    const s = serviceProviders.value.find(s => s._id === id)
+  const { error } = await supabase.from('service_providers').update({ status }).eq('id', id)
+  if (!error) {
+    const s = serviceProviders.value.find(s => s.id === id)
     if (s) s.status = status
     toast.add({ title: `Provider ${status}`, color: 'success' })
-  } catch {
+  } else {
     toast.add({ title: 'Failed to update', color: 'error' })
   }
 }
 
 const deleteServiceProvider = async (id: string) => {
-  try {
-    await $fetch(`https://jos-backend.onrender.com/api/services/${id}`, { method: 'DELETE' })
-    serviceProviders.value = serviceProviders.value.filter(s => s._id !== id)
+  const { error } = await supabase.from('service_providers').delete().eq('id', id)
+  if (!error) {
+    serviceProviders.value = serviceProviders.value.filter(s => s.id !== id)
     toast.add({ title: 'Provider deleted', color: 'success' })
-  } catch {
+  } else {
     toast.add({ title: 'Failed to delete', color: 'error' })
   }
 }
@@ -100,7 +92,7 @@ const tabs = [
 ]
 
 const CLOUDINARY = 'https://api.cloudinary.com/v1_1/dfye3j2bs/image/upload'
-const newProvider = reactive({ serviceName: '', category: '', description: '', phone: '', location: '', experience: '', priceRange: '', image: '', gallery: [] as string[] })
+const newProvider = reactive({ service_name: '', category: '', description: '', phone: '', location: '', experience: '', price_range: '', image: '', gallery: [] as string[] })
 const uploading = ref(false)
 
 const uploadImage = async (file: File): Promise<string> => {
@@ -132,21 +124,14 @@ const handleGalleryUpload = async (e: Event) => {
 }
 
 const submitProvider = async () => {
-  try {
-    const data = await $fetch<any>('https://jos-backend.onrender.com/api/services/apply-public', {
-      method: 'POST',
-      body: newProvider
-    })
-    if (data._id || data.success) {
-      toast.add({ title: 'Provider added!', color: 'success' })
-      Object.assign(newProvider, { serviceName: '', category: '', description: '', phone: '', location: '', experience: '', priceRange: '', image: '', gallery: [] })
-      tab.value = 'services'
-      loadServiceProviders()
-    } else {
-      toast.add({ title: data.message || 'Failed', color: 'error' })
-    }
-  } catch {
-    toast.add({ title: 'Network error', color: 'error' })
+  const { data, error } = await supabase.from('service_providers').insert([{ ...newProvider, status: 'approved' }]).select().single()
+  if (!error && data) {
+    toast.add({ title: 'Provider added!', color: 'success' })
+    Object.assign(newProvider, { service_name: '', category: '', description: '', phone: '', location: '', experience: '', price_range: '', image: '', gallery: [] })
+    tab.value = 'services'
+    loadServiceProviders()
+  } else {
+    toast.add({ title: 'Failed to add provider', color: 'error' })
   }
 }
 
@@ -285,21 +270,21 @@ const statCards = computed(() => [
           <p class="text-xs mt-1">Make sure the Render backend is running</p>
         </div>
         <div v-else class="space-y-3">
-          <div v-for="s in serviceProviders" :key="s._id" class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm flex items-center gap-4">
+          <div v-for="s in serviceProviders" :key="s.id" class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm flex items-center gap-4">
             <div class="w-12 h-12 rounded-full overflow-hidden bg-emerald-100 flex-shrink-0 flex items-center justify-center">
               <img v-if="s.image" :src="s.image" class="w-full h-full object-cover" />
-              <span v-else class="text-emerald-600 font-bold">{{ s.serviceName?.charAt(0) }}</span>
+              <span v-else class="text-emerald-600 font-bold">{{ s.service_name?.charAt(0) }}</span>
             </div>
             <div class="flex-1 min-w-0">
-              <p class="font-bold truncate">{{ s.serviceName }}</p>
+              <p class="font-bold truncate">{{ s.service_name }}</p>
               <p class="text-sm text-gray-500">{{ s.category }} · {{ s.location }}</p>
               <p class="text-xs text-gray-400">{{ s.phone }}</p>
             </div>
             <UBadge :color="s.status === 'approved' ? 'success' : s.status === 'rejected' ? 'error' : 'warning'" size="sm">{{ s.status }}</UBadge>
             <div class="flex gap-1">
-              <UButton v-if="s.status !== 'approved'" size="xs" color="success" @click="updateServiceStatus(s._id, 'approved')">Approve</UButton>
-              <UButton v-if="s.status !== 'rejected'" size="xs" color="warning" variant="outline" @click="updateServiceStatus(s._id, 'rejected')">Reject</UButton>
-              <UButton size="xs" color="error" variant="ghost" icon="i-lucide-trash" @click="deleteServiceProvider(s._id)" />
+              <UButton v-if="s.status !== 'approved'" size="xs" color="success" @click="updateServiceStatus(s.id, 'approved')">Approve</UButton>
+              <UButton v-if="s.status !== 'rejected'" size="xs" color="warning" variant="outline" @click="updateServiceStatus(s.id, 'rejected')">Reject</UButton>
+              <UButton size="xs" color="error" variant="ghost" icon="i-lucide-trash" @click="deleteServiceProvider(s.id)" />
             </div>
           </div>
         </div>
@@ -328,7 +313,7 @@ const statCards = computed(() => [
       <div v-else-if="tab === 'addProvider'" class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md max-w-2xl">
         <h3 class="font-black text-xl mb-6">Add Service Provider</h3>
         <form class="space-y-4" @submit.prevent="submitProvider">
-          <UInput v-model="newProvider.serviceName" required placeholder="Business / Service name" size="lg" />
+          <UInput v-model="newProvider.service_name" required placeholder="Business / Service name" size="lg" />
           <UTextarea v-model="newProvider.description" required placeholder="Description" :rows="3" />
           <div class="grid grid-cols-2 gap-4">
             <UInput v-model="newProvider.phone" required placeholder="Phone number" />
@@ -336,7 +321,7 @@ const statCards = computed(() => [
           </div>
           <div class="grid grid-cols-2 gap-4">
             <UInput v-model="newProvider.experience" placeholder="Experience (e.g. 5 years)" />
-            <UInput v-model="newProvider.priceRange" placeholder="Price range (e.g. ₦5k - ₦50k)" />
+            <UInput v-model="newProvider.price_range" placeholder="Price range (e.g. ₦5k - ₦50k)" />
           </div>
           <USelect
             v-model="newProvider.category"

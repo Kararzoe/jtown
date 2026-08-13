@@ -1,20 +1,20 @@
 <script setup lang="ts">
+const supabase = useSupabaseClient()
 const toast = useToast()
 const submitted = ref(false)
 const loading = ref(false)
 const uploading = ref(false)
 
-const API = 'https://jos-backend.onrender.com/api'
 const CLOUDINARY = 'https://api.cloudinary.com/v1_1/dfye3j2bs/image/upload'
 
 const form = reactive({
-  serviceName: '',
+  service_name: '',
   category: '',
   description: '',
   phone: '',
   location: '',
   experience: '',
-  priceRange: '',
+  price_range: '',
   image: '',
   gallery: [] as string[],
 })
@@ -60,18 +60,11 @@ const onGalleryChange = async (e: Event) => {
 
 const submit = async () => {
   loading.value = true
-  try {
-    const data: any = await $fetch(`${API}/services/apply-public`, {
-      method: 'POST',
-      body: form,
-    })
-    if (data._id || data.success) {
-      submitted.value = true
-    } else {
-      toast.add({ title: data.message || 'Failed to submit', color: 'error' })
-    }
-  } catch (e: any) {
-    toast.add({ title: 'Network error. Please try again.', color: 'error' })
+  const { error } = await supabase.from('service_providers').insert([{ ...form, status: 'pending' }])
+  if (error) {
+    toast.add({ title: 'Failed to submit. Please try again.', color: 'error' })
+  } else {
+    submitted.value = true
   }
   loading.value = false
 }
@@ -107,7 +100,7 @@ const submit = async () => {
         <form class="bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 shadow-lg space-y-5" @submit.prevent="submit">
 
           <UFormField label="Business / Service Name *">
-            <UInput v-model="form.serviceName" placeholder="e.g. Bright Plumbing Services" required class="w-full" />
+            <UInput v-model="form.service_name" placeholder="e.g. Bright Plumbing Services" required class="w-full" />
           </UFormField>
 
           <UFormField label="Category *">
@@ -144,7 +137,7 @@ const submit = async () => {
               <UInput v-model="form.experience" placeholder="e.g. 3 years" class="w-full" />
             </UFormField>
             <UFormField label="Price Range">
-              <UInput v-model="form.priceRange" placeholder="e.g. ₦5,000 - ₦50,000" class="w-full" />
+              <UInput v-model="form.price_range" placeholder="e.g. ₦5,000 - ₦50,000" class="w-full" />
             </UFormField>
           </div>
 

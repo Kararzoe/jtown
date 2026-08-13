@@ -1,11 +1,10 @@
 <script setup lang="ts">
+const supabase = useSupabaseClient()
 const route = useRoute()
 const router = useRouter()
 const category = ref((route.query.category as string) || '')
 const providers = ref<any[]>([])
 const loading = ref(false)
-
-const API = 'https://jos-backend.onrender.com/api'
 
 const categories = [
   { label: 'Plumbing', slug: 'plumbing' },
@@ -38,12 +37,12 @@ const categories = [
 const loadProviders = async () => {
   if (!category.value) return
   loading.value = true
-  try {
-    const data = await $fetch<any[]>(`${API}/services/category/${category.value}`)
-    providers.value = Array.isArray(data) ? data : []
-  } catch {
-    providers.value = []
-  }
+  const { data } = await supabase
+    .from('service_providers')
+    .select('*')
+    .eq('category', category.value)
+    .eq('status', 'approved')
+  providers.value = data || []
   loading.value = false
 }
 
@@ -131,11 +130,11 @@ const categoryLabel = computed(() => categories.find(c => c.slug === category.va
           <div class="flex items-start justify-between mb-3">
             <div class="flex items-center gap-3">
               <div class="w-12 h-12 rounded-full overflow-hidden bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center flex-shrink-0">
-                <img v-if="provider.image" :src="provider.image" :alt="provider.serviceName" class="w-full h-full object-cover" />
-                <span v-else class="text-emerald-600 font-bold text-lg">{{ provider.serviceName?.charAt(0) }}</span>
+                <img v-if="provider.image" :src="provider.image" :alt="provider.service_name" class="w-full h-full object-cover" />
+                <span v-else class="text-emerald-600 font-bold text-lg">{{ provider.service_name?.charAt(0) }}</span>
               </div>
               <div>
-                <h3 class="font-bold text-lg leading-tight">{{ provider.serviceName }}</h3>
+                <h3 class="font-bold text-lg leading-tight">{{ provider.service_name }}</h3>
                 <p class="text-sm text-gray-500">{{ provider.location }}</p>
               </div>
             </div>
@@ -153,9 +152,9 @@ const categoryLabel = computed(() => categories.find(c => c.slug === category.va
               <UIcon name="i-lucide-clock" class="w-4 h-4 text-emerald-500" />
               {{ provider.experience }} experience
             </div>
-            <div v-if="provider.priceRange" class="flex items-center gap-2">
+            <div v-if="provider.price_range" class="flex items-center gap-2">
               <span class="text-emerald-500 font-bold text-xs">₦</span>
-              {{ provider.priceRange }}
+              {{ provider.price_range }}
             </div>
             <div v-if="provider.rating > 0" class="flex items-center gap-2">
               <UIcon name="i-lucide-star" class="w-4 h-4 text-yellow-400" />
@@ -176,7 +175,7 @@ const categoryLabel = computed(() => categories.find(c => c.slug === category.va
               <UIcon name="i-lucide-phone" class="w-4 h-4" /> Call
             </a>
             <a
-              :href="`https://wa.me/${provider.phone?.replace(/[^0-9]/g, '')}?text=Hi, I found you on JosMKT. I need your ${provider.serviceName} service`"
+              :href="`https://wa.me/${provider.phone?.replace(/[^0-9]/g, '')}?text=Hi, I found you on JosMKT. I need your ${provider.service_name} service`"
               target="_blank"
               class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 bg-green-500 text-white rounded-xl text-sm font-semibold hover:bg-green-600 transition"
             >
