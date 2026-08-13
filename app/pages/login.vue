@@ -10,19 +10,13 @@ const emailSent = ref(false)
 
 const form = reactive({ email: '', password: '', name: '', phone: '' })
 
-// Redirect if already logged in
-watchEffect(() => {
-  if (user.value) router.push('/dashboard')
-})
-
 const submit = async () => {
   loading.value = true
   try {
     if (isLogin.value) {
       const { error } = await supabase.auth.signInWithPassword({ email: form.email, password: form.password })
       if (error) throw error
-      toast.add({ title: 'Welcome back!', color: 'success' })
-      router.push('/dashboard')
+      router.push('/')
     } else {
       const { error } = await supabase.auth.signUp({
         email: form.email,
