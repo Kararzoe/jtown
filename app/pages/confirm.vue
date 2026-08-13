@@ -7,6 +7,11 @@ const status = ref<'loading' | 'success' | 'error'>('loading')
 
 onMounted(() => {
   const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'PASSWORD_RECOVERY') {
+      subscription.unsubscribe()
+      router.push('/reset-password')
+      return
+    }
     if (event === 'SIGNED_IN' && session) {
       subscription.unsubscribe()
       status.value = 'success'
@@ -17,7 +22,6 @@ onMounted(() => {
 
   supabase.auth.getSession().then(({ data: { session } }) => {
     if (session) {
-      subscription.unsubscribe()
       status.value = 'success'
       toast.add({ title: 'Email verified! Welcome to JosMKT 🎉', color: 'success' })
       setTimeout(() => router.push('/dashboard'), 2000)
