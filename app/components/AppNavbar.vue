@@ -40,7 +40,8 @@ const navLinks = [
 
         <!-- Logo -->
         <NuxtLink to="/">
-          <img src="/josmkt-logo-2.png" alt="Jos Marketplace" class="h-8 md:h-10 w-auto" />
+          <img src="/josmkt-logo.png" alt="Jos Marketplace" class="h-8 md:h-10 w-auto dark:hidden" />
+          <img src="/josmkt-logo-2.png" alt="Jos Marketplace" class="h-8 md:h-10 w-auto hidden dark:block" />
         </NuxtLink>
 
         <!-- Desktop Nav -->
