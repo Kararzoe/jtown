@@ -77,15 +77,25 @@ onMounted(async () => {
   products.value = data || []
   loading.value = false
   setInterval(() => { currentBanner.value = (currentBanner.value + 1) % banners.length }, 4000)
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible')
+        observer.unobserve(e.target)
+      }
+    })
+  }, { threshold: 0.1 })
+  document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => observer.observe(el))
 })
 </script>
 
 <template>
   <div>
     <!-- Trending Banner -->
-    <div :class="`bg-gradient-to-r ${banners[currentBanner].bg} py-2.5 px-4 transition-all duration-500`">
+    <div :class="`bg-gradient-to-r ${banners[currentBanner].bg} py-2.5 px-4 transition-all duration-700`">
       <div class="max-w-7xl mx-auto flex items-center justify-center gap-3 text-white">
-        <UIcon name="i-lucide-sparkles" class="w-4 h-4 flex-shrink-0" />
+        <UIcon name="i-lucide-sparkles" class="w-4 h-4 flex-shrink-0 animate-spin-slow" />
         <p class="text-xs md:text-sm font-semibold text-center">{{ banners[currentBanner].text }}</p>
         <NuxtLink to="/become-seller" class="px-3 py-1 bg-white/20 backdrop-blur-sm text-white rounded-full font-medium hover:bg-white/30 text-xs border border-white/30 transition whitespace-nowrap">
           Get Started
@@ -100,42 +110,44 @@ onMounted(async () => {
       </video>
       <div class="absolute inset-0 bg-gradient-to-b from-gray-900/70 via-emerald-900/40 to-gray-900/80" />
 
+      <!-- Floating orbs -->
+      <div class="absolute top-20 left-10 w-32 h-32 bg-emerald-500/20 rounded-full blur-2xl animate-float" />
+      <div class="absolute bottom-20 right-10 w-48 h-48 bg-teal-500/15 rounded-full blur-3xl animate-float" style="animation-delay: 1.5s" />
+
       <div class="max-w-7xl mx-auto relative z-10 px-4 py-20 w-full">
         <div class="text-center">
-          <div class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/20 border border-emerald-500/30 rounded-full text-emerald-300 text-sm font-medium mb-8 backdrop-blur-sm">
+          <div class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/20 border border-emerald-500/30 rounded-full text-emerald-300 text-sm font-medium mb-8 backdrop-blur-sm animate-fade-up">
             <UIcon name="i-lucide-zap" class="w-4 h-4" />
             {{ t('tagline') }}
           </div>
 
-          <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
+          <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight animate-slide-up">
             {{ t('heroTitle1') }}
-            <span class="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent"> {{ t('heroHighlight1') }}</span>
+            <span class="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent animate-gradient"> {{ t('heroHighlight1') }}</span>
             <br />{{ t('heroTitle2') }}
             <span class="bg-gradient-to-r from-amber-400 to-orange-300 bg-clip-text text-transparent"> {{ t('heroHighlight2') }}</span>
           </h1>
 
-          <p class="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed">
+          <p class="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed animate-fade-up" style="animation-delay:0.3s">
             {{ t('heroDescription') }}
           </p>
 
-          <div class="max-w-2xl mx-auto mb-10">
-            <div class="relative">
-              <UInput
-                :placeholder="t('searchPlaceholder')"
-                size="xl"
-                icon="i-lucide-search"
-                class="w-full"
-                @keyup.enter="(e: any) => navigateTo(`/products?search=${e.target.value}`)"
-              />
-            </div>
+          <div class="max-w-2xl mx-auto mb-10 animate-fade-up" style="animation-delay:0.5s">
+            <UInput
+              :placeholder="t('searchPlaceholder')"
+              size="xl"
+              icon="i-lucide-search"
+              class="w-full"
+              @keyup.enter="(e: any) => navigateTo(`/products?search=${e.target.value}`)"
+            />
           </div>
 
-          <div class="flex flex-wrap justify-center gap-3">
+          <div class="flex flex-wrap justify-center gap-3 animate-fade-up" style="animation-delay:0.7s">
             <span class="text-gray-400 text-sm">{{ t('popular') }}:</span>
             <button
               v-for="tag in [t('plumbing'), t('electricians'), t('acRepair'), t('bakers')]"
               :key="tag"
-              class="px-5 py-2.5 bg-white/10 backdrop-blur-sm text-white rounded-full border border-white/20 hover:bg-emerald-500/20 hover:border-emerald-400/40 transition-all text-sm font-medium"
+              class="px-5 py-2.5 bg-white/10 backdrop-blur-sm text-white rounded-full border border-white/20 hover:bg-emerald-500/20 hover:border-emerald-400/40 hover:scale-105 transition-all text-sm font-medium"
               @click="navigateTo(`/services?category=${tag.toLowerCase()}`)"
             >
               {{ tag }}
@@ -151,7 +163,7 @@ onMounted(async () => {
       <div class="absolute bottom-0 right-0 w-72 h-72 bg-teal-300/20 rounded-full blur-3xl" />
 
       <div class="max-w-7xl mx-auto relative z-10">
-        <div class="text-center mb-14">
+        <div class="text-center mb-14 reveal">
           <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
             {{ t('ourServices') }}
           </div>
@@ -163,14 +175,15 @@ onMounted(async () => {
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
           <NuxtLink
-            v-for="cat in categories"
+            v-for="(cat, i) in categories"
             :key="cat.slug"
             :to="categoryHref(cat.slug)"
-            class="group bg-white dark:bg-gray-800 rounded-2xl p-5 md:p-7 shadow-sm hover:shadow-xl transition-all border border-gray-100 dark:border-gray-700 hover:border-emerald-200 dark:hover:border-emerald-700"
+            class="reveal-scale group bg-white dark:bg-gray-800 rounded-2xl p-5 md:p-7 shadow-sm hover:shadow-xl transition-all border border-gray-100 dark:border-gray-700 hover:border-emerald-200 dark:hover:border-emerald-700 hover:-translate-y-1"
+            :style="`transition-delay: ${(i % 8) * 0.05}s`"
           >
-            <div class="text-3xl md:text-4xl mx-auto mb-4 text-center group-hover:scale-110 transition-transform duration-300">{{ cat.icon }}</div>
+            <div class="text-3xl md:text-4xl mx-auto mb-4 text-center group-hover:scale-125 group-hover:rotate-6 transition-transform duration-300">{{ cat.icon }}</div>
             <h3 class="text-center font-semibold text-sm md:text-base text-gray-900 dark:text-white">{{ cat.label }}</h3>
-            <p class="text-center text-xs text-gray-400 mt-1 hidden md:block">Explore →</p>
+            <p class="text-center text-xs text-gray-400 mt-1 hidden md:block group-hover:text-emerald-500 transition-colors">Explore →</p>
           </NuxtLink>
         </div>
       </div>
@@ -179,7 +192,7 @@ onMounted(async () => {
     <!-- Featured Products -->
     <section class="py-16 px-4 bg-gray-50 dark:bg-gray-800">
       <div class="max-w-7xl mx-auto">
-        <div class="flex items-center justify-between mb-12">
+        <div class="flex items-center justify-between mb-12 reveal">
           <div>
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">{{ t('featuredListings') }}</h2>
             <p class="text-gray-600 dark:text-gray-400">{{ t('discoverServices') }}</p>
@@ -197,15 +210,22 @@ onMounted(async () => {
           </div>
         </div>
 
-        <div v-else-if="products.length === 0" class="text-center py-16">
-          <div class="text-6xl mb-4">🏪</div>
+        <div v-else-if="products.length === 0" class="text-center py-16 reveal">
+          <div class="text-6xl mb-4 animate-bounce">🏪</div>
           <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">{{ t('noListingsYet') }}</h3>
           <p class="text-gray-500 mb-6">{{ t('beFirstToList') }}</p>
           <UButton to="/upload-product" color="primary" size="lg">{{ t('listYourService') }}</UButton>
         </div>
 
         <div v-else class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-          <ProductCard v-for="product in products" :key="product.id" :product="product" />
+          <div
+            v-for="(product, i) in products"
+            :key="product.id"
+            class="reveal-scale"
+            :style="`transition-delay: ${i * 0.07}s`"
+          >
+            <ProductCard :product="product" />
+          </div>
         </div>
       </div>
     </section>
@@ -213,7 +233,7 @@ onMounted(async () => {
     <!-- How It Works -->
     <section class="py-20 px-4 bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
       <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-14">
+        <div class="text-center mb-14 reveal">
           <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
             {{ t('simpleProcess') }}
           </div>
@@ -222,12 +242,17 @@ onMounted(async () => {
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-          <div v-for="(step, i) in howItWorks" :key="i" class="relative text-center">
+          <div
+            v-for="(step, i) in howItWorks"
+            :key="i"
+            class="reveal relative text-center"
+            :style="`transition-delay: ${i * 0.15}s`"
+          >
             <div class="relative inline-block mb-4">
-              <div class="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg text-3xl">
+              <div class="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg text-3xl hover:scale-110 hover:rotate-3 transition-transform duration-300">
                 {{ step.icon }}
               </div>
-              <div class="absolute -top-2 -right-2 w-7 h-7 bg-gray-900 dark:bg-white rounded-full flex items-center justify-center text-white dark:text-gray-900 font-bold text-xs shadow-md">
+              <div class="absolute -top-2 -right-2 w-7 h-7 bg-gray-900 dark:bg-white rounded-full flex items-center justify-center text-white dark:text-gray-900 font-bold text-xs shadow-md animate-pulse-glow">
                 {{ i + 1 }}
               </div>
             </div>
@@ -241,13 +266,18 @@ onMounted(async () => {
     <!-- Trust Section -->
     <section class="py-16 px-4 bg-white dark:bg-gray-900">
       <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-12">
+        <div class="text-center mb-12 reveal">
           <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">{{ t('shopWithConfidence') }}</h2>
           <p class="text-gray-600 dark:text-gray-400">{{ t('safetyPriority') }}</p>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-          <div v-for="f in trust" :key="f.title" class="text-center p-4 md:p-6 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition">
-            <div class="w-12 h-12 md:w-16 md:h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
+          <div
+            v-for="(f, i) in trust"
+            :key="f.title"
+            class="reveal-scale text-center p-4 md:p-6 rounded-xl hover:bg-emerald-50 dark:hover:bg-emerald-900/10 transition-all hover:-translate-y-1 cursor-default"
+            :style="`transition-delay: ${i * 0.1}s`"
+          >
+            <div class="w-12 h-12 md:w-16 md:h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4 hover:scale-110 transition-transform">
               <UIcon :name="f.icon" class="w-6 h-6 md:w-8 md:h-8 text-emerald-600" />
             </div>
             <h3 class="font-bold text-sm md:text-lg mb-2 text-gray-900 dark:text-white">{{ f.title }}</h3>
@@ -266,7 +296,7 @@ onMounted(async () => {
     <!-- FAQ -->
     <section class="py-20 px-4 bg-white dark:bg-gray-900">
       <div class="max-w-3xl mx-auto">
-        <div class="text-center mb-14">
+        <div class="text-center mb-14 reveal">
           <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
             {{ t('faqTitle') }}
           </div>
@@ -278,32 +308,41 @@ onMounted(async () => {
           <div
             v-for="(faq, i) in faqs"
             :key="i"
-            class="border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden hover:border-emerald-200 dark:hover:border-emerald-700 transition-colors"
+            class="reveal border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden hover:border-emerald-200 dark:hover:border-emerald-700 transition-all"
+            :style="`transition-delay: ${i * 0.08}s`"
           >
             <button
               class="w-full px-6 py-4 flex items-center justify-between hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10 transition"
               @click="openFaq = openFaq === i ? null : i"
             >
               <span class="font-semibold text-left text-gray-900 dark:text-white text-sm md:text-base">{{ faq.q }}</span>
-              <div :class="`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors ${openFaq === i ? 'bg-emerald-500 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-400'}`">
+              <div :class="`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300 ${openFaq === i ? 'bg-emerald-500 text-white rotate-180' : 'bg-gray-100 dark:bg-gray-800 text-gray-400'}`">
                 <UIcon :name="openFaq === i ? 'i-lucide-minus' : 'i-lucide-plus'" class="w-4 h-4" />
               </div>
             </button>
-            <div v-if="openFaq === i" class="px-6 pb-4 text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-              {{ faq.a }}
-            </div>
+            <Transition name="faq">
+              <div v-if="openFaq === i" class="px-6 pb-4 text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                {{ faq.a }}
+              </div>
+            </Transition>
           </div>
         </div>
       </div>
     </section>
 
     <!-- CTA -->
-    <section class="py-16 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-center">
-      <div class="max-w-3xl mx-auto">
+    <section class="py-16 px-4 bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-600 animate-gradient text-white text-center">
+      <div class="max-w-3xl mx-auto reveal">
         <h2 class="text-3xl md:text-4xl font-bold mb-4">{{ t('readyToGrow') }}</h2>
         <p class="text-emerald-100 mb-8 text-lg">{{ t('joinThousands') }}</p>
-        <UButton to="/become-seller" size="xl" color="white" class="font-bold">{{ t('getStartedFree') }}</UButton>
+        <UButton to="/become-seller" size="xl" color="white" class="font-bold hover:scale-105 transition-transform">{{ t('getStartedFree') }}</UButton>
       </div>
     </section>
   </div>
 </template>
+
+<style scoped>
+.faq-enter-active { transition: all 0.3s ease; }
+.faq-leave-active { transition: all 0.2s ease; }
+.faq-enter-from, .faq-leave-to { opacity: 0; transform: translateY(-8px); }
+</style>
