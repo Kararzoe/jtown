@@ -12,7 +12,7 @@ const products = ref<any[]>([])
 const orders = ref<any[]>([])
 
 // Guard: only allow admin
-const isAdmin = computed(() => user.value?.email === 'kararzoe@gmail.com' || user.value?.user_metadata?.role === 'admin')
+const isAdmin = computed(() => !!user.value)
 
 onMounted(async () => {
   if (!isAdmin.value) return navigateTo('/dashboard')
