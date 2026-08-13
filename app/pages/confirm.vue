@@ -7,11 +7,6 @@ const status = ref<'loading' | 'success' | 'error'>('loading')
 
 onMounted(() => {
   const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-    if (event === 'PASSWORD_RECOVERY') {
-      subscription.unsubscribe()
-      router.push('/reset-password')
-      return
-    }
     if (event === 'SIGNED_IN' && session) {
       subscription.unsubscribe()
       status.value = 'success'

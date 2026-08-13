@@ -9,25 +9,37 @@ const loading = ref(false)
 const ready = ref(false)
 const expired = ref(false)
 
-onMounted(() => {
-  // Check if we already have a session (came from confirm page)
-  supabase.auth.getSession().then(({ data: { session } }) => {
-    if (session) {
-      ready.value = true
-      return
-    }
-    // Otherwise wait for PASSWORD_RECOVERY event from the email link hash
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'PASSWORD_RECOVERY' || (event === 'SIGNED_IN' && session)) {
-        ready.value = true
-        subscription.unsubscribe()
-      }
+onMounted(async () => {
+  // Parse the hash from the URL — Supabase appends #access_token=...&type=recovery
+  const hash = window.location.hash.substring(1)
+  const params = new URLSearchParams(hash)
+  const accessToken = params.get('access_token')
+  const refreshToken = params.get('refresh_token')
+  const type = params.get('type')
+
+  if (accessToken && type === 'recovery') {
+    // Set the session manually from the tokens in the URL
+    const { error } = await supabase.auth.setSession({
+      access_token: accessToken,
+      refresh_token: refreshToken || ''
     })
-    // If nothing happens in 8 seconds, link is expired
-    setTimeout(() => {
-      if (!ready.value) expired.value = true
-    }, 8000)
-  })
+    if (error) {
+      expired.value = true
+    } else {
+      ready.value = true
+      // Clean the hash from the URL
+      window.history.replaceState(null, '', window.location.pathname)
+    }
+    return
+  }
+
+  // No token in URL — check if already has a valid session
+  const { data: { session } } = await supabase.auth.getSession()
+  if (session) {
+    ready.value = true
+  } else {
+    expired.value = true
+  }
 })
 
 const submit = async () => {
