@@ -145,19 +145,6 @@ onMounted(async () => {
       </div>
     </section>
 
-    <!-- Stats -->
-    <section class="py-16 bg-emerald-600">
-      <div class="max-w-7xl mx-auto px-4">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-          <div v-for="stat in stats" :key="stat.label" class="text-center text-white">
-            <UIcon :name="stat.icon" class="w-8 h-8 mx-auto mb-3 text-emerald-200" />
-            <p class="text-3xl font-black mb-1">{{ stat.value }}</p>
-            <p class="text-emerald-200 text-sm">{{ stat.label }}</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!-- Categories -->
     <section id="services" class="py-20 px-4 bg-white dark:bg-gray-900 relative overflow-hidden">
       <div class="absolute top-0 left-0 w-72 h-72 bg-emerald-300/20 rounded-full blur-3xl" />

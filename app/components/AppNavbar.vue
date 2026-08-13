@@ -39,9 +39,8 @@ const navLinks = [
       <div class="flex items-center justify-between h-14 md:h-16">
 
         <!-- Logo -->
-        <NuxtLink to="/" class="flex flex-col">
-          <span class="text-xl md:text-2xl font-black gradient-text leading-none">Jos Marketplace</span>
-          <span class="text-xs text-gray-400 hidden md:block">Powered by Plero Digitals</span>
+        <NuxtLink to="/">
+          <img src="/josmkt-logo-2.png" alt="Jos Marketplace" class="h-8 md:h-10 w-auto" />
         </NuxtLink>
 
         <!-- Desktop Nav -->
