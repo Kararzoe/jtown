@@ -95,7 +95,68 @@ const deleteServiceProvider = async (id: string) => {
   }
 }
 
-watch(tab, (val) => { if (val === 'services') loadServiceProviders() })
+watch(tab, (val) => {
+  if (val === 'services') loadServiceProviders()
+  if (val === 'messages') loadConversations()
+})
+
+// ── Support Messages ───────────────────────────────────────────
+const conversations = ref<any[]>([])
+const selectedUser = ref<any>(null)
+const threadMessages = ref<any[]>([])
+const adminReply = ref('')
+const loadingConvos = ref(false)
+const threadEnd = ref<HTMLElement | null>(null)
+
+const loadConversations = async () => {
+  loadingConvos.value = true
+  const { data } = await supabase
+    .from('support_messages')
+    .select('user_id, user_name, user_email, created_at, content, read, is_admin')
+    .order('created_at', { ascending: false })
+  // group by user_id, keep latest message per user
+  const map = new Map<string, any>()
+  for (const msg of (data || [])) {
+    if (!map.has(msg.user_id)) map.set(msg.user_id, { ...msg, unread: 0 })
+    if (!msg.read && !msg.is_admin) map.get(msg.user_id).unread++
+  }
+  conversations.value = Array.from(map.values())
+  loadingConvos.value = false
+}
+
+const openThread = async (convo: any) => {
+  selectedUser.value = convo
+  const { data } = await supabase
+    .from('support_messages')
+    .select('*')
+    .eq('user_id', convo.user_id)
+    .order('created_at', { ascending: true })
+  threadMessages.value = data || []
+  nextTick(() => threadEnd.value?.scrollIntoView({ behavior: 'smooth' }))
+  // mark as read
+  await supabase.from('support_messages').update({ read: true }).eq('user_id', convo.user_id).eq('is_admin', false)
+  convo.unread = 0
+  // realtime
+  supabase.channel(`admin-support:${convo.user_id}`)
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'support_messages', filter: `user_id=eq.${convo.user_id}` }, (payload) => {
+      threadMessages.value.push(payload.new)
+      nextTick(() => threadEnd.value?.scrollIntoView({ behavior: 'smooth' }))
+    }).subscribe()
+}
+
+const sendAdminReply = async () => {
+  if (!adminReply.value.trim() || !selectedUser.value) return
+  const content = adminReply.value.trim()
+  adminReply.value = ''
+  await supabase.from('support_messages').insert({
+    user_id: selectedUser.value.user_id,
+    user_email: selectedUser.value.user_email,
+    user_name: selectedUser.value.user_name,
+    content,
+    is_admin: true,
+    read: false
+  })
+}
 
 const tabs = [
   { label: 'Overview', value: 'overview', icon: 'i-lucide-layout-dashboard' },
@@ -103,6 +164,7 @@ const tabs = [
   { label: 'Products', value: 'products', icon: 'i-lucide-package' },
   { label: 'Orders', value: 'orders', icon: 'i-lucide-shopping-bag' },
   { label: 'Service Providers', value: 'services', icon: 'i-lucide-wrench' },
+  { label: 'Messages', value: 'messages', icon: 'i-lucide-message-square' },
   { label: '+ Add Provider', value: 'addProvider', icon: 'i-lucide-plus-circle' },
 ]
 
@@ -371,6 +433,97 @@ const statCards = computed(() => [
           />
         </div>
       </div>
+      <!-- Messages Tab -->
+      <div v-else-if="tab === 'messages'" class="bg-white dark:bg-gray-800 rounded-2xl shadow-md overflow-hidden" style="height: 68vh">
+        <div class="flex h-full">
+          <!-- Conversation List -->
+          <div class="w-full md:w-2/5 border-r border-gray-100 dark:border-gray-700 overflow-y-auto">
+            <div class="p-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+              <h3 class="font-bold text-gray-900 dark:text-white">Support Inbox</h3>
+              <UButton icon="i-lucide-refresh-cw" size="xs" variant="ghost" @click="loadConversations" />
+            </div>
+            <div v-if="loadingConvos" class="p-4 space-y-3">
+              <div v-for="i in 4" :key="i" class="skeleton h-16 rounded-xl" />
+            </div>
+            <div v-else-if="conversations.length === 0" class="p-8 text-center text-gray-400">
+              <UIcon name="i-lucide-inbox" class="w-10 h-10 mx-auto mb-2 opacity-40" />
+              <p class="text-sm">No messages yet</p>
+            </div>
+            <button
+              v-for="convo in conversations"
+              :key="convo.user_id"
+              class="w-full p-4 border-b border-gray-50 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition text-left"
+              :class="selectedUser?.user_id === convo.user_id ? 'bg-emerald-50 dark:bg-emerald-900/20 border-l-2 border-l-emerald-500' : ''"
+              @click="openThread(convo)"
+            >
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center font-bold text-emerald-600 flex-shrink-0 relative">
+                  {{ convo.user_name?.charAt(0)?.toUpperCase() || '?' }}
+                  <span v-if="convo.unread > 0" class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white text-xs flex items-center justify-center">{{ convo.unread }}</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="font-semibold text-sm text-gray-900 dark:text-white truncate">{{ convo.user_name || convo.user_email }}</p>
+                  <p class="text-xs text-gray-400 truncate">{{ convo.content }}</p>
+                </div>
+              </div>
+            </button>
+          </div>
+
+          <!-- Thread -->
+          <div class="hidden md:flex flex-1 flex-col">
+            <div v-if="!selectedUser" class="flex-1 flex items-center justify-center">
+              <div class="text-center text-gray-400">
+                <UIcon name="i-lucide-message-square" class="w-12 h-12 mx-auto mb-3 opacity-30" />
+                <p class="text-sm">Select a conversation to reply</p>
+              </div>
+            </div>
+            <template v-else>
+              <div class="p-4 border-b border-gray-100 dark:border-gray-700 flex items-center gap-3">
+                <div class="w-9 h-9 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center font-bold text-emerald-600">
+                  {{ selectedUser.user_name?.charAt(0)?.toUpperCase() || '?' }}
+                </div>
+                <div>
+                  <p class="font-bold text-sm text-gray-900 dark:text-white">{{ selectedUser.user_name }}</p>
+                  <p class="text-xs text-gray-400">{{ selectedUser.user_email }}</p>
+                </div>
+              </div>
+              <div class="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+                <div v-for="msg in threadMessages" :key="msg.id" class="flex" :class="msg.is_admin ? 'justify-end' : 'justify-start'">
+                  <div class="flex items-end gap-2 max-w-sm">
+                    <div v-if="!msg.is_admin" class="w-7 h-7 bg-gray-200 dark:bg-gray-600 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mb-1">
+                      {{ selectedUser.user_name?.charAt(0)?.toUpperCase() }}
+                    </div>
+                    <div>
+                      <div class="px-4 py-2.5 rounded-2xl text-sm" :class="msg.is_admin ? 'bg-emerald-500 text-white rounded-tr-sm' : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-tl-sm'">
+                        {{ msg.content }}
+                      </div>
+                      <p class="text-xs text-gray-400 mt-1" :class="msg.is_admin ? 'text-right' : 'text-left'">
+                        {{ new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div ref="threadEnd" />
+              </div>
+              <div class="p-4 border-t border-gray-100 dark:border-gray-700">
+                <div class="flex gap-2">
+                  <input
+                    v-model="adminReply"
+                    type="text"
+                    placeholder="Reply as admin..."
+                    class="flex-1 px-4 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm focus:outline-none focus:border-emerald-400 transition"
+                    @keyup.enter="sendAdminReply"
+                  />
+                  <button class="w-10 h-10 bg-emerald-500 hover:bg-emerald-600 rounded-xl flex items-center justify-center transition" @click="sendAdminReply">
+                    <UIcon name="i-lucide-send" class="w-4 h-4 text-white" />
+                  </button>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+
       <!-- Add Provider Tab -->
       <div v-else-if="tab === 'addProvider'" class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md max-w-2xl">
         <h3 class="font-black text-xl mb-6">Add Service Provider</h3>
