@@ -304,21 +304,49 @@ const statCards = computed(() => [
           <p class="text-xs mt-1">Make sure the Render backend is running</p>
         </div>
         <div v-else class="space-y-3">
-          <div v-for="s in serviceProviders" :key="s.id" class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm flex items-center gap-4">
-            <div class="w-12 h-12 rounded-full overflow-hidden bg-emerald-100 flex-shrink-0 flex items-center justify-center">
-              <img v-if="s.image" :src="s.image" class="w-full h-full object-cover" />
-              <span v-else class="text-emerald-600 font-bold">{{ s.service_name?.charAt(0) }}</span>
+          <div v-for="s in serviceProviders" :key="s.id" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+            <div class="p-4 flex items-center gap-4">
+              <div class="w-12 h-12 rounded-full overflow-hidden bg-emerald-100 flex-shrink-0 flex items-center justify-center">
+                <img v-if="s.image" :src="s.image" class="w-full h-full object-cover" />
+                <span v-else class="text-emerald-600 font-bold">{{ s.service_name?.charAt(0) }}</span>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="font-bold truncate">{{ s.service_name }}</p>
+                <p class="text-sm text-gray-500">{{ s.category }} · {{ s.location }}</p>
+                <p class="text-xs text-gray-400">{{ s.phone }}</p>
+              </div>
+              <UBadge :color="s.status === 'approved' ? 'success' : s.status === 'rejected' ? 'error' : 'warning'" size="sm">{{ s.status }}</UBadge>
+              <div class="flex gap-1">
+                <UButton v-if="s.status !== 'approved'" size="xs" color="success" @click="updateServiceStatus(s.id, 'approved')">Approve</UButton>
+                <UButton v-if="s.status !== 'rejected'" size="xs" color="warning" variant="outline" @click="updateServiceStatus(s.id, 'rejected')">Reject</UButton>
+                <UButton size="xs" color="error" variant="ghost" icon="i-lucide-trash" @click="deleteServiceProvider(s.id)" />
+              </div>
             </div>
-            <div class="flex-1 min-w-0">
-              <p class="font-bold truncate">{{ s.service_name }}</p>
-              <p class="text-sm text-gray-500">{{ s.category }} · {{ s.location }}</p>
-              <p class="text-xs text-gray-400">{{ s.phone }}</p>
+            <!-- Verification Documents -->
+            <div v-if="s.id_image || s.selfie_image" class="px-4 pb-4 border-t border-gray-100 dark:border-gray-700 pt-3">
+              <p class="text-xs font-semibold text-gray-500 mb-2 flex items-center gap-1">
+                <UIcon name="i-lucide-shield-check" class="w-3.5 h-3.5 text-amber-500" /> Verification Documents
+              </p>
+              <div class="flex gap-3">
+                <div v-if="s.id_image">
+                  <p class="text-xs text-gray-400 mb-1">Government ID</p>
+                  <a :href="s.id_image" target="_blank">
+                    <img :src="s.id_image" class="w-28 h-20 object-cover rounded-lg border border-gray-200 dark:border-gray-700 hover:opacity-80 transition" />
+                  </a>
+                </div>
+                <div v-if="s.selfie_image">
+                  <p class="text-xs text-gray-400 mb-1">Selfie with ID</p>
+                  <a :href="s.selfie_image" target="_blank">
+                    <img :src="s.selfie_image" class="w-28 h-20 object-cover rounded-lg border border-gray-200 dark:border-gray-700 hover:opacity-80 transition" />
+                  </a>
+                </div>
+                <div v-if="!s.id_image && !s.selfie_image" class="flex items-center gap-1.5 text-xs text-red-400">
+                  <UIcon name="i-lucide-alert-triangle" class="w-3.5 h-3.5" /> No verification documents submitted
+                </div>
+              </div>
             </div>
-            <UBadge :color="s.status === 'approved' ? 'success' : s.status === 'rejected' ? 'error' : 'warning'" size="sm">{{ s.status }}</UBadge>
-            <div class="flex gap-1">
-              <UButton v-if="s.status !== 'approved'" size="xs" color="success" @click="updateServiceStatus(s.id, 'approved')">Approve</UButton>
-              <UButton v-if="s.status !== 'rejected'" size="xs" color="warning" variant="outline" @click="updateServiceStatus(s.id, 'rejected')">Reject</UButton>
-              <UButton size="xs" color="error" variant="ghost" icon="i-lucide-trash" @click="deleteServiceProvider(s.id)" />
+            <div v-else class="px-4 pb-3 flex items-center gap-1.5 text-xs text-red-400">
+              <UIcon name="i-lucide-alert-triangle" class="w-3.5 h-3.5" /> No verification documents submitted
             </div>
           </div>
         </div>

@@ -17,6 +17,8 @@ const form = reactive({
   price_range: '',
   image: '',
   gallery: [] as string[],
+  id_image: '',
+  selfie_image: '',
 })
 
 const categories = [
@@ -58,7 +60,29 @@ const onGalleryChange = async (e: Event) => {
   uploading.value = false
 }
 
+const uploadingId = ref(false)
+
+const onIdChange = async (e: Event) => {
+  const file = (e.target as HTMLInputElement).files?.[0]
+  if (!file) return
+  uploadingId.value = true
+  form.id_image = await uploadImage(file)
+  uploadingId.value = false
+}
+
+const onSelfieChange = async (e: Event) => {
+  const file = (e.target as HTMLInputElement).files?.[0]
+  if (!file) return
+  uploadingId.value = true
+  form.selfie_image = await uploadImage(file)
+  uploadingId.value = false
+}
+
 const submit = async () => {
+  if (!form.id_image || !form.selfie_image) {
+    toast.add({ title: 'Please upload your ID and a selfie for verification', color: 'error' })
+    return
+  }
   loading.value = true
   const { error } = await supabase.from('service_providers').insert([{ ...form, status: 'pending' }])
   if (error) {
@@ -156,7 +180,71 @@ const submit = async () => {
             </div>
           </UFormField>
 
-          <UButton type="submit" size="xl" block :loading="loading || uploading" class="bg-gradient-to-r from-emerald-500 to-teal-500 font-bold text-lg">
+          <!-- Verification Section -->
+          <div class="rounded-2xl border-2 border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 p-5">
+            <div class="flex items-center gap-2 mb-1">
+              <UIcon name="i-lucide-shield-check" class="w-5 h-5 text-amber-600" />
+              <h3 class="font-bold text-amber-800 dark:text-amber-300">Identity Verification (Required)</h3>
+            </div>
+            <p class="text-xs text-amber-700 dark:text-amber-400 mb-4">To protect customers from scams, we verify every service provider before approval. Your documents are kept private and only seen by our admin team.</p>
+
+            <div class="space-y-4">
+              <!-- Government ID -->
+              <div>
+                <p class="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-1">Government-issued ID <span class="text-red-500">*</span></p>
+                <p class="text-xs text-gray-500 mb-2">NIN slip, Voter's card, Driver's license, International passport, or Student ID</p>
+                <label class="flex items-center gap-3 px-4 py-3 border-2 border-dashed rounded-xl cursor-pointer transition"
+                  :class="form.id_image ? 'border-emerald-400 bg-emerald-50 dark:bg-emerald-900/20' : 'border-gray-300 dark:border-gray-600 hover:border-amber-400'">
+                  <input type="file" accept="image/*" class="hidden" @change="onIdChange" />
+                  <div v-if="form.id_image" class="flex items-center gap-3 w-full">
+                    <img :src="form.id_image" class="w-14 h-14 object-cover rounded-lg flex-shrink-0" />
+                    <div>
+                      <p class="text-sm font-semibold text-emerald-600">ID uploaded ✓</p>
+                      <p class="text-xs text-gray-400">Tap to change</p>
+                    </div>
+                  </div>
+                  <div v-else class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+                      <UIcon name="i-lucide-id-card" class="w-5 h-5 text-gray-400" />
+                    </div>
+                    <div>
+                      <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Upload your ID</p>
+                      <p class="text-xs text-gray-400">JPG, PNG — clear photo required</p>
+                    </div>
+                  </div>
+                </label>
+              </div>
+
+              <!-- Selfie -->
+              <div>
+                <p class="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-1">Selfie holding your ID <span class="text-red-500">*</span></p>
+                <p class="text-xs text-gray-500 mb-2">Take a clear photo of yourself holding the same ID document</p>
+                <label class="flex items-center gap-3 px-4 py-3 border-2 border-dashed rounded-xl cursor-pointer transition"
+                  :class="form.selfie_image ? 'border-emerald-400 bg-emerald-50 dark:bg-emerald-900/20' : 'border-gray-300 dark:border-gray-600 hover:border-amber-400'">
+                  <input type="file" accept="image/*" capture="user" class="hidden" @change="onSelfieChange" />
+                  <div v-if="form.selfie_image" class="flex items-center gap-3 w-full">
+                    <img :src="form.selfie_image" class="w-14 h-14 object-cover rounded-lg flex-shrink-0" />
+                    <div>
+                      <p class="text-sm font-semibold text-emerald-600">Selfie uploaded ✓</p>
+                      <p class="text-xs text-gray-400">Tap to change</p>
+                    </div>
+                  </div>
+                  <div v-else class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+                      <UIcon name="i-lucide-camera" class="w-5 h-5 text-gray-400" />
+                    </div>
+                    <div>
+                      <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Take / upload selfie with ID</p>
+                      <p class="text-xs text-gray-400">Face must be clearly visible</p>
+                    </div>
+                  </div>
+                </label>
+              </div>
+            </div>
+            <p v-if="uploadingId" class="text-xs text-emerald-500 mt-2">Uploading...</p>
+          </div>
+
+          <UButton type="submit" size="xl" block :loading="loading || uploading || uploadingId" class="bg-gradient-to-r from-emerald-500 to-teal-500 font-bold text-lg">
             <UIcon name="i-lucide-send" class="w-5 h-5 mr-2" />
             {{ loading ? 'Submitting...' : 'Submit Application' }}
           </UButton>

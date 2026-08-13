@@ -15,7 +15,12 @@ const form = reactive({
   bio: '',
   avatar_url: '',
   whatsapp: '',
+  service_images: [] as string[],
 })
+
+const serviceImageFiles = ref<File[]>([])
+const serviceImagePreviews = ref<string[]>([])
+const uploadingService = ref(false)
 
 onMounted(async () => {
   const { data } = await supabase.from('profiles').select('*').eq('id', user.value?.id).single()
@@ -30,6 +35,26 @@ const onFileChange = (e: Event) => {
   avatarPreview.value = URL.createObjectURL(file)
 }
 
+const onServiceImagesChange = (e: Event) => {
+  const selected = Array.from((e.target as HTMLInputElement).files || [])
+  if (serviceImageFiles.value.length + selected.length > 6) {
+    toast.add({ title: 'Max 6 service images', color: 'error' })
+    return
+  }
+  serviceImageFiles.value = [...serviceImageFiles.value, ...selected]
+  selected.forEach(f => {
+    const reader = new FileReader()
+    reader.onloadend = () => serviceImagePreviews.value.push(reader.result as string)
+    reader.readAsDataURL(f)
+  })
+}
+
+const removeServiceImage = (i: number) => {
+  serviceImageFiles.value.splice(i, 1)
+  serviceImagePreviews.value.splice(i, 1)
+  form.service_images.splice(i, 1)
+}
+
 const save = async () => {
   loading.value = true
   try {
@@ -42,6 +67,22 @@ const save = async () => {
       const { data: { publicUrl } } = supabase.storage.from('products').getPublicUrl(path)
       form.avatar_url = publicUrl
       uploading.value = false
+    }
+    if (serviceImageFiles.value.length) {
+      uploadingService.value = true
+      const urls: string[] = []
+      for (const file of serviceImageFiles.value) {
+        const ext = file.name.split('.').pop()
+        const path = `service-images/${user.value?.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+        const { error } = await supabase.storage.from('products').upload(path, file, { upsert: true })
+        if (!error) {
+          const { data: { publicUrl } } = supabase.storage.from('products').getPublicUrl(path)
+          urls.push(publicUrl)
+        }
+      }
+      form.service_images = [...(form.service_images || []), ...urls]
+      serviceImageFiles.value = []
+      uploadingService.value = false
     }
     const { error } = await supabase.from('profiles').upsert({ id: user.value?.id, ...form, updated_at: new Date().toISOString() })
     if (error) throw error
@@ -96,6 +137,29 @@ const save = async () => {
           <UFormField label="Bio">
             <UTextarea v-model="form.bio" placeholder="Tell buyers about yourself..." :rows="3" class="w-full" />
           </UFormField>
+
+          <!-- Service Images -->
+          <div class="pt-2">
+            <div class="flex items-center gap-2 mb-3">
+              <UIcon name="i-lucide-image" class="w-4 h-4 text-emerald-500" />
+              <p class="font-semibold text-gray-800 dark:text-gray-200">Service / Work Images</p>
+              <span class="text-xs text-gray-400">(Max 6 — helps build trust with customers)</span>
+            </div>
+            <div class="grid grid-cols-3 gap-2 mb-3">
+              <div v-for="(img, i) in (serviceImagePreviews.length ? serviceImagePreviews : form.service_images)" :key="i" class="relative aspect-square">
+                <img :src="img" class="w-full h-full object-cover rounded-xl border border-gray-200 dark:border-gray-700" />
+                <button type="button" class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center" @click="removeServiceImage(i)">
+                  <UIcon name="i-lucide-x" class="w-3 h-3 text-white" />
+                </button>
+              </div>
+              <label v-if="(form.service_images?.length || 0) + serviceImageFiles.length < 6" class="aspect-square border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-emerald-400 transition">
+                <input type="file" accept="image/*" multiple class="hidden" @change="onServiceImagesChange" />
+                <UIcon name="i-lucide-plus" class="w-6 h-6 text-gray-400" />
+                <span class="text-xs text-gray-400 mt-1">Add photo</span>
+              </label>
+            </div>
+            <p v-if="uploadingService" class="text-xs text-emerald-500">Uploading images...</p>
+          </div>
 
           <div class="pt-2">
             <UButton type="submit" color="primary" size="lg" block :loading="loading || uploading">
