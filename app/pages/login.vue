@@ -29,7 +29,7 @@ const submit = async () => {
         password: form.password,
         options: {
           data: { full_name: form.name, phone: form.phone },
-          emailRedirectTo: `${window.location.origin}/confirm`
+          emailRedirectTo: `${useRequestURL().origin}/confirm`
         }
       })
       if (error) throw error

@@ -39,7 +39,7 @@ onMounted(async () => {
             </div>
             <p class="text-xs text-gray-400 mt-1">{{ new Date(order.created_at).toLocaleDateString() }}</p>
           </div>
-          <UButton icon="i-lucide-message-circle" color="success" size="sm" @click="() => window.open(`https://wa.me/${order.seller?.phone}`, '_blank')" />
+          <UButton icon="i-lucide-message-circle" color="success" size="sm" @click="() => navigateTo(`https://wa.me/${order.seller?.phone}`, { external: true, open: { target: '_blank' } })" />
         </div>
       </div>
     </div>

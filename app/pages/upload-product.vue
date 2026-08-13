@@ -104,15 +104,15 @@ const submit = async () => {
 
           <div class="grid grid-cols-2 gap-4">
             <UFormField label="Category">
-              <USelect v-model="form.category" :options="categories" size="lg" class="w-full" />
+              <USelect v-model="form.category" :items="categories" size="lg" class="w-full" />
             </UFormField>
             <UFormField label="Condition">
-              <USelect v-model="form.condition" :options="['new','used','refurbished']" size="lg" class="w-full" />
+              <USelect v-model="form.condition" :items="['new','used','refurbished']" size="lg" class="w-full" />
             </UFormField>
           </div>
 
           <UFormField label="Location">
-            <USelect v-model="form.location" :options="locations" size="lg" class="w-full" />
+            <USelect v-model="form.location" :items="locations" size="lg" class="w-full" />
           </UFormField>
 
           <UFormField label="Tags (comma separated)">

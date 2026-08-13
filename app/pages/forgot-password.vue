@@ -9,7 +9,7 @@ const sent = ref(false)
 const submit = async () => {
   loading.value = true
   const { error } = await supabase.auth.resetPasswordForEmail(email.value, {
-    redirectTo: `${window.location.origin}/reset-password`
+    redirectTo: `${useRequestURL().origin}/reset-password`
   })
   if (error) {
     toast.add({ title: error.message, color: 'error' })

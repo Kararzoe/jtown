@@ -43,7 +43,7 @@ const toggleFav = async () => {
           icon="i-lucide-message-circle"
           color="success"
           size="xs"
-          @click.stop="() => window.open(`https://wa.me/${product.seller?.phone}?text=Hi, I'm interested in ${product.title}`, '_blank')"
+          @click.stop="navigateTo(`https://wa.me/${product.seller?.phone}?text=Hi, I'm interested in ${product.title}`, { external: true, open: { target: '_blank' } })"
         />
       </div>
     </div>

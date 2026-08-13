@@ -12,9 +12,9 @@ const loading = ref(true)
 onMounted(async () => {
   const { data } = await supabase
     .from('chats')
-    .select('*, participants:profiles(*), product:products(*), messages(*)')
-    .contains('participant_ids', [user.value?.id])
-    .order('updated_at', { ascending: false })
+    .select('*, buyer:profiles!chats_buyer_id_fkey(*), seller:profiles!chats_seller_id_fkey(*), product:products(*)')
+    .or(`buyer_id.eq.${user.value?.id},seller_id.eq.${user.value?.id}`)
+    .order('created_at', { ascending: false })
   chats.value = data || []
   loading.value = false
 })
@@ -54,7 +54,7 @@ const scrollToBottom = () => {
 }
 
 const otherParticipant = (chat: any) => {
-  return chat.participants?.find((p: any) => p.id !== user.value?.id)
+  return chat.buyer_id === user.value?.id ? chat.seller : chat.buyer
 }
 </script>
 

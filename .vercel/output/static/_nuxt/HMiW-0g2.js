@@ -1,0 +1,1 @@
+import{a as e}from"./CbmomGPF.js";var t=()=>e().$supabase.client;export{t};
