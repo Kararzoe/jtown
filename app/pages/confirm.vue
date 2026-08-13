@@ -5,18 +5,28 @@ const router = useRouter()
 const toast = useToast()
 const status = ref<'loading' | 'success' | 'error'>('loading')
 
-onMounted(async () => {
-  // Supabase puts the token in the URL hash - the module handles it automatically
-  // Just wait a moment then check if user is logged in
-  await new Promise(r => setTimeout(r, 2000))
-  const { data: { user } } = await supabase.auth.getUser()
-  if (user) {
-    status.value = 'success'
-    toast.add({ title: 'Email verified! Welcome to JosMKT 🎉', color: 'success' })
-    setTimeout(() => router.push('/dashboard'), 2000)
-  } else {
-    status.value = 'error'
-  }
+onMounted(() => {
+  const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+      subscription.unsubscribe()
+      status.value = 'success'
+      toast.add({ title: 'Email verified! Welcome to JosMKT 🎉', color: 'success' })
+      setTimeout(() => router.push('/dashboard'), 2000)
+    }
+  })
+
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    if (session) {
+      subscription.unsubscribe()
+      status.value = 'success'
+      toast.add({ title: 'Email verified! Welcome to JosMKT 🎉', color: 'success' })
+      setTimeout(() => router.push('/dashboard'), 2000)
+    } else {
+      setTimeout(() => {
+        if (status.value === 'loading') status.value = 'error'
+      }, 5000)
+    }
+  })
 })
 </script>
 
