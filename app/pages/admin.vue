@@ -31,6 +31,10 @@ onMounted(async () => {
     orders: orders.value.length,
     revenue: orders.value.filter(o => o.status === 'completed').reduce((s, o) => s + (o.product?.price || 0), 0)
   }
+  // Auto-switch to products tab if there are pending items
+  if (products.value.some(p => p.status === 'pending')) {
+    tab.value = 'products'
+  }
   loading.value = false
 })
 
@@ -40,6 +44,17 @@ const deleteProduct = async (id: string) => {
   stats.value.products--
   toast.add({ title: 'Product deleted', color: 'success' })
 }
+
+const updateProductStatus = async (id: string, status: string) => {
+  const { error } = await supabase.from('products').update({ status }).eq('id', id)
+  if (!error) {
+    const p = products.value.find(p => p.id === id)
+    if (p) p.status = status
+    toast.add({ title: `Product ${status}`, color: 'success' })
+  }
+}
+
+const productFilter = ref<'all' | 'pending' | 'active' | 'rejected'>('pending')
 
 const updateOrderStatus = async (id: string, status: string) => {
   await supabase.from('orders').update({ status }).eq('id', id)
@@ -139,7 +154,7 @@ const serviceCategories = ['plumbing','electrical','ac','furniture','catering','
 
 const statCards = computed(() => [
   { label: 'Total Users', value: stats.value.users, icon: 'i-lucide-users', color: 'bg-blue-500' },
-  { label: 'Total Products', value: stats.value.products, icon: 'i-lucide-package', color: 'bg-purple-500' },
+  { label: 'Pending Review', value: products.value.filter(p => p.status === 'pending').length, icon: 'i-lucide-clock', color: 'bg-amber-500' },
   { label: 'Total Orders', value: stats.value.orders, icon: 'i-lucide-shopping-bag', color: 'bg-orange-500' },
   { label: 'Revenue', value: `₦${stats.value.revenue.toLocaleString()}`, icon: 'i-lucide-trending-up', color: 'bg-green-500' },
 ])
@@ -236,22 +251,41 @@ const statCards = computed(() => [
       </div>
 
       <!-- Products Tab -->
-      <div v-else-if="tab === 'products'" class="space-y-3">
-        <div v-for="p in products" :key="p.id" class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm flex items-center gap-4">
-          <div class="w-14 h-14 rounded-lg bg-gray-100 dark:bg-gray-700 overflow-hidden flex-shrink-0">
-            <img v-if="p.images?.[0]" :src="p.images[0]" :alt="p.title" class="w-full h-full object-cover" />
-            <div v-else class="w-full h-full flex items-center justify-center text-2xl">📦</div>
-          </div>
-          <div class="flex-1 min-w-0">
-            <p class="font-bold truncate">{{ p.title }}</p>
-            <p class="text-sm text-primary-600 font-semibold">₦{{ p.price?.toLocaleString() }}</p>
-            <p class="text-xs text-gray-400">by {{ p.seller?.full_name || 'Unknown' }}</p>
-          </div>
-          <div class="flex gap-2">
-            <NuxtLink :to="`/product/${p.id}`">
-              <UButton icon="i-lucide-eye" variant="ghost" size="xs" />
-            </NuxtLink>
-            <UButton icon="i-lucide-trash" variant="ghost" color="error" size="xs" @click="deleteProduct(p.id)" />
+      <div v-else-if="tab === 'products'">
+        <!-- Filter Pills -->
+        <div class="flex gap-2 mb-4 flex-wrap">
+          <button
+            v-for="f in ['pending', 'active', 'rejected', 'all']" :key="f"
+            :class="['px-4 py-1.5 rounded-full text-sm font-medium transition border', productFilter === f ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-emerald-300']"
+            @click="productFilter = f as any"
+          >
+            {{ f.charAt(0).toUpperCase() + f.slice(1) }}
+            <span class="ml-1 text-xs opacity-70">({{ f === 'all' ? products.length : products.filter(p => p.status === f).length }})</span>
+          </button>
+        </div>
+        <div class="space-y-3">
+          <div
+            v-for="p in (productFilter === 'all' ? products : products.filter(p => p.status === productFilter))"
+            :key="p.id"
+            class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm flex items-center gap-4 border-l-4"
+            :class="p.status === 'pending' ? 'border-amber-400' : p.status === 'active' ? 'border-emerald-400' : 'border-red-400'"
+          >
+            <div class="w-14 h-14 rounded-lg bg-gray-100 dark:bg-gray-700 overflow-hidden flex-shrink-0">
+              <img v-if="p.images?.[0]" :src="p.images[0]" :alt="p.title" class="w-full h-full object-cover" />
+              <div v-else class="w-full h-full flex items-center justify-center text-2xl">📦</div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="font-bold truncate">{{ p.title }}</p>
+              <p class="text-sm text-primary-600 font-semibold">₦{{ p.price?.toLocaleString() }}</p>
+              <p class="text-xs text-gray-400">by {{ p.seller?.full_name || 'Unknown' }} · {{ p.category }}</p>
+            </div>
+            <UBadge :color="p.status === 'active' ? 'success' : p.status === 'rejected' ? 'error' : 'warning'" size="sm">{{ p.status }}</UBadge>
+            <div class="flex gap-1 flex-wrap justify-end">
+              <UButton v-if="p.status !== 'active'" size="xs" color="success" @click="updateProductStatus(p.id, 'active')">Approve</UButton>
+              <UButton v-if="p.status !== 'rejected'" size="xs" color="warning" variant="outline" @click="updateProductStatus(p.id, 'rejected')">Reject</UButton>
+              <NuxtLink :to="`/product/${p.id}`"><UButton icon="i-lucide-eye" variant="ghost" size="xs" /></NuxtLink>
+              <UButton icon="i-lucide-trash" variant="ghost" color="error" size="xs" @click="deleteProduct(p.id)" />
+            </div>
           </div>
         </div>
       </div>

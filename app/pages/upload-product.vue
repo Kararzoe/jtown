@@ -50,11 +50,11 @@ const submit = async () => {
     const { error } = await supabase.from('products').insert({
       title: form.title, description: form.description, price: Number(form.price),
       category: form.category, condition: form.condition, location: form.location,
-      stock: Number(form.stock), images: imageUrls, seller_id: user.value?.id, status: 'active',
+      stock: Number(form.stock), images: imageUrls, seller_id: user.value?.id, status: 'pending',
       tags: form.tags ? form.tags.split(',').map(t => t.trim()) : []
     })
     if (error) throw error
-    toast.add({ title: 'Product uploaded!', color: 'success' })
+    toast.add({ title: 'Product submitted for review! You\'ll be notified once approved.', color: 'success' })
     router.push('/dashboard')
   } catch (e: any) {
     toast.add({ title: e.message, color: 'error' })
