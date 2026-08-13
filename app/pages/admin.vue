@@ -55,9 +55,7 @@ const loadingServices = ref(false)
 const loadServiceProviders = async () => {
   loadingServices.value = true
   try {
-    const data = await $fetch<any[]>('https://jos-backend.onrender.com/api/services/all', {
-      headers: { Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}` }
-    })
+    const data = await $fetch<any[]>('https://jos-backend.onrender.com/api/services/all')
     serviceProviders.value = Array.isArray(data) ? data : []
   } catch {
     // fallback - try without auth since admin is checking
