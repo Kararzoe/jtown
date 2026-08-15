@@ -5,7 +5,27 @@ const router = useRouter()
 const toast = useToast()
 const status = ref<'loading' | 'success' | 'error'>('loading')
 
-onMounted(() => {
+onMounted(async () => {
+  // If this is a password recovery, forward to reset-password with the code
+  const route = useRoute()
+  const code = route.query.code as string
+  const type = route.query.type as string
+
+  if (type === 'recovery' || (code && !type)) {
+    // Try to detect recovery by exchanging code and checking session
+    if (code) {
+      const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+      if (!error && data.session) {
+        // Check if this was a recovery session
+        await supabase.auth.signOut()
+        router.replace(`/reset-password?code=${code}`)
+        return
+      }
+    }
+    router.replace('/reset-password')
+    return
+  }
+
   const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_IN' && session) {
       subscription.unsubscribe()

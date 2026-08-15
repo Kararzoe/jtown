@@ -11,40 +11,30 @@ const ready = ref(false)
 const expired = ref(false)
 
 onMounted(async () => {
-  // PKCE flow — code is in the query string ?code=...
+  // PKCE: exchange code for session
   const code = route.query.code as string
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
-    if (error) {
-      expired.value = true
-    } else {
-      ready.value = true
-    }
+    if (error) { expired.value = true } else { ready.value = true }
     return
   }
 
-  // Implicit flow — token is in the URL hash #access_token=...&type=recovery
+  // Implicit flow: token in hash
   const hash = window.location.hash.substring(1)
   const params = new URLSearchParams(hash)
   const accessToken = params.get('access_token')
   const refreshToken = params.get('refresh_token')
   const type = params.get('type')
-
   if (accessToken && type === 'recovery') {
-    const { error } = await supabase.auth.setSession({
-      access_token: accessToken,
-      refresh_token: refreshToken || ''
-    })
-    if (error) {
-      expired.value = true
-    } else {
+    const { error } = await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken || '' })
+    if (error) { expired.value = true } else {
       ready.value = true
       window.history.replaceState(null, '', window.location.pathname)
     }
     return
   }
 
-  // Already has session
+  // Fallback: already has active session (e.g. redirected from /confirm)
   const { data: { session } } = await supabase.auth.getSession()
   if (session) {
     ready.value = true
