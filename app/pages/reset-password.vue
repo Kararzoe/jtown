@@ -2,6 +2,7 @@
 definePageMeta({ layout: 'default' })
 const supabase = useSupabaseClient()
 const router = useRouter()
+const route = useRoute()
 const toast = useToast()
 const password = ref('')
 const confirm = ref('')
@@ -10,7 +11,19 @@ const ready = ref(false)
 const expired = ref(false)
 
 onMounted(async () => {
-  // Parse the hash from the URL — Supabase appends #access_token=...&type=recovery
+  // PKCE flow — code is in the query string ?code=...
+  const code = route.query.code as string
+  if (code) {
+    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    if (error) {
+      expired.value = true
+    } else {
+      ready.value = true
+    }
+    return
+  }
+
+  // Implicit flow — token is in the URL hash #access_token=...&type=recovery
   const hash = window.location.hash.substring(1)
   const params = new URLSearchParams(hash)
   const accessToken = params.get('access_token')
@@ -18,7 +31,6 @@ onMounted(async () => {
   const type = params.get('type')
 
   if (accessToken && type === 'recovery') {
-    // Set the session manually from the tokens in the URL
     const { error } = await supabase.auth.setSession({
       access_token: accessToken,
       refresh_token: refreshToken || ''
@@ -27,13 +39,12 @@ onMounted(async () => {
       expired.value = true
     } else {
       ready.value = true
-      // Clean the hash from the URL
       window.history.replaceState(null, '', window.location.pathname)
     }
     return
   }
 
-  // No token in URL — check if already has a valid session
+  // Already has session
   const { data: { session } } = await supabase.auth.getSession()
   if (session) {
     ready.value = true
