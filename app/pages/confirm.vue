@@ -11,19 +11,14 @@ onMounted(async () => {
   const code = route.query.code as string
   const type = route.query.type as string
 
-  if (type === 'recovery' || (code && !type)) {
-    // Try to detect recovery by exchanging code and checking session
-    if (code) {
-      const { data, error } = await supabase.auth.exchangeCodeForSession(code)
-      if (!error && data.session) {
-        // Check if this was a recovery session
-        await supabase.auth.signOut()
-        router.replace(`/reset-password?code=${code}`)
-        return
-      }
+  if (code) {
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+    if (!error && data.session) {
+      // Recovery flow — session is now active, go straight to reset form
+      router.replace('/reset-password')
+      return
     }
-    router.replace('/reset-password')
-    return
+    // Not recovery or failed — fall through to normal email verify below
   }
 
   const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
