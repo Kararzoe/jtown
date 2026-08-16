@@ -2,7 +2,6 @@
 definePageMeta({ layout: 'default' })
 const supabase = useSupabaseClient()
 const router = useRouter()
-const route = useRoute()
 const toast = useToast()
 const password = ref('')
 const confirm = ref('')
@@ -11,36 +10,30 @@ const ready = ref(false)
 const expired = ref(false)
 
 onMounted(async () => {
-  // PKCE: exchange code for session
-  const code = route.query.code as string
-  if (code) {
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
-    if (error) { expired.value = true } else { ready.value = true }
-    return
-  }
-
-  // Implicit flow: token in hash
-  const hash = window.location.hash.substring(1)
-  const params = new URLSearchParams(hash)
-  const accessToken = params.get('access_token')
-  const refreshToken = params.get('refresh_token')
-  const type = params.get('type')
-  if (accessToken && type === 'recovery') {
-    const { error } = await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken || '' })
-    if (error) { expired.value = true } else {
+  // The @nuxtjs/supabase module handles the code exchange automatically.
+  // We just need to listen for PASSWORD_RECOVERY event or check existing session.
+  const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'PASSWORD_RECOVERY' || (event === 'SIGNED_IN' && session)) {
+      subscription.unsubscribe()
       ready.value = true
-      window.history.replaceState(null, '', window.location.pathname)
     }
-    return
-  }
+  })
 
-  // Fallback: already has active session (e.g. redirected from /confirm)
+  // Also check if session already exists (module already processed the code)
   const { data: { session } } = await supabase.auth.getSession()
   if (session) {
+    subscription.unsubscribe()
     ready.value = true
-  } else {
-    expired.value = true
+    return
   }
+
+  // No session and no event after 6s = expired
+  setTimeout(() => {
+    if (!ready.value) {
+      subscription.unsubscribe()
+      expired.value = true
+    }
+  }, 6000)
 })
 
 const submit = async () => {
