@@ -13,12 +13,20 @@ onMounted(async () => {
 
   if (code) {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code)
-    if (!error && data.session) {
-      // Recovery flow — session is now active, go straight to reset form
+    if (error || !data.session) {
+      status.value = 'error'
+      return
+    }
+    // Recovery flow — session is now active, go straight to reset form
+    if (type === 'recovery') {
       router.replace('/reset-password')
       return
     }
-    // Not recovery or failed — fall through to normal email verify below
+    // Normal email verification
+    status.value = 'success'
+    toast.add({ title: 'Email verified! Welcome to JosMKT 🎉', color: 'success' })
+    setTimeout(() => router.push('/dashboard'), 2000)
+    return
   }
 
   const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {

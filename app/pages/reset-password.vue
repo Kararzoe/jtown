@@ -10,30 +10,30 @@ const ready = ref(false)
 const expired = ref(false)
 
 onMounted(async () => {
-  // The @nuxtjs/supabase module handles the code exchange automatically.
-  // We just need to listen for PASSWORD_RECOVERY event or check existing session.
-  const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-    if (event === 'PASSWORD_RECOVERY' || (event === 'SIGNED_IN' && session)) {
-      subscription.unsubscribe()
-      ready.value = true
-    }
-  })
-
-  // Also check if session already exists (module already processed the code)
+  // PKCE flow: /confirm exchanges the code and sets the session, then redirects here
+  // Just check if there's an active recovery session
   const { data: { session } } = await supabase.auth.getSession()
   if (session) {
-    subscription.unsubscribe()
     ready.value = true
     return
   }
 
-  // No session and no event after 6s = expired
-  setTimeout(() => {
-    if (!ready.value) {
-      subscription.unsubscribe()
-      expired.value = true
+  // Fallback: implicit flow hash tokens (older Supabase email templates)
+  const hash = window.location.hash.substring(1)
+  const params = new URLSearchParams(hash)
+  const accessToken = params.get('access_token')
+  const refreshToken = params.get('refresh_token') || ''
+  const type = params.get('type')
+
+  if (accessToken && type === 'recovery') {
+    const { error } = await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
+    if (error) { expired.value = true } else {
+      ready.value = true
+      window.history.replaceState(null, '', window.location.pathname)
     }
-  }, 6000)
+  } else {
+    expired.value = true
+  }
 })
 
 const submit = async () => {
@@ -58,7 +58,6 @@ const submit = async () => {
   <div class="min-h-screen flex items-center justify-center px-4">
     <div class="w-full max-w-md">
 
-      <!-- Expired link -->
       <UCard v-if="expired" class="shadow-xl p-2 text-center">
         <div class="text-5xl mb-4">⏰</div>
         <h2 class="text-2xl font-black mb-2 text-red-500">Link Expired</h2>
@@ -66,17 +65,14 @@ const submit = async () => {
         <UButton to="/forgot-password" color="primary" block>Request New Link</UButton>
       </UCard>
 
-      <!-- Waiting for token -->
       <UCard v-else-if="!ready" class="shadow-xl p-2 text-center">
         <div class="text-5xl mb-4">🔐</div>
         <h2 class="text-2xl font-black mb-2">Verifying link...</h2>
-        <p class="text-gray-500 mb-4">Please wait while we verify your reset link</p>
-        <div class="flex justify-center">
+        <div class="flex justify-center mt-4">
           <div class="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
         </div>
       </UCard>
 
-      <!-- Reset form -->
       <UCard v-else class="shadow-xl p-2">
         <div class="text-center mb-6">
           <div class="text-4xl mb-3">🔑</div>
