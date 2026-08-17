@@ -1,7 +1,6 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'default' })
 const supabase = useSupabaseClient()
-const route = useRoute()
 const router = useRouter()
 const toast = useToast()
 const password = ref('')
@@ -10,27 +9,19 @@ const loading = ref(false)
 const ready = ref(false)
 const expired = ref(false)
 
-onMounted(async () => {
-  // Read directly from window.location to avoid Vue router SPA quirks
-  const searchParams = new URLSearchParams(window.location.search)
-  const hashParams = new URLSearchParams(window.location.hash.substring(1))
+const authCallback = useState<'idle' | 'ok' | 'error'>('auth-callback')
 
-  const code = searchParams.get('code')
+onMounted(async () => {
+  // 1. Plugin already exchanged the code before this page mounted
+  if (authCallback.value === 'ok') { ready.value = true; return }
+  if (authCallback.value === 'error') { expired.value = true; return }
+
+  // 2. Implicit flow — #access_token hash (some Supabase email templates)
+  const hashParams = new URLSearchParams(window.location.hash.substring(1))
   const accessToken = hashParams.get('access_token')
   const refreshToken = hashParams.get('refresh_token') || ''
   const type = hashParams.get('type')
 
-  // 1. PKCE flow — ?code= in URL
-  if (code) {
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
-    if (error) { expired.value = true } else {
-      ready.value = true
-      window.history.replaceState(null, '', window.location.pathname)
-    }
-    return
-  }
-
-  // 2. Implicit flow — #access_token in hash
   if (accessToken && type === 'recovery') {
     const { error } = await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
     if (error) { expired.value = true } else {
@@ -40,12 +31,9 @@ onMounted(async () => {
     return
   }
 
-  // 3. Already have active session (came from /confirm)
+  // 3. Active session already exists
   const { data: { session } } = await supabase.auth.getSession()
-  if (session) {
-    ready.value = true
-    return
-  }
+  if (session) { ready.value = true; return }
 
   expired.value = true
 })
