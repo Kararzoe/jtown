@@ -4,42 +4,58 @@ const supabase = useSupabaseClient()
 const router = useRouter()
 const toast = useToast()
 const password = ref('')
-const confirm = ref('')
+const confirmPass = ref('')
 const loading = ref(false)
 const ready = ref(false)
 const expired = ref(false)
 
-const authCallback = useState<'idle' | 'ok' | 'error'>('auth-callback')
-
 onMounted(async () => {
-  // 1. Plugin already exchanged the code before this page mounted
-  if (authCallback.value === 'ok') { ready.value = true; return }
-  if (authCallback.value === 'error') { expired.value = true; return }
+  // Read URL before anything touches it
+  const search = new URLSearchParams(window.location.search)
+  const hash = new URLSearchParams(window.location.hash.replace('#', ''))
 
-  // 2. Implicit flow — #access_token hash (some Supabase email templates)
-  const hashParams = new URLSearchParams(window.location.hash.substring(1))
-  const accessToken = hashParams.get('access_token')
-  const refreshToken = hashParams.get('refresh_token') || ''
-  const type = hashParams.get('type')
+  const code = search.get('code')
+  const accessToken = hash.get('access_token')
+  const refreshToken = hash.get('refresh_token') || ''
+  const type = hash.get('type')
 
-  if (accessToken && type === 'recovery') {
-    const { error } = await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
-    if (error) { expired.value = true } else {
-      ready.value = true
-      window.history.replaceState(null, '', window.location.pathname)
-    }
+  // PKCE flow — ?code= in query string
+  if (code) {
+    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    window.history.replaceState(null, '', window.location.pathname)
+    if (error) { expired.value = true } else { ready.value = true }
     return
   }
 
-  // 3. Active session already exists
-  const { data: { session } } = await supabase.auth.getSession()
-  if (session) { ready.value = true; return }
+  // Implicit flow — #access_token in hash
+  if (accessToken && type === 'recovery') {
+    const { error } = await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
+    window.history.replaceState(null, '', window.location.pathname)
+    if (error) { expired.value = true } else { ready.value = true }
+    return
+  }
 
-  expired.value = true
+  // Listen for PASSWORD_RECOVERY event — Supabase fires this automatically
+  // when the user lands on the site from a recovery link
+  const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'PASSWORD_RECOVERY' && session) {
+      subscription.unsubscribe()
+      ready.value = true
+    }
+  })
+
+  // Also check if session already exists (e.g. navigated here after /confirm)
+  const { data: { session } } = await supabase.auth.getSession()
+  if (session) { ready.value = true; subscription.unsubscribe(); return }
+
+  // Give Supabase 5 seconds to fire the event before showing expired
+  setTimeout(() => {
+    if (!ready.value) { expired.value = true; subscription.unsubscribe() }
+  }, 5000)
 })
 
 const submit = async () => {
-  if (password.value !== confirm.value) {
+  if (password.value !== confirmPass.value) {
     toast.add({ title: 'Passwords do not match', color: 'error' })
     return
   }
@@ -86,7 +102,7 @@ const submit = async () => {
             <UInput v-model="password" type="password" placeholder="Min 6 characters" icon="i-lucide-lock" size="lg" class="w-full" required minlength="6" />
           </UFormField>
           <UFormField label="Confirm Password">
-            <UInput v-model="confirm" type="password" placeholder="Repeat password" icon="i-lucide-lock" size="lg" class="w-full" required />
+            <UInput v-model="confirmPass" type="password" placeholder="Repeat password" icon="i-lucide-lock" size="lg" class="w-full" required />
           </UFormField>
           <UButton type="submit" color="primary" size="lg" block :loading="loading">Update Password</UButton>
         </form>
