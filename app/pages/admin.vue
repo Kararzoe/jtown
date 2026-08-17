@@ -11,11 +11,14 @@ const users = ref<any[]>([])
 const products = ref<any[]>([])
 const orders = ref<any[]>([])
 
-// Guard: only allow admin
-const isAdmin = computed(() => !!user.value)
+const isAdmin = ref(false)
 
 onMounted(async () => {
-  if (!isAdmin.value) return navigateTo('/dashboard')
+  if (!user.value) return navigateTo('/login')
+
+  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.value.id).single()
+  if (profile?.role !== 'admin') return navigateTo('/dashboard')
+  isAdmin.value = true
 
   const [{ data: u }, { data: p }, { data: o }] = await Promise.all([
     supabase.from('profiles').select('*').order('created_at', { ascending: false }),
