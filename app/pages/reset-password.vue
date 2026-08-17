@@ -23,7 +23,10 @@ onMounted(async () => {
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     window.history.replaceState(null, '', window.location.pathname)
-    if (error) { expired.value = true } else { ready.value = true }
+    if (error) {
+      console.error('[reset] PKCE exchange error:', error.message)
+      expired.value = true
+    } else { ready.value = true }
     return
   }
 
@@ -31,24 +34,27 @@ onMounted(async () => {
   if (accessToken && type === 'recovery') {
     const { error } = await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
     window.history.replaceState(null, '', window.location.pathname)
-    if (error) { expired.value = true } else { ready.value = true }
+    if (error) {
+      console.error('[reset] implicit setSession error:', error.message)
+      expired.value = true
+    } else { ready.value = true }
     return
   }
 
-  // Listen for PASSWORD_RECOVERY event — Supabase fires this automatically
-  // when the user lands on the site from a recovery link
+  // Listen for PASSWORD_RECOVERY event
   const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    console.log('[reset] auth event:', event)
     if (event === 'PASSWORD_RECOVERY' && session) {
       subscription.unsubscribe()
       ready.value = true
     }
   })
 
-  // Also check if session already exists (e.g. navigated here after /confirm)
   const { data: { session } } = await supabase.auth.getSession()
   if (session) { ready.value = true; subscription.unsubscribe(); return }
 
-  // Give Supabase 5 seconds to fire the event before showing expired
+  console.log('[reset] no code, no hash, no session — full URL was:', window.location.href)
+
   setTimeout(() => {
     if (!ready.value) { expired.value = true; subscription.unsubscribe() }
   }, 5000)
