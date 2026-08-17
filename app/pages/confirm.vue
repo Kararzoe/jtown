@@ -12,42 +12,23 @@ onMounted(async () => {
 
   if (code) {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code)
-    if (error || !data.session) {
-      status.value = 'error'
-      return
-    }
-    // Recovery flow — session is now active, go straight to reset form
-    if (type === 'recovery') {
-      router.replace('/reset-password')
-      return
-    }
-    // Normal email verification
+    if (error || !data.session) { status.value = 'error'; return }
     status.value = 'success'
     toast.add({ title: 'Email verified! Welcome to JosMKT 🎉', color: 'success' })
     setTimeout(() => router.push('/dashboard'), 2000)
     return
   }
 
-  const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-    if (event === 'SIGNED_IN' && session) {
-      subscription.unsubscribe()
-      status.value = 'success'
-      toast.add({ title: 'Email verified! Welcome to JosMKT 🎉', color: 'success' })
-      setTimeout(() => router.push('/dashboard'), 2000)
-    }
-  })
+  // Session already set by @nuxtjs/supabase callback handler
+  const { data: { session } } = await supabase.auth.getSession()
+  if (session) {
+    status.value = 'success'
+    toast.add({ title: 'Email verified! Welcome to JosMKT 🎉', color: 'success' })
+    setTimeout(() => router.push('/dashboard'), 2000)
+    return
+  }
 
-  supabase.auth.getSession().then(({ data: { session } }) => {
-    if (session) {
-      status.value = 'success'
-      toast.add({ title: 'Email verified! Welcome to JosMKT 🎉', color: 'success' })
-      setTimeout(() => router.push('/dashboard'), 2000)
-    } else {
-      setTimeout(() => {
-        if (status.value === 'loading') status.value = 'error'
-      }, 5000)
-    }
-  })
+  setTimeout(() => { if (status.value === 'loading') status.value = 'error' }, 4000)
 })
 </script>
 

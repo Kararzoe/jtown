@@ -11,8 +11,16 @@ const ready = ref(false)
 const expired = ref(false)
 
 onMounted(async () => {
-  // 1. PKCE flow: code in query string (sent by Supabase when redirectTo is /reset-password)
-  const code = route.query.code as string
+  // Read directly from window.location to avoid Vue router SPA quirks
+  const searchParams = new URLSearchParams(window.location.search)
+  const hashParams = new URLSearchParams(window.location.hash.substring(1))
+
+  const code = searchParams.get('code')
+  const accessToken = hashParams.get('access_token')
+  const refreshToken = hashParams.get('refresh_token') || ''
+  const type = hashParams.get('type')
+
+  // 1. PKCE flow — ?code= in URL
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (error) { expired.value = true } else {
@@ -22,13 +30,7 @@ onMounted(async () => {
     return
   }
 
-  // 2. Implicit flow: #access_token hash (older Supabase email templates)
-  const hash = window.location.hash.substring(1)
-  const params = new URLSearchParams(hash)
-  const accessToken = params.get('access_token')
-  const refreshToken = params.get('refresh_token') || ''
-  const type = params.get('type')
-
+  // 2. Implicit flow — #access_token in hash
   if (accessToken && type === 'recovery') {
     const { error } = await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
     if (error) { expired.value = true } else {
@@ -38,7 +40,7 @@ onMounted(async () => {
     return
   }
 
-  // 3. Already have an active session (redirected from /confirm)
+  // 3. Already have active session (came from /confirm)
   const { data: { session } } = await supabase.auth.getSession()
   if (session) {
     ready.value = true

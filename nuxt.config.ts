@@ -19,12 +19,6 @@ export default defineNuxtConfig({
     cookieOptions: {
       secure: true
     },
-    clientOptions: {
-      auth: {
-        flowType: 'pkce',
-        detectSessionInUrl: true,
-      }
-    },
     redirectOptions: {
       login: '/login',
       callback: '/reset-password',
