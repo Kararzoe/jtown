@@ -1,6 +1,7 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'default' })
 const supabase = useSupabaseClient()
+const route = useRoute()
 const router = useRouter()
 const toast = useToast()
 const password = ref('')
@@ -10,15 +11,18 @@ const ready = ref(false)
 const expired = ref(false)
 
 onMounted(async () => {
-  // PKCE flow: /confirm exchanges the code and sets the session, then redirects here
-  // Just check if there's an active recovery session
-  const { data: { session } } = await supabase.auth.getSession()
-  if (session) {
-    ready.value = true
+  // 1. PKCE flow: code in query string (sent by Supabase when redirectTo is /reset-password)
+  const code = route.query.code as string
+  if (code) {
+    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    if (error) { expired.value = true } else {
+      ready.value = true
+      window.history.replaceState(null, '', window.location.pathname)
+    }
     return
   }
 
-  // Fallback: implicit flow hash tokens (older Supabase email templates)
+  // 2. Implicit flow: #access_token hash (older Supabase email templates)
   const hash = window.location.hash.substring(1)
   const params = new URLSearchParams(hash)
   const accessToken = params.get('access_token')
@@ -31,9 +35,17 @@ onMounted(async () => {
       ready.value = true
       window.history.replaceState(null, '', window.location.pathname)
     }
-  } else {
-    expired.value = true
+    return
   }
+
+  // 3. Already have an active session (redirected from /confirm)
+  const { data: { session } } = await supabase.auth.getSession()
+  if (session) {
+    ready.value = true
+    return
+  }
+
+  expired.value = true
 })
 
 const submit = async () => {

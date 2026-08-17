@@ -1,13 +1,12 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'default' })
 const supabase = useSupabaseClient()
+const route = useRoute()
 const router = useRouter()
 const toast = useToast()
 const status = ref<'loading' | 'success' | 'error'>('loading')
 
 onMounted(async () => {
-  // If this is a password recovery, forward to reset-password with the code
-  const route = useRoute()
   const code = route.query.code as string
   const type = route.query.type as string
 
