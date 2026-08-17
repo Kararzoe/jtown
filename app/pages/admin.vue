@@ -14,6 +14,13 @@ const orders = ref<any[]>([])
 const isAdmin = ref(false)
 
 onMounted(async () => {
+  // Wait for session to be restored (SPA mode loads async)
+  if (!user.value) {
+    await new Promise<void>((resolve) => {
+      const stop = watch(user, (val) => { if (val !== undefined) { stop(); resolve() } }, { immediate: true })
+    })
+  }
+
   if (!user.value) return navigateTo('/login')
 
   const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.value.id).single()
