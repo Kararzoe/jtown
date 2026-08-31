@@ -96,14 +96,52 @@ create table service_providers (
   price_range text,
   image text default '',
   gallery text[] default '{}',
+  id_image text default '',
+  selfie_image text default '',
   status text default 'pending',
   created_at timestamptz default now()
 );
 
 alter table service_providers enable row level security;
+-- Public can only read approved providers
 create policy "Public read approved providers" on service_providers for select using (status = 'approved');
+-- Admins can read all providers (including pending)
+create policy "Admin read all providers" on service_providers for select using (
+  exists (select 1 from profiles where id = auth.uid() and role = 'admin')
+);
+-- Anyone can submit an application
 create policy "Anyone can apply" on service_providers for insert with check (true);
-create policy "Admin manages providers" on service_providers for all using (true);
+-- Only admins can update or delete
+create policy "Admin update providers" on service_providers for update using (
+  exists (select 1 from profiles where id = auth.uid() and role = 'admin')
+);
+create policy "Admin delete providers" on service_providers for delete using (
+  exists (select 1 from profiles where id = auth.uid() and role = 'admin')
+);
+
+-- Support Messages table
+create table support_messages (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid not null,
+  user_name text,
+  user_email text,
+  content text not null,
+  is_admin boolean default false,
+  read boolean default false,
+  created_at timestamptz default now()
+);
+
+alter table support_messages enable row level security;
+create policy "Users manage own messages" on support_messages for all using (auth.uid() = user_id);
+create policy "Admin read all messages" on support_messages for select using (
+  exists (select 1 from profiles where id = auth.uid() and role = 'admin')
+);
+create policy "Admin send replies" on support_messages for insert with check (
+  exists (select 1 from profiles where id = auth.uid() and role = 'admin')
+);
+create policy "Admin update read status" on support_messages for update using (
+  exists (select 1 from profiles where id = auth.uid() and role = 'admin')
+);
 
 -- Auto create profile on signup
 create or replace function handle_new_user()

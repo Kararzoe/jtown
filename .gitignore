@@ -26,3 +26,6 @@ logs
 .env.*
 !.env.example
 .vercel
+
+# Migration scripts (may contain credentials)
+migrate-providers.mjs

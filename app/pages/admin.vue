@@ -79,7 +79,7 @@ const loadingServices = ref(false)
 
 const loadServiceProviders = async () => {
   loadingServices.value = true
-  const { data } = await supabase.from('service_providers').select('*').order('created_at', { ascending: false })
+  const data = await $fetch<any[]>('/api/admin/providers').catch(() => [])
   serviceProviders.value = data || []
   loadingServices.value = false
 }
@@ -179,7 +179,7 @@ const tabs = [
 ]
 
 const CLOUDINARY = 'https://api.cloudinary.com/v1_1/dfye3j2bs/image/upload'
-const newProvider = reactive({ service_name: '', category: '', description: '', phone: '', location: '', experience: '', price_range: '', image: '', gallery: [] as string[] })
+const newProvider = reactive({ service_name: '', category: '', description: '', phone: '', location: '', experience: '', price_range: '', image: '', gallery: [] as string[], id_image: '', selfie_image: '' })
 const uploading = ref(false)
 
 const uploadImage = async (file: File): Promise<string> => {
@@ -211,15 +211,36 @@ const handleGalleryUpload = async (e: Event) => {
 }
 
 const submitProvider = async () => {
+  if (!newProvider.service_name || !newProvider.category || !newProvider.description || !newProvider.phone || !newProvider.location) {
+    toast.add({ title: 'Please fill all required fields', color: 'error' })
+    return
+  }
   const { data, error } = await supabase.from('service_providers').insert([{ ...newProvider, status: 'approved' }]).select().single()
   if (!error && data) {
     toast.add({ title: 'Provider added!', color: 'success' })
-    Object.assign(newProvider, { service_name: '', category: '', description: '', phone: '', location: '', experience: '', price_range: '', image: '', gallery: [] })
+    Object.assign(newProvider, { service_name: '', category: '', description: '', phone: '', location: '', experience: '', price_range: '', image: '', gallery: [], id_image: '', selfie_image: '' })
     tab.value = 'services'
     loadServiceProviders()
   } else {
-    toast.add({ title: 'Failed to add provider', color: 'error' })
+    toast.add({ title: error?.message || 'Failed to add provider', color: 'error' })
+    console.error('submitProvider error:', error)
   }
+}
+
+const handleIdUpload = async (e: Event) => {
+  const file = (e.target as HTMLInputElement).files?.[0]
+  if (!file) return
+  uploading.value = true
+  newProvider.id_image = await uploadImage(file)
+  uploading.value = false
+}
+
+const handleSelfieUpload = async (e: Event) => {
+  const file = (e.target as HTMLInputElement).files?.[0]
+  if (!file) return
+  uploading.value = true
+  newProvider.selfie_image = await uploadImage(file)
+  uploading.value = false
 }
 
 const serviceCategories = ['plumbing','electrical','ac','furniture','catering','painting','mechanic','barbing','carpentry','fashion-design','shoemaking','photography','tech','logistics','laundry','education','perfumery','makeup','event-planning','rentals','mason','phone-accessories','legal','housing-agent','e-wallet']
@@ -564,6 +585,18 @@ const statCards = computed(() => [
             <input type="file" accept="image/*" multiple class="w-full text-sm" @change="handleGalleryUpload" />
             <div v-if="newProvider.gallery.length" class="flex gap-2 mt-2 flex-wrap">
               <img v-for="(url, i) in newProvider.gallery" :key="i" :src="url" class="w-16 h-16 object-cover rounded-lg" />
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <p class="text-sm font-semibold mb-2">Government ID (optional)</p>
+              <input type="file" accept="image/*" class="w-full text-sm" @change="handleIdUpload" />
+              <img v-if="newProvider.id_image" :src="newProvider.id_image" class="mt-2 w-24 h-16 object-cover rounded-lg" />
+            </div>
+            <div>
+              <p class="text-sm font-semibold mb-2">Selfie with ID (optional)</p>
+              <input type="file" accept="image/*" class="w-full text-sm" @change="handleSelfieUpload" />
+              <img v-if="newProvider.selfie_image" :src="newProvider.selfie_image" class="mt-2 w-24 h-16 object-cover rounded-lg" />
             </div>
           </div>
           <UButton type="submit" color="primary" size="lg" block :loading="uploading">Add Provider</UButton>

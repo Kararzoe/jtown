@@ -13,6 +13,12 @@ export default defineNuxtConfig({
     preset: 'vercel'
   },
 
+  runtimeConfig: {
+    supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+    public: {
+      supabaseUrl: 'https://mtqggkguwshvpdbiwbup.supabase.co'
+    }
+  },
   supabase: {
     url: 'https://mtqggkguwshvpdbiwbup.supabase.co',
     key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10cWdna2d1d3NodnBkYml3YnVwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0NDc2OTgsImV4cCI6MjEwMjAyMzY5OH0.aMM3xSkpT7jHOrGZDcROtL1T5JGQcOrGa5ebruqAjMY',
