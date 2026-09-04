@@ -322,6 +322,9 @@ const filtered = computed(() => {
                 >
                   <UIcon name="i-lucide-message-circle" class="w-4 h-4" /> WhatsApp
                 </a>
+                <NuxtLink :to="`/provider/${provider.id}`" class="flex items-center justify-center px-3 py-2.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-xl transition-all">
+                  <UIcon name="i-lucide-eye" class="w-4 h-4" />
+                </NuxtLink>
               </div>
             </div>
           </div>

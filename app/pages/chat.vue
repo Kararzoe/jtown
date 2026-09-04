@@ -1,5 +1,5 @@
 <script setup lang="ts">
-definePageMeta({ layout: 'default' })
+definePageMeta({ layout: 'default', middleware: 'auth' })
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
 const activeTab = ref<'support' | 'chats'>('support')
