@@ -1,6 +1,5 @@
 <script setup lang="ts">
-definePageMeta({ layout: 'default' })
-const user = useSupabaseUser()
+definePageMeta({ layout: 'default', middleware: 'admin' })
 const supabase = useSupabaseClient()
 const toast = useToast()
 const tab = ref('overview')
@@ -13,15 +12,6 @@ const orders = ref<any[]>([])
 const serviceProviders = ref<any[]>([])
 
 onMounted(async () => {
-  if (!user.value) {
-    await new Promise<void>((resolve) => {
-      const stop = watch(user, (val) => { if (val !== undefined) { stop(); resolve() } }, { immediate: true })
-    })
-  }
-  if (!user.value) return navigateTo('/login')
-  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.value.id).single()
-  if (profile?.role !== 'admin') return navigateTo('/dashboard')
-
   const d = await $fetch<any>('/api/admin/data').catch(() => null)
   if (!d) { toast.add({ title: 'Failed to load admin data', color: 'error' }); return }
   users.value = d.users

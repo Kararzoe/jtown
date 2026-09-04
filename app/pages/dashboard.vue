@@ -20,7 +20,7 @@ onMounted(async () => {
 })
 
 const displayName = computed(() => profile.value?.full_name || user.value?.user_metadata?.full_name || user.value?.email?.split('@')[0] || 'User')
-const isAdmin = computed(() => user.value?.email === 'kararzoe@gmail.com' || user.value?.user_metadata?.role === 'admin')
+const isAdmin = computed(() => profile.value?.role === 'admin')
 
 const stats = computed(() => [
   { label: 'Orders', value: orders.value.length, icon: 'i-lucide-package', color: 'bg-blue-500' },
