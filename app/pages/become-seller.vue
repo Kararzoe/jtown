@@ -19,6 +19,8 @@ const form = reactive({
   gallery: [] as string[],
   id_image: '',
   selfie_image: '',
+  lat: null as number | null,
+  lng: null as number | null,
 })
 
 const categories = [
@@ -30,6 +32,31 @@ const categories = [
 ]
 
 const locations = ['Bukuru', 'Rayfield', 'Terminus', 'Sukuwa', 'Lamingo', 'Hwolshe', 'Tudun Wada', 'Nassarawa', 'Old Airport', 'Polo', 'British', 'Other']
+
+const gettingLocation = ref(false)
+const locationPinned = ref(false)
+
+const pinMyLocation = () => {
+  if (!navigator.geolocation) {
+    toast.add({ title: 'GPS not supported on this device', color: 'error' })
+    return
+  }
+  gettingLocation.value = true
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      form.lat = pos.coords.latitude
+      form.lng = pos.coords.longitude
+      locationPinned.value = true
+      gettingLocation.value = false
+      toast.add({ title: 'Location pinned!', color: 'success' })
+    },
+    () => {
+      gettingLocation.value = false
+      toast.add({ title: 'Could not get location. Please allow GPS access.', color: 'error' })
+    },
+    { enableHighAccuracy: true }
+  )
+}
 
 const uploadImage = async (file: File): Promise<string> => {
   const fd = new FormData()
@@ -154,6 +181,36 @@ const submit = async () => {
                 class="w-full"
               />
             </UFormField>
+          </div>
+
+          <!-- GPS Pin -->
+          <div class="rounded-xl border-2 p-4 transition-all" :class="locationPinned ? 'border-emerald-400 bg-emerald-50 dark:bg-emerald-900/20' : 'border-gray-200 dark:border-gray-700'">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-semibold text-gray-800 dark:text-gray-200">📍 Pin Your Exact Location</p>
+                <p class="text-xs text-gray-500 mt-0.5">Helps customers find you on the map</p>
+              </div>
+              <UButton
+                type="button"
+                :loading="gettingLocation"
+                :color="locationPinned ? 'success' : 'primary'"
+                size="sm"
+                :icon="locationPinned ? 'i-lucide-check' : 'i-lucide-map-pin'"
+                @click="pinMyLocation"
+              >
+                {{ locationPinned ? 'Location Pinned ✓' : 'Use My GPS' }}
+              </UButton>
+            </div>
+            <div v-if="locationPinned && form.lat && form.lng" class="mt-3 rounded-xl overflow-hidden border border-emerald-200">
+              <iframe
+                :src="`https://maps.google.com/maps?q=${form.lat},${form.lng}&z=16&output=embed`"
+                width="100%"
+                height="180"
+                style="border:0"
+                loading="lazy"
+                allowfullscreen
+              />
+            </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

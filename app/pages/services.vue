@@ -48,6 +48,34 @@ const loadProviders = async () => {
   loading.value = false
 }
 
+const userLat = ref<number | null>(null)
+const userLng = ref<number | null>(null)
+const sortByNearest = ref(false)
+const gettingLocation = ref(false)
+
+const getDistance = (lat1: number, lng1: number, lat2: number, lng2: number) => {
+  const R = 6371
+  const dLat = (lat2 - lat1) * Math.PI / 180
+  const dLng = (lng2 - lng1) * Math.PI / 180
+  const a = Math.sin(dLat/2) ** 2 + Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) * Math.sin(dLng/2) ** 2
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+}
+
+const findNearest = () => {
+  if (!navigator.geolocation) return
+  gettingLocation.value = true
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      userLat.value = pos.coords.latitude
+      userLng.value = pos.coords.longitude
+      sortByNearest.value = true
+      gettingLocation.value = false
+    },
+    () => { gettingLocation.value = false },
+    { enableHighAccuracy: true }
+  )
+}
+
 const selectCategory = (slug: string) => {
   category.value = slug
   search.value = ''
@@ -60,13 +88,23 @@ onMounted(loadProviders)
 const activeCat = computed(() => categories.find(c => c.slug === category.value))
 
 const filtered = computed(() => {
-  if (!search.value.trim()) return providers.value
-  const q = search.value.toLowerCase()
-  return providers.value.filter(p =>
-    p.service_name?.toLowerCase().includes(q) ||
-    p.location?.toLowerCase().includes(q) ||
-    p.description?.toLowerCase().includes(q)
-  )
+  let list = providers.value
+  if (search.value.trim()) {
+    const q = search.value.toLowerCase()
+    list = list.filter(p =>
+      p.service_name?.toLowerCase().includes(q) ||
+      p.location?.toLowerCase().includes(q) ||
+      p.description?.toLowerCase().includes(q)
+    )
+  }
+  if (sortByNearest.value && userLat.value && userLng.value) {
+    list = [...list].sort((a, b) => {
+      const dA = a.lat && a.lng ? getDistance(userLat.value!, userLng.value!, a.lat, a.lng) : 9999
+      const dB = b.lat && b.lng ? getDistance(userLat.value!, userLng.value!, b.lat, b.lng) : 9999
+      return dA - dB
+    })
+  }
+  return list
 })
 </script>
 
@@ -192,6 +230,16 @@ const filtered = computed(() => {
           <p class="text-sm text-gray-500 dark:text-gray-400">
             <span class="font-semibold text-gray-900 dark:text-white">{{ filtered.length }}</span> provider{{ filtered.length !== 1 ? 's' : '' }} found
           </p>
+          <UButton
+            :loading="gettingLocation"
+            :color="sortByNearest ? 'success' : 'primary'"
+            size="sm"
+            :icon="sortByNearest ? 'i-lucide-check' : 'i-lucide-navigation'"
+            variant="outline"
+            @click="findNearest"
+          >
+            {{ sortByNearest ? 'Sorted by Distance' : 'Find Nearest to Me' }}
+          </UButton>
         </div>
 
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -213,9 +261,15 @@ const filtered = computed(() => {
                 <div class="flex-1 min-w-0">
                   <div class="flex items-start justify-between gap-2">
                     <h3 class="font-bold text-gray-900 dark:text-white leading-tight truncate">{{ provider.service_name }}</h3>
-                    <span class="flex-shrink-0 flex items-center gap-1 px-2 py-0.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-xs font-semibold rounded-full border border-emerald-100 dark:border-emerald-800">
-                      <UIcon name="i-lucide-badge-check" class="w-3 h-3" /> Verified
-                    </span>
+                    <div class="flex flex-col items-end gap-1 flex-shrink-0">
+                      <span class="flex items-center gap-1 px-2 py-0.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-xs font-semibold rounded-full border border-emerald-100 dark:border-emerald-800">
+                        <UIcon name="i-lucide-badge-check" class="w-3 h-3" /> Verified
+                      </span>
+                      <span v-if="sortByNearest && userLat && userLng && provider.lat && provider.lng" class="flex items-center gap-1 px-2 py-0.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-semibold rounded-full border border-blue-100 dark:border-blue-800">
+                        <UIcon name="i-lucide-navigation" class="w-3 h-3" />
+                        {{ getDistance(userLat, userLng, provider.lat, provider.lng).toFixed(1) }} km
+                      </span>
+                    </div>
                   </div>
                   <div class="flex items-center gap-1 mt-1 text-xs text-gray-500 dark:text-gray-400">
                     <UIcon name="i-lucide-map-pin" class="w-3 h-3 text-emerald-500" />
