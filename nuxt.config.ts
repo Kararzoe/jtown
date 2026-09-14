@@ -8,8 +8,10 @@ export default defineNuxtConfig({
   app: {
     head: {
       link: [
-        { rel: 'icon', type: 'image/png', href: '/josmkt-logo.png' }
-      ]
+        { rel: 'icon', type: 'image/png', href: '/josmkt-logo.png' },
+        { rel: 'apple-touch-icon', href: '/josmkt-logo.png' }
+      ],
+      title: 'JosMKT — Jos Marketplace'
     }
   },
 
