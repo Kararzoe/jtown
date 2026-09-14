@@ -5,6 +5,14 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  app: {
+    head: {
+      link: [
+        { rel: 'icon', type: 'image/png', href: '/josmkt-logo.png' }
+      ]
+    }
+  },
+
   compatibilityDate: '2025-01-01',
 
   ssr: false,
