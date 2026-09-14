@@ -8,6 +8,11 @@ const search = ref('')
 const providers = ref<any[]>([])
 const loading = ref(false)
 
+const imgUrl = (url: string, w = 400) => {
+  if (!url || !url.includes('cloudinary.com')) return url
+  return url.replace('/upload/', `/upload/f_auto,q_auto,w_${w}/`)
+}
+
 const categories = [
   { label: 'Plumbing', icon: '🔧', slug: 'plumbing' },
   { label: 'Electricians', icon: '⚡', slug: 'electrical' },
@@ -255,7 +260,7 @@ const filtered = computed(() => {
               <!-- Provider Header -->
               <div class="flex items-start gap-3 mb-4">
                 <div class="w-14 h-14 rounded-2xl overflow-hidden bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/40 dark:to-teal-900/40 flex items-center justify-center flex-shrink-0 border border-emerald-100 dark:border-emerald-800">
-                  <img v-if="provider.image" :src="provider.image" :alt="provider.service_name" class="w-full h-full object-cover" />
+                  <img v-if="provider.image" :src="imgUrl(provider.image, 200)" :alt="provider.service_name" class="w-full h-full object-cover" />
                   <span v-else class="text-emerald-600 dark:text-emerald-400 font-bold text-xl">{{ provider.service_name?.charAt(0) }}</span>
                 </div>
                 <div class="flex-1 min-w-0">
@@ -299,7 +304,7 @@ const filtered = computed(() => {
                 <img
                   v-for="(img, i) in provider.gallery.slice(0, 3)"
                   :key="i"
-                  :src="img"
+                  :src="imgUrl(img, 200)"
                   class="w-16 h-16 object-cover rounded-xl border border-gray-100 dark:border-gray-700"
                 />
                 <div v-if="provider.gallery.length > 3" class="w-16 h-16 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-xs font-semibold text-gray-500">

@@ -1,14 +1,79 @@
 <script setup lang="ts">
+import { Loader } from '@googlemaps/js-api-loader'
+
 const route = useRoute()
 const supabase = useSupabaseClient()
+const config = useRuntimeConfig()
 const provider = ref<any>(null)
 const loading = ref(true)
 const selectedImage = ref<string | null>(null)
+const mapEl = ref<HTMLElement | null>(null)
+const mapType = ref<'roadmap' | 'satellite'>('roadmap')
+let googleMap: any = null
+let marker: any = null
+
+// Cloudinary WebP optimization helper
+const imgUrl = (url: string, w = 800) => {
+  if (!url || !url.includes('cloudinary.com')) return url
+  return url.replace('/upload/', `/upload/f_auto,q_auto,w_${w}/`)
+}
 
 onMounted(async () => {
   const { data } = await supabase.from('service_providers').select('*').eq('id', route.params.id).single()
   provider.value = data
   loading.value = false
+
+  if (data?.lat && data?.lng) {
+    await nextTick()
+    initMap(data.lat, data.lng, data.service_name)
+  }
+})
+
+const initMap = async (lat: number, lng: number, title: string) => {
+  const loader = new Loader({
+    apiKey: config.public.googleMapsKey,
+    version: 'weekly',
+    libraries: ['marker']
+  })
+
+  const { Map } = await loader.importLibrary('maps')
+  const { AdvancedMarkerElement } = await loader.importLibrary('marker') as any
+
+  googleMap = new Map(mapEl.value!, {
+    center: { lat, lng },
+    zoom: 16,
+    mapId: 'josmkt_provider_map',
+    mapTypeId: mapType.value,
+    disableDefaultUI: false,
+    zoomControl: true,
+    streetViewControl: true,
+    fullscreenControl: true,
+    mapTypeControl: false,
+  })
+
+  // Custom marker pin
+  const pin = document.createElement('div')
+  pin.innerHTML = `
+    <div style="background:#10b981;color:white;padding:8px 14px;border-radius:20px;font-weight:700;font-size:13px;box-shadow:0 4px 15px rgba(16,185,129,0.4);white-space:nowrap;display:flex;align-items:center;gap:6px;">
+      <span style="font-size:16px">📍</span> ${title}
+    </div>
+  `
+
+  marker = new AdvancedMarkerElement({
+    map: googleMap,
+    position: { lat, lng },
+    content: pin,
+    title,
+  })
+}
+
+const toggleMapType = () => {
+  mapType.value = mapType.value === 'roadmap' ? 'satellite' : 'roadmap'
+  if (googleMap) googleMap.setMapTypeId(mapType.value)
+}
+
+watch(mapType, (val) => {
+  if (googleMap) googleMap.setMapTypeId(val)
 })
 </script>
 
@@ -42,7 +107,12 @@ onMounted(async () => {
         <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 shadow-xl mb-6">
           <div class="flex flex-col md:flex-row gap-6">
             <div class="flex-shrink-0">
-              <img v-if="provider.image" :src="provider.image" :alt="provider.service_name" class="w-28 h-28 md:w-36 md:h-36 rounded-2xl object-cover border-4 border-white shadow-lg" />
+              <img
+                v-if="provider.image"
+                :src="imgUrl(provider.image, 300)"
+                :alt="provider.service_name"
+                class="w-28 h-28 md:w-36 md:h-36 rounded-2xl object-cover border-4 border-white shadow-lg"
+              />
               <div v-else class="w-28 h-28 md:w-36 md:h-36 rounded-2xl bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/40 dark:to-teal-900/40 flex items-center justify-center text-emerald-600 font-bold text-4xl border-4 border-white shadow-lg">
                 {{ provider.service_name?.charAt(0) }}
               </div>
@@ -74,7 +144,7 @@ onMounted(async () => {
                 </div>
               </div>
 
-              <div class="flex gap-3">
+              <div class="flex gap-3 flex-wrap">
                 <a :href="`tel:${provider.phone}`" class="flex items-center gap-2 px-6 py-3 bg-emerald-500 text-white rounded-xl font-semibold hover:bg-emerald-600 transition">
                   <UIcon name="i-lucide-phone" class="w-5 h-5" /> Call Now
                 </a>
@@ -86,21 +156,22 @@ onMounted(async () => {
           </div>
         </div>
 
-        <!-- Map -->
+        <!-- Google Map -->
         <div v-if="provider.lat && provider.lng" class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm mb-6 overflow-hidden">
-          <div class="p-4 md:p-6 pb-0">
-            <h2 class="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-3">
+          <div class="p-4 md:p-6 pb-3 flex items-center justify-between">
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
               <UIcon name="i-lucide-map-pin" class="w-5 h-5 text-emerald-500" /> Location
             </h2>
+            <button
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition"
+              :class="mapType === 'satellite' ? 'bg-gray-900 text-white border-gray-700' : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-600'"
+              @click="toggleMapType"
+            >
+              <UIcon :name="mapType === 'satellite' ? 'i-lucide-map' : 'i-lucide-satellite'" class="w-3.5 h-3.5" />
+              {{ mapType === 'satellite' ? 'Map View' : 'Satellite' }}
+            </button>
           </div>
-          <iframe
-            :src="`https://maps.google.com/maps?q=${provider.lat},${provider.lng}&z=16&output=embed`"
-            width="100%"
-            height="300"
-            style="border:0"
-            loading="lazy"
-            allowfullscreen
-          />
+          <div ref="mapEl" style="height: 320px; width: 100%;" />
           <div class="p-4">
             <a
               :href="`https://www.google.com/maps/dir/?api=1&destination=${provider.lat},${provider.lng}`"
@@ -127,7 +198,7 @@ onMounted(async () => {
             <img
               v-for="(img, idx) in provider.gallery"
               :key="idx"
-              :src="img"
+              :src="imgUrl(img, 400)"
               :alt="`Work ${idx + 1}`"
               class="w-full h-40 object-cover rounded-xl border border-gray-200 dark:border-gray-700 hover:border-emerald-300 transition cursor-pointer hover:scale-105"
               @click="selectedImage = img"
@@ -153,7 +224,7 @@ onMounted(async () => {
 
     <!-- Lightbox -->
     <div v-if="selectedImage" class="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4" @click="selectedImage = null">
-      <img :src="selectedImage" alt="Gallery" class="max-w-full max-h-[90vh] rounded-xl" />
+      <img :src="imgUrl(selectedImage, 1200)" alt="Gallery" class="max-w-full max-h-[90vh] rounded-xl" />
     </div>
   </div>
 </template>
