@@ -2,6 +2,7 @@
 const supabase = useSupabaseClient()
 const { t } = useLanguage()
 const products = ref<any[]>([])
+const allProviders = ref<any[]>([])
 const loading = ref(true)
 const currentBanner = ref(0)
 const openFaq = ref<number | null>(null)
@@ -73,8 +74,12 @@ const faqs = computed(() => [
 ])
 
 onMounted(async () => {
-  const { data } = await supabase.from('products').select('*, seller:profiles(*)').eq('status', 'active').limit(8)
-  products.value = data || []
+  const [{ data: p }, { data: prov }] = await Promise.all([
+    supabase.from('products').select('*, seller:profiles(*)').eq('status', 'active').limit(8),
+    supabase.from('service_providers').select('id,service_name,category,location,phone,image,description,lat,lng').eq('status', 'approved')
+  ])
+  products.value = p || []
+  allProviders.value = prov || []
   loading.value = false
   setInterval(() => { currentBanner.value = (currentBanner.value + 1) % banners.length }, 4000)
 
@@ -185,6 +190,25 @@ onMounted(async () => {
             <h3 class="text-center font-semibold text-sm md:text-base text-gray-900 dark:text-white">{{ cat.label }}</h3>
             <p class="text-center text-xs text-gray-400 mt-1 hidden md:block group-hover:text-emerald-500 transition-colors">Explore →</p>
           </NuxtLink>
+        </div>
+      </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="py-16 px-4 bg-white dark:bg-gray-900">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-8 reveal">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
+            <UIcon name="i-lucide-map-pin" class="w-4 h-4" /> Live Service Map
+          </div>
+          <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3">
+            Find Services <span class="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">Near You</span>
+          </h2>
+          <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto">Browse verified service providers across Jos on the map. Click any pin to contact them instantly.</p>
+        </div>
+        <ProvidersMap :providers="allProviders" height="480px" />
+        <div class="text-center mt-6">
+          <UButton to="/services" color="primary" size="lg" trailing-icon="i-lucide-arrow-right">Browse All Services</UButton>
         </div>
       </div>
     </section>

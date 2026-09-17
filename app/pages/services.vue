@@ -231,6 +231,15 @@ const filtered = computed(() => {
 
       <!-- Providers Grid -->
       <div v-else>
+        <!-- Map View -->
+        <div class="mb-8">
+          <div class="flex items-center gap-2 mb-3">
+            <UIcon name="i-lucide-map" class="w-4 h-4 text-emerald-500" />
+            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Map View — {{ filtered.filter(p => p.lat && p.lng).length }} providers pinned</p>
+          </div>
+          <ProvidersMap :providers="filtered" height="380px" />
+        </div>
+
         <div class="flex items-center justify-between mb-5">
           <p class="text-sm text-gray-500 dark:text-gray-400">
             <span class="font-semibold text-gray-900 dark:text-white">{{ filtered.length }}</span> provider{{ filtered.length !== 1 ? 's' : '' }} found
