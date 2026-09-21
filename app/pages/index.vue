@@ -50,19 +50,21 @@ const stats = [
   { label: 'Happy Customers', value: '25,000+', icon: 'i-lucide-users' },
 ]
 
-const howItWorks = computed(() => [
-  { icon: '👤', title: t('step1Title'), desc: t('step1Desc') },
-  { icon: '📢', title: t('step2Title'), desc: t('step2Desc') },
-  { icon: '👁️', title: t('step3Title'), desc: t('step3Desc') },
-  { icon: '📈', title: t('step4Title'), desc: t('step4Desc') },
-])
+const howTab = ref<'customers' | 'providers'>('customers')
 
-const trust = computed(() => [
-  { icon: 'i-lucide-shield', title: t('verifiedSellers'), desc: t('verifiedSellersDesc') },
-  { icon: 'i-lucide-check-circle', title: t('qualityAssured'), desc: t('qualityAssuredDesc') },
-  { icon: 'i-lucide-lock', title: t('secureContacts'), desc: t('secureContactsDesc') },
-  { icon: 'i-lucide-users', title: t('communityTrust'), desc: t('communityTrustDesc') },
-])
+const howItWorksCustomers = [
+  { icon: '🔍', title: 'Search a Service', desc: 'Browse categories or search for exactly what you need — plumber, caterer, electrician and more.' },
+  { icon: '📍', title: 'Find Nearby Providers', desc: 'See verified professionals near you on the map. Filter by location across Jos.' },
+  { icon: '📞', title: 'Call or WhatsApp', desc: 'Contact the provider directly — no middleman, no commission. One tap to call or chat.' },
+  { icon: '✅', title: 'Get the Job Done', desc: 'Meet your provider, get the work done, and leave a review to help others.' },
+]
+
+const howItWorksProviders = [
+  { icon: '📝', title: 'Register Your Business', desc: 'Fill in your business details, upload photos of your work, and pin your location on the map.' },
+  { icon: '🛡️', title: 'Get Verified', desc: 'Upload your ID for a quick identity check. Verified badges build trust with customers.' },
+  { icon: '🌍', title: 'Go Live on JosMKT', desc: 'Once approved, your profile is visible to thousands of customers searching in Jos every day.' },
+  { icon: '📈', title: 'Grow Your Business', desc: 'Receive calls, WhatsApp messages, and bookings directly. Track your visibility and grow.' },
+]
 
 const faqs = computed(() => [
   { q: t('faq1Q'), a: t('faq1A') },
@@ -257,26 +259,44 @@ onMounted(async () => {
     <!-- How It Works -->
     <section class="py-20 px-4 bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
       <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-14 reveal">
+        <div class="text-center mb-10 reveal">
           <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
-            {{ t('simpleProcess') }}
+            Simple Process
           </div>
-          <h2 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">{{ t('howItWorks') }}</h2>
-          <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto">{{ t('fourSteps') }}</p>
+          <h2 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">How It Works</h2>
+          <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto">Whether you're looking for a service or offering one — JosMKT makes it simple.</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex justify-center mb-10">
+          <div class="inline-flex bg-gray-100 dark:bg-gray-800 rounded-2xl p-1 gap-1">
+            <button
+              :class="['px-6 py-2.5 rounded-xl text-sm font-semibold transition-all', howTab === 'customers' ? 'bg-white dark:bg-gray-700 text-emerald-600 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300']"
+              @click="howTab = 'customers'"
+            >
+              🔍 For Customers
+            </button>
+            <button
+              :class="['px-6 py-2.5 rounded-xl text-sm font-semibold transition-all', howTab === 'providers' ? 'bg-white dark:bg-gray-700 text-emerald-600 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300']"
+              @click="howTab = 'providers'"
+            >
+              💼 For Providers
+            </button>
+          </div>
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
           <div
-            v-for="(step, i) in howItWorks"
+            v-for="(step, i) in (howTab === 'customers' ? howItWorksCustomers : howItWorksProviders)"
             :key="i"
             class="reveal relative text-center"
-            :style="`transition-delay: ${i * 0.15}s`"
+            :style="`transition-delay: ${i * 0.1}s`"
           >
             <div class="relative inline-block mb-4">
               <div class="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg text-3xl hover:scale-110 hover:rotate-3 transition-transform duration-300">
                 {{ step.icon }}
               </div>
-              <div class="absolute -top-2 -right-2 w-7 h-7 bg-gray-900 dark:bg-white rounded-full flex items-center justify-center text-white dark:text-gray-900 font-bold text-xs shadow-md animate-pulse-glow">
+              <div class="absolute -top-2 -right-2 w-7 h-7 bg-gray-900 dark:bg-white rounded-full flex items-center justify-center text-white dark:text-gray-900 font-bold text-xs shadow-md">
                 {{ i + 1 }}
               </div>
             </div>
@@ -284,35 +304,13 @@ onMounted(async () => {
             <p class="text-xs md:text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{{ step.desc }}</p>
           </div>
         </div>
-      </div>
-    </section>
 
-    <!-- Trust Section -->
-    <section class="py-16 px-4 bg-white dark:bg-gray-900">
-      <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-12 reveal">
-          <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">{{ t('shopWithConfidence') }}</h2>
-          <p class="text-gray-600 dark:text-gray-400">{{ t('safetyPriority') }}</p>
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-          <div
-            v-for="(f, i) in trust"
-            :key="f.title"
-            class="reveal-scale text-center p-4 md:p-6 rounded-xl hover:bg-emerald-50 dark:hover:bg-emerald-900/10 transition-all hover:-translate-y-1 cursor-default"
-            :style="`transition-delay: ${i * 0.1}s`"
-          >
-            <div class="w-12 h-12 md:w-16 md:h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4 hover:scale-110 transition-transform">
-              <UIcon :name="f.icon" class="w-6 h-6 md:w-8 md:h-8 text-emerald-600" />
-            </div>
-            <h3 class="font-bold text-sm md:text-lg mb-2 text-gray-900 dark:text-white">{{ f.title }}</h3>
-            <p class="text-xs md:text-sm text-gray-600 dark:text-gray-400">{{ f.desc }}</p>
-          </div>
+        <!-- CTA under providers tab -->
+        <div v-if="howTab === 'providers'" class="text-center mt-10">
+          <UButton to="/become-seller" color="primary" size="lg" trailing-icon="i-lucide-arrow-right">Register Your Business — It's Free</UButton>
         </div>
       </div>
     </section>
-
-    <!-- Testimonials -->
-    <TestimonialsSection />
 
     <!-- Newsletter -->
     <NewsletterSection />
