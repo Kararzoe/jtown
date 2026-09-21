@@ -112,13 +112,9 @@ watch(() => props.providers, async () => {
       </div>
     </Transition>
 
-    <!-- No coords notice -->
-    <div v-if="providers.filter(p => p.lat && p.lng).length === 0" class="absolute inset-0 flex items-center justify-center bg-gray-50/80 dark:bg-gray-900/80 backdrop-blur-sm">
-      <div class="text-center p-6">
-        <div class="text-4xl mb-2">📍</div>
-        <p class="font-semibold text-gray-700 dark:text-gray-300 text-sm">No providers with GPS yet</p>
-        <p class="text-xs text-gray-400 mt-1">Providers appear here once they pin their location</p>
-      </div>
+    <!-- No coords notice (non-blocking) -->
+    <div v-if="providers.filter(p => p.lat && p.lng).length === 0" class="absolute top-3 left-1/2 -translate-x-1/2 z-10 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm px-4 py-2 rounded-full shadow text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2 whitespace-nowrap">
+      <span>📍</span> Providers will appear here once they add their location
     </div>
   </div>
 </template>
