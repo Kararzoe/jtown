@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { Loader } from '@googlemaps/js-api-loader'
-
 const route = useRoute()
 const supabase = useSupabaseClient()
 const config = useRuntimeConfig()
@@ -10,7 +8,17 @@ const selectedImage = ref<string | null>(null)
 const mapEl = ref<HTMLElement | null>(null)
 const mapType = ref<'roadmap' | 'satellite'>('roadmap')
 let googleMap: any = null
-let marker: any = null
+
+const loadGoogleMaps = (): Promise<void> => {
+  return new Promise((resolve) => {
+    if ((window as any).google?.maps) return resolve()
+    const script = document.createElement('script')
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${config.public.googleMapsKey}&libraries=marker&v=weekly`
+    script.async = true
+    script.onload = () => resolve()
+    document.head.appendChild(script)
+  })
+}
 
 // Cloudinary WebP optimization helper
 const imgUrl = (url: string, w = 800) => {
@@ -30,14 +38,10 @@ onMounted(async () => {
 })
 
 const initMap = async (lat: number, lng: number, title: string) => {
-  const loader = new Loader({
-    apiKey: config.public.googleMapsKey,
-    version: 'weekly',
-    libraries: ['marker']
-  })
+  await loadGoogleMaps()
 
-  const { Map } = await loader.importLibrary('maps')
-  const { AdvancedMarkerElement } = await loader.importLibrary('marker') as any
+  const { Map } = (window as any).google.maps
+  const { AdvancedMarkerElement } = (window as any).google.maps.marker
 
   googleMap = new Map(mapEl.value!, {
     center: { lat, lng },
@@ -53,13 +57,9 @@ const initMap = async (lat: number, lng: number, title: string) => {
 
   // Custom marker pin
   const pin = document.createElement('div')
-  pin.innerHTML = `
-    <div style="background:#10b981;color:white;padding:8px 14px;border-radius:20px;font-weight:700;font-size:13px;box-shadow:0 4px 15px rgba(16,185,129,0.4);white-space:nowrap;display:flex;align-items:center;gap:6px;">
-      <span style="font-size:16px">📍</span> ${title}
-    </div>
-  `
+  pin.innerHTML = `<div style="background:#10b981;color:white;padding:8px 14px;border-radius:20px;font-weight:700;font-size:13px;box-shadow:0 4px 15px rgba(16,185,129,0.4);white-space:nowrap;display:flex;align-items:center;gap:6px;"><span style="font-size:16px">📍</span> ${title}</div>`
 
-  marker = new AdvancedMarkerElement({
+  new AdvancedMarkerElement({
     map: googleMap,
     position: { lat, lng },
     content: pin,

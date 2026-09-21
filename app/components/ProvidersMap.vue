@@ -1,48 +1,44 @@
 <script setup lang="ts">
-import { Loader } from '@googlemaps/js-api-loader'
-
 const props = defineProps<{ providers: any[], height?: string }>()
 const config = useRuntimeConfig()
 const mapEl = ref<HTMLElement | null>(null)
 const selectedProvider = ref<any>(null)
 let googleMap: any = null
 
-onMounted(async () => {
-  await nextTick()
-  const withCoords = props.providers.filter(p => p.lat && p.lng)
-
-  const loader = new Loader({
-    apiKey: config.public.googleMapsKey,
-    version: 'weekly',
-    libraries: ['marker']
+const loadGoogleMaps = (): Promise<void> => {
+  return new Promise((resolve) => {
+    if ((window as any).google?.maps) return resolve()
+    const script = document.createElement('script')
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${config.public.googleMapsKey}&libraries=marker&v=weekly`
+    script.async = true
+    script.onload = () => resolve()
+    document.head.appendChild(script)
   })
+}
 
-  const { Map } = await loader.importLibrary('maps')
-  const { AdvancedMarkerElement } = await loader.importLibrary('marker') as any
+const initMap = async () => {
+  await nextTick()
+  await loadGoogleMaps()
 
-  // Center on Jos, Nigeria
+  const { Map } = (window as any).google.maps
+  const { AdvancedMarkerElement } = (window as any).google.maps.marker
   const josCenter = { lat: 9.8965, lng: 8.8583 }
 
   googleMap = new Map(mapEl.value!, {
     center: josCenter,
     zoom: 13,
     mapId: 'josmkt_providers_map',
-    disableDefaultUI: false,
     zoomControl: true,
     streetViewControl: false,
     fullscreenControl: true,
     mapTypeControl: false,
   })
 
-  // Add a marker for each provider with coords
+  const withCoords = props.providers.filter(p => p.lat && p.lng)
+
   withCoords.forEach(provider => {
     const pin = document.createElement('div')
-    pin.style.cssText = 'cursor:pointer;'
-    pin.innerHTML = `
-      <div style="background:#10b981;color:white;padding:5px 10px;border-radius:20px;font-weight:700;font-size:11px;box-shadow:0 3px 10px rgba(16,185,129,0.5);white-space:nowrap;display:flex;align-items:center;gap:4px;border:2px solid white;">
-        <span style="font-size:13px">📍</span> ${provider.service_name}
-      </div>
-    `
+    pin.innerHTML = `<div style="background:#10b981;color:white;padding:5px 10px;border-radius:20px;font-weight:700;font-size:11px;box-shadow:0 3px 10px rgba(16,185,129,0.5);white-space:nowrap;display:flex;align-items:center;gap:4px;border:2px solid white;cursor:pointer"><span style="font-size:13px">📍</span> ${provider.service_name}</div>`
 
     const marker = new AdvancedMarkerElement({
       map: googleMap,
@@ -58,17 +54,16 @@ onMounted(async () => {
     })
   })
 
-  // If providers have coords, fit map to show all of them
   if (withCoords.length > 1) {
-    const { LatLngBounds } = await loader.importLibrary('core') as any
-    const bounds = new LatLngBounds()
-    withCoords.forEach(p => bounds.extend({ lat: Number(p.lat), lng: Number(p.lng) }))
+    const bounds = new (window as any).google.maps.LatLngBounds()
+    withCoords.forEach((p: any) => bounds.extend({ lat: Number(p.lat), lng: Number(p.lng) }))
     googleMap.fitBounds(bounds, 80)
   }
-})
+}
 
-// Re-render markers when providers change
-watch(() => props.providers, async () => {
+onMounted(initMap)
+
+watch(() => props.providers, () => {
   if (googleMap) {
     googleMap.setCenter({ lat: 9.8965, lng: 8.8583 })
     googleMap.setZoom(13)
