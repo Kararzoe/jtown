@@ -1,11 +1,19 @@
 <script setup lang="ts">
-const { auth } = useSupabaseClient()
+const supabase = useSupabaseClient()
+const { auth } = supabase
 const user = useSupabaseUser()
 const router = useRouter()
 const isOpen = ref(false)
 const searchOpen = ref(false)
 const searchQuery = ref('')
 const { currentLang, setLang } = useLanguage()
+const isAdmin = ref(false)
+
+watch(user, async (u) => {
+  if (!u) { isAdmin.value = false; return }
+  const { data } = await supabase.from('profiles').select('role').eq('id', u.id).single()
+  isAdmin.value = data?.role === 'admin'
+}, { immediate: true })
 
 const languages = [
   { label: 'English', value: 'en', flag: '🇬🇧' },
@@ -21,7 +29,7 @@ const handleSearch = () => {
 }
 
 const logout = async () => {
-  await auth.signOut()
+  await supabase.auth.signOut()
   router.push('/')
 }
 
@@ -95,7 +103,7 @@ const navLinks = [
               { label: 'Wishlist', icon: 'i-lucide-heart', to: '/wishlist' },
               { label: 'Compare', icon: 'i-lucide-scale', to: '/compare' },
               { label: 'Saved Searches', icon: 'i-lucide-bookmark', to: '/saved-searches' },
-              { label: 'Admin Dashboard', icon: 'i-lucide-shield', to: '/admin' },
+              ...(isAdmin.value ? [{ label: 'Admin Dashboard', icon: 'i-lucide-shield', to: '/admin' }] : []),
               { label: 'Logout', icon: 'i-lucide-log-out', onSelect: logout }
             ]]">
               <UButton variant="ghost" color="neutral" icon="i-lucide-user-circle" />
@@ -142,7 +150,7 @@ const navLinks = [
               <NuxtLink to="/wishlist" class="text-gray-700 dark:text-gray-300 font-medium px-2 py-1" @click="isOpen = false">Wishlist</NuxtLink>
               <NuxtLink to="/compare" class="text-gray-700 dark:text-gray-300 font-medium px-2 py-1" @click="isOpen = false">Compare</NuxtLink>
               <NuxtLink to="/saved-searches" class="text-gray-700 dark:text-gray-300 font-medium px-2 py-1" @click="isOpen = false">Saved Searches</NuxtLink>
-              <NuxtLink to="/admin" class="text-gray-700 dark:text-gray-300 font-medium px-2 py-1" @click="isOpen = false">Admin Dashboard</NuxtLink>
+              <NuxtLink v-if="isAdmin" to="/admin" class="text-gray-700 dark:text-gray-300 font-medium px-2 py-1" @click="isOpen = false">Admin Dashboard</NuxtLink>
               <button class="text-left text-red-500 font-medium px-2 py-1" @click="logout">Logout</button>
             </template>
             <NuxtLink v-else to="/login" class="text-gray-700 dark:text-gray-300 font-medium px-2 py-1" @click="isOpen = false">Login</NuxtLink>
