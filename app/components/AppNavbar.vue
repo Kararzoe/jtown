@@ -39,6 +39,19 @@ const navLinks = [
   { label: 'Services', to: '/services' },
   { label: 'Trending', to: '/trending' },
 ]
+
+const userMenuItems = computed(() => [[
+  { label: 'Dashboard', icon: 'i-lucide-layout-dashboard', to: '/dashboard' },
+  { label: 'Profile', icon: 'i-lucide-user-circle', to: '/profile' },
+  { label: 'Messages', icon: 'i-lucide-message-square', to: '/chat' },
+  { label: 'Seller Dashboard', icon: 'i-lucide-store', to: '/seller-dashboard' },
+  { label: 'Orders', icon: 'i-lucide-package', to: '/orders' },
+  { label: 'Wishlist', icon: 'i-lucide-heart', to: '/wishlist' },
+  { label: 'Compare', icon: 'i-lucide-scale', to: '/compare' },
+  { label: 'Saved Searches', icon: 'i-lucide-bookmark', to: '/saved-searches' },
+  ...(isAdmin.value ? [{ label: 'Admin Dashboard', icon: 'i-lucide-shield', to: '/admin' }] : []),
+  { label: 'Logout', icon: 'i-lucide-log-out', onSelect: logout }
+]])
 </script>
 
 <template>
@@ -94,18 +107,7 @@ const navLinks = [
 
           <!-- User -->
           <div v-if="user" class="hidden md:block">
-            <UDropdownMenu :items="[[
-              { label: 'Dashboard', icon: 'i-lucide-layout-dashboard', to: '/dashboard' },
-              { label: 'Profile', icon: 'i-lucide-user-circle', to: '/profile' },
-              { label: 'Messages', icon: 'i-lucide-message-square', to: '/chat' },
-              { label: 'Seller Dashboard', icon: 'i-lucide-store', to: '/seller-dashboard' },
-              { label: 'Orders', icon: 'i-lucide-package', to: '/orders' },
-              { label: 'Wishlist', icon: 'i-lucide-heart', to: '/wishlist' },
-              { label: 'Compare', icon: 'i-lucide-scale', to: '/compare' },
-              { label: 'Saved Searches', icon: 'i-lucide-bookmark', to: '/saved-searches' },
-              ...(isAdmin.value ? [{ label: 'Admin Dashboard', icon: 'i-lucide-shield', to: '/admin' }] : []),
-              { label: 'Logout', icon: 'i-lucide-log-out', onSelect: logout }
-            ]]">
+            <UDropdownMenu :items="userMenuItems">
               <UButton variant="ghost" color="neutral" icon="i-lucide-user-circle" />
             </UDropdownMenu>
           </div>
