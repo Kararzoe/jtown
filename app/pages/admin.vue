@@ -1,5 +1,5 @@
 <script setup lang="ts">
-definePageMeta({ layout: 'default', middleware: 'admin' })
+definePageMeta({ layout: 'default' })
 const supabase = useSupabaseClient()
 const toast = useToast()
 const tab = ref('overview')
