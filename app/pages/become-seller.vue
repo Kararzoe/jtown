@@ -111,14 +111,11 @@ const onSelfieChange = async (e: Event) => {
 }
 
 const submit = async () => {
-  if (!form.id_image || !form.selfie_image) {
-    toast.add({ title: 'Please upload your ID and a selfie for verification', color: 'error' })
-    return
-  }
   loading.value = true
   const { error } = await supabase.from('service_providers').insert([{ ...form, status: 'pending' }])
   if (error) {
-    toast.add({ title: 'Failed to submit. Please try again.', color: 'error' })
+    console.error('Submit error:', error)
+    toast.add({ title: error.message || 'Failed to submit. Please try again.', color: 'error' })
   } else {
     submitted.value = true
   }
