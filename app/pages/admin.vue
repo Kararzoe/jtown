@@ -4,6 +4,7 @@ const supabase = useSupabaseClient()
 const toast = useToast()
 const tab = ref('overview')
 const loading = ref(true)
+const sidebarOpen = ref(false)
 
 const stats = ref({ users: 0, products: 0, orders: 0, revenue: 0 })
 const users = ref<any[]>([])
@@ -24,17 +25,16 @@ onMounted(async () => {
     orders: d.orders.length,
     revenue: d.orders.filter((o: any) => o.status === 'completed').reduce((s: number, o: any) => s + (o.product?.price || 0), 0)
   }
-  if (products.value.some((p: any) => p.status === 'pending')) tab.value = 'products'
   loading.value = false
 })
 
-// ── Products ──────────────────────────────────────────────────
 const productFilter = ref<'all' | 'pending' | 'active' | 'rejected'>('pending')
+const serviceFilter = ref<'all' | 'pending' | 'approved' | 'rejected'>('pending')
+const loadingServices = ref(false)
 
 const deleteProduct = async (id: string) => {
   await $fetch('/api/admin/delete', { method: 'POST', body: { table: 'products', id } })
   products.value = products.value.filter(p => p.id !== id)
-  stats.value.products--
   toast.add({ title: 'Product deleted', color: 'success' })
 }
 
@@ -45,17 +45,12 @@ const updateProductStatus = async (id: string, status: string) => {
   toast.add({ title: `Product ${status}`, color: 'success' })
 }
 
-// ── Orders ────────────────────────────────────────────────────
 const updateOrderStatus = async (id: string, status: string) => {
   await $fetch('/api/admin/update', { method: 'POST', body: { table: 'orders', id, data: { status } } })
   const o = orders.value.find(o => o.id === id)
   if (o) o.status = status
   toast.add({ title: 'Order updated', color: 'success' })
 }
-
-// ── Service Providers ─────────────────────────────────────────
-const loadingServices = ref(false)
-const serviceFilter = ref<'all' | 'pending' | 'approved' | 'rejected'>('pending')
 
 const loadServiceProviders = async () => {
   loadingServices.value = true
@@ -77,12 +72,7 @@ const deleteServiceProvider = async (id: string) => {
   toast.add({ title: 'Provider deleted', color: 'success' })
 }
 
-watch(tab, (val) => {
-  if (val === 'services') loadServiceProviders()
-  if (val === 'messages') loadConversations()
-})
-
-// ── Support Messages ──────────────────────────────────────────
+// Messages
 const conversations = ref<any[]>([])
 const selectedUser = ref<any>(null)
 const threadMessages = ref<any[]>([])
@@ -109,11 +99,6 @@ const openThread = async (convo: any) => {
   nextTick(() => threadEnd.value?.scrollIntoView({ behavior: 'smooth' }))
   await supabase.from('support_messages').update({ read: true }).eq('user_id', convo.user_id).eq('is_admin', false)
   convo.unread = 0
-  supabase.channel(`admin-support:${convo.user_id}`)
-    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'support_messages', filter: `user_id=eq.${convo.user_id}` }, (payload) => {
-      threadMessages.value.push(payload.new)
-      nextTick(() => threadEnd.value?.scrollIntoView({ behavior: 'smooth' }))
-    }).subscribe()
 }
 
 const sendAdminReply = async () => {
@@ -121,11 +106,12 @@ const sendAdminReply = async () => {
   const content = adminReply.value.trim()
   adminReply.value = ''
   await supabase.from('support_messages').insert({ user_id: selectedUser.value.user_id, user_email: selectedUser.value.user_email, user_name: selectedUser.value.user_name, content, is_admin: true, read: false })
+  await loadConversations()
 }
 
-// ── Add Provider ──────────────────────────────────────────────
+// Add Provider
 const CLOUDINARY = 'https://api.cloudinary.com/v1_1/dfye3j2bs/image/upload'
-const newProvider = reactive({ service_name: '', category: '', description: '', phone: '', location: '', experience: '', price_range: '', image: '', gallery: [] as string[], id_image: '', selfie_image: '', lat: null as number | null, lng: null as number | null })
+const newProvider = reactive({ service_name: '', category: '', description: '', phone: '', location: '', experience: '', price_range: '', image: '', gallery: [] as string[], lat: null as number | null, lng: null as number | null })
 const uploading = ref(false)
 const gettingLocation = ref(false)
 const locationPinned = ref(false)
@@ -139,52 +125,11 @@ const uploadImage = async (file: File): Promise<string> => {
   return data.secure_url || ''
 }
 
-const handleLogoUpload = async (e: Event) => {
-  const file = (e.target as HTMLInputElement).files?.[0]
-  if (!file) return
-  uploading.value = true
-  newProvider.image = await uploadImage(file)
-  uploading.value = false
-}
-
-const handleGalleryUpload = async (e: Event) => {
-  const files = (e.target as HTMLInputElement).files
-  if (!files) return
-  uploading.value = true
-  for (const file of Array.from(files)) {
-    const url = await uploadImage(file)
-    if (url) newProvider.gallery.push(url)
-  }
-  uploading.value = false
-}
-
-const handleIdUpload = async (e: Event) => {
-  const file = (e.target as HTMLInputElement).files?.[0]
-  if (!file) return
-  uploading.value = true
-  newProvider.id_image = await uploadImage(file)
-  uploading.value = false
-}
-
-const handleSelfieUpload = async (e: Event) => {
-  const file = (e.target as HTMLInputElement).files?.[0]
-  if (!file) return
-  uploading.value = true
-  newProvider.selfie_image = await uploadImage(file)
-  uploading.value = false
-}
-
 const pinLocation = () => {
   if (!navigator.geolocation) return
   gettingLocation.value = true
   navigator.geolocation.getCurrentPosition(
-    (pos) => {
-      newProvider.lat = pos.coords.latitude
-      newProvider.lng = pos.coords.longitude
-      locationPinned.value = true
-      gettingLocation.value = false
-      toast.add({ title: 'Location pinned!', color: 'success' })
-    },
+    (pos) => { newProvider.lat = pos.coords.latitude; newProvider.lng = pos.coords.longitude; locationPinned.value = true; gettingLocation.value = false; toast.add({ title: 'Location pinned!', color: 'success' }) },
     () => { gettingLocation.value = false; toast.add({ title: 'Could not get location', color: 'error' }) },
     { enableHighAccuracy: true }
   )
@@ -192,14 +137,13 @@ const pinLocation = () => {
 
 const submitProvider = async () => {
   if (!newProvider.service_name || !newProvider.category || !newProvider.description || !newProvider.phone || !newProvider.location) {
-    toast.add({ title: 'Please fill all required fields', color: 'error' })
-    return
+    toast.add({ title: 'Please fill all required fields', color: 'error' }); return
   }
   const { data, error } = await supabase.from('service_providers').insert([{ ...newProvider, status: 'approved' }]).select().single()
   if (!error && data) {
     toast.add({ title: 'Provider added!', color: 'success' })
     serviceProviders.value.unshift(data)
-    Object.assign(newProvider, { service_name: '', category: '', description: '', phone: '', location: '', experience: '', price_range: '', image: '', gallery: [], id_image: '', selfie_image: '', lat: null, lng: null })
+    Object.assign(newProvider, { service_name: '', category: '', description: '', phone: '', location: '', experience: '', price_range: '', image: '', gallery: [], lat: null, lng: null })
     locationPinned.value = false
     tab.value = 'services'
   } else {
@@ -207,340 +151,388 @@ const submitProvider = async () => {
   }
 }
 
+watch(tab, (val) => {
+  if (val === 'services') loadServiceProviders()
+  if (val === 'messages') loadConversations()
+})
+
 const serviceCategories = ['plumbing','electrical','ac','furniture','catering','painting','mechanic','barbing','carpentry','fashion-design','shoemaking','photography','tech','logistics','laundry','education','perfumery','makeup','event-planning','rentals','mason','phone-accessories','legal','housing-agent','e-wallet']
 const locations = ['Bukuru', 'Rayfield', 'Terminus', 'Sukuwa', 'Lamingo', 'Hwolshe', 'Tudun Wada', 'Nassarawa', 'Old Airport', 'Polo', 'British', 'Other']
 
-const tabs = [
+const navItems = [
   { label: 'Overview', value: 'overview', icon: 'i-lucide-layout-dashboard' },
   { label: 'Users', value: 'users', icon: 'i-lucide-users' },
   { label: 'Products', value: 'products', icon: 'i-lucide-package' },
   { label: 'Orders', value: 'orders', icon: 'i-lucide-shopping-bag' },
   { label: 'Services', value: 'services', icon: 'i-lucide-wrench' },
   { label: 'Messages', value: 'messages', icon: 'i-lucide-message-square' },
-  { label: '+ Add Provider', value: 'addProvider', icon: 'i-lucide-plus-circle' },
+  { label: 'Add Provider', value: 'addProvider', icon: 'i-lucide-plus-circle' },
 ]
 
 const statCards = computed(() => [
-  { label: 'Total Users', value: stats.value.users, icon: 'i-lucide-users', color: 'bg-blue-500' },
-  { label: 'Pending Products', value: products.value.filter(p => p.status === 'pending').length, icon: 'i-lucide-clock', color: 'bg-amber-500' },
-  { label: 'Pending Providers', value: serviceProviders.value.filter(s => s.status === 'pending').length, icon: 'i-lucide-wrench', color: 'bg-purple-500' },
-  { label: 'Revenue', value: `₦${stats.value.revenue.toLocaleString()}`, icon: 'i-lucide-trending-up', color: 'bg-green-500' },
+  { label: 'Total Users', value: stats.value.users, icon: 'i-lucide-users', bg: 'from-blue-500 to-blue-600', change: '+12%' },
+  { label: 'Total Products', value: stats.value.products, icon: 'i-lucide-package', bg: 'from-violet-500 to-violet-600', change: '+8%' },
+  { label: 'Total Orders', value: stats.value.orders, icon: 'i-lucide-shopping-bag', bg: 'from-amber-500 to-orange-500', change: '+23%' },
+  { label: 'Revenue', value: `₦${stats.value.revenue.toLocaleString()}`, icon: 'i-lucide-trending-up', bg: 'from-emerald-500 to-teal-500', change: '+18%' },
 ])
 
+const pendingProducts = computed(() => products.value.filter(p => p.status === 'pending').length)
+const pendingProviders = computed(() => serviceProviders.value.filter(s => s.status === 'pending').length)
 const filteredProviders = computed(() => serviceFilter.value === 'all' ? serviceProviders.value : serviceProviders.value.filter(s => s.status === serviceFilter.value))
 const filteredProducts = computed(() => productFilter.value === 'all' ? products.value : products.value.filter(p => p.status === productFilter.value))
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
-    <div class="max-w-7xl mx-auto">
-      <div class="flex items-center justify-between mb-8">
+  <div class="min-h-screen bg-gray-950 flex">
+
+    <!-- Sidebar -->
+    <aside :class="['fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 border-r border-gray-800 flex flex-col transition-transform duration-300', sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0']">
+      <div class="p-6 border-b border-gray-800">
         <div class="flex items-center gap-3">
-          <UButton to="/dashboard" icon="i-lucide-arrow-left" variant="ghost" color="neutral" />
+          <div class="w-9 h-9 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center">
+            <UIcon name="i-lucide-shield" class="w-5 h-5 text-white" />
+          </div>
           <div>
-            <h1 class="text-3xl font-black text-gray-900 dark:text-white">Admin Dashboard</h1>
-            <p class="text-sm text-gray-500">Jos Marketplace Control Panel</p>
-          </div>
-        </div>
-        <UBadge color="error" size="lg" icon="i-lucide-shield">Admin</UBadge>
-      </div>
-
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div v-for="s in statCards" :key="s.label" class="bg-white dark:bg-gray-800 rounded-2xl p-4 md:p-6 shadow-md">
-          <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-3" :class="s.color">
-            <UIcon :name="s.icon" class="w-5 h-5 text-white" />
-          </div>
-          <p class="text-2xl font-black">{{ s.value }}</p>
-          <p class="text-xs text-gray-500">{{ s.label }}</p>
-        </div>
-      </div>
-
-      <div class="flex gap-2 mb-6 flex-wrap">
-        <UButton v-for="t in tabs" :key="t.value" :icon="t.icon" :variant="tab === t.value ? 'solid' : 'outline'" :color="tab === t.value ? 'primary' : 'neutral'" size="sm" @click="tab = t.value">{{ t.label }}</UButton>
-      </div>
-
-      <div v-if="loading" class="space-y-3">
-        <div v-for="i in 5" :key="i" class="skeleton h-16 rounded-xl" />
-      </div>
-
-      <!-- Overview -->
-      <div v-else-if="tab === 'overview'" class="grid md:grid-cols-2 gap-6">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
-          <h3 class="font-black text-lg mb-4">Recent Users</h3>
-          <div class="space-y-3">
-            <div v-for="u in users.slice(0,5)" :key="u.id" class="flex items-center gap-3">
-              <div class="w-9 h-9 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center overflow-hidden">
-                <img v-if="u.avatar_url" :src="u.avatar_url" class="w-full h-full object-cover" />
-                <UIcon v-else name="i-lucide-user" class="w-4 h-4 text-primary-600" />
-              </div>
-              <div class="flex-1 min-w-0">
-                <p class="font-semibold text-sm truncate">{{ u.full_name || 'No name' }}</p>
-                <p class="text-xs text-gray-400 truncate">{{ u.email }}</p>
-              </div>
-              <p class="text-xs text-gray-400">{{ new Date(u.created_at).toLocaleDateString() }}</p>
-            </div>
-          </div>
-        </div>
-        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
-          <h3 class="font-black text-lg mb-4">Pending Items</h3>
-          <div class="space-y-3">
-            <div class="flex items-center justify-between p-3 bg-amber-50 dark:bg-amber-900/20 rounded-xl">
-              <span class="text-sm font-semibold text-amber-800 dark:text-amber-300">Pending Products</span>
-              <UBadge color="warning">{{ products.filter(p => p.status === 'pending').length }}</UBadge>
-            </div>
-            <div class="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
-              <span class="text-sm font-semibold text-purple-800 dark:text-purple-300">Pending Providers</span>
-              <UBadge color="primary">{{ serviceProviders.filter(s => s.status === 'pending').length }}</UBadge>
-            </div>
-            <div class="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
-              <span class="text-sm font-semibold text-blue-800 dark:text-blue-300">Total Orders</span>
-              <UBadge color="info">{{ orders.length }}</UBadge>
-            </div>
+            <p class="font-black text-white text-sm">JosMKT Admin</p>
+            <p class="text-xs text-gray-500">Control Panel</p>
           </div>
         </div>
       </div>
-
-      <!-- Users -->
-      <div v-else-if="tab === 'users'" class="space-y-3">
-        <div v-for="u in users" :key="u.id" class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm flex items-center gap-4">
-          <div class="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center overflow-hidden flex-shrink-0">
-            <img v-if="u.avatar_url" :src="u.avatar_url" class="w-full h-full object-cover" />
-            <UIcon v-else name="i-lucide-user" class="w-5 h-5 text-primary-600" />
-          </div>
-          <div class="flex-1 min-w-0">
-            <p class="font-bold truncate">{{ u.full_name || 'No name' }}</p>
-            <p class="text-sm text-gray-500 truncate">{{ u.email }}</p>
-          </div>
-          <UBadge :color="u.role === 'admin' ? 'error' : u.role === 'seller' ? 'success' : 'neutral'" size="sm">{{ u.role || 'buyer' }}</UBadge>
-          <p class="text-xs text-gray-400 hidden md:block">{{ new Date(u.created_at).toLocaleDateString() }}</p>
-          <NuxtLink :to="`/seller/${u.id}`"><UButton icon="i-lucide-eye" variant="ghost" size="xs" /></NuxtLink>
-        </div>
+      <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+        <button
+          v-for="item in navItems" :key="item.value"
+          :class="['w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all relative', tab === item.value ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'text-gray-400 hover:bg-gray-800 hover:text-white']"
+          @click="tab = item.value; sidebarOpen = false"
+        >
+          <UIcon :name="item.icon" class="w-4 h-4 flex-shrink-0" />
+          {{ item.label }}
+          <span v-if="item.value === 'products' && pendingProducts > 0" class="ml-auto w-5 h-5 bg-amber-500 rounded-full text-white text-xs flex items-center justify-center">{{ pendingProducts }}</span>
+          <span v-if="item.value === 'services' && pendingProviders > 0" class="ml-auto w-5 h-5 bg-purple-500 rounded-full text-white text-xs flex items-center justify-center">{{ pendingProviders }}</span>
+        </button>
+      </nav>
+      <div class="p-4 border-t border-gray-800">
+        <NuxtLink to="/" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-gray-400 hover:bg-gray-800 hover:text-white transition">
+          <UIcon name="i-lucide-arrow-left" class="w-4 h-4" /> Back to Site
+        </NuxtLink>
       </div>
+    </aside>
 
-      <!-- Products -->
-      <div v-else-if="tab === 'products'">
-        <div class="flex gap-2 mb-4 flex-wrap">
-          <button v-for="f in ['pending','active','rejected','all']" :key="f"
-            :class="['px-4 py-1.5 rounded-full text-sm font-medium transition border', productFilter === f ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-emerald-300']"
-            @click="productFilter = f as any">
-            {{ f.charAt(0).toUpperCase() + f.slice(1) }}
-            <span class="ml-1 text-xs opacity-70">({{ f === 'all' ? products.length : products.filter(p => p.status === f).length }})</span>
+    <!-- Overlay -->
+    <div v-if="sidebarOpen" class="fixed inset-0 bg-black/60 z-40 md:hidden" @click="sidebarOpen = false" />
+
+    <!-- Main -->
+    <div class="flex-1 md:ml-64 flex flex-col min-h-screen">
+
+      <!-- Top Bar -->
+      <header class="sticky top-0 z-30 bg-gray-900/80 backdrop-blur border-b border-gray-800 px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <button class="md:hidden text-gray-400 hover:text-white" @click="sidebarOpen = true">
+            <UIcon name="i-lucide-menu" class="w-5 h-5" />
           </button>
-        </div>
-        <div class="space-y-3">
-          <div v-for="p in filteredProducts" :key="p.id"
-            class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm flex items-center gap-4 border-l-4"
-            :class="p.status === 'pending' ? 'border-amber-400' : p.status === 'active' ? 'border-emerald-400' : 'border-red-400'">
-            <div class="w-14 h-14 rounded-lg bg-gray-100 dark:bg-gray-700 overflow-hidden flex-shrink-0">
-              <img v-if="p.images?.[0]" :src="p.images[0]" :alt="p.title" class="w-full h-full object-cover" />
-              <div v-else class="w-full h-full flex items-center justify-center text-2xl">📦</div>
-            </div>
-            <div class="flex-1 min-w-0">
-              <p class="font-bold truncate">{{ p.title }}</p>
-              <p class="text-sm text-primary-600 font-semibold">₦{{ p.price?.toLocaleString() }}</p>
-              <p class="text-xs text-gray-400">by {{ p.seller?.full_name || 'Unknown' }} · {{ p.category }}</p>
-            </div>
-            <UBadge :color="p.status === 'active' ? 'success' : p.status === 'rejected' ? 'error' : 'warning'" size="sm">{{ p.status }}</UBadge>
-            <div class="flex gap-1 flex-wrap justify-end">
-              <UButton v-if="p.status !== 'active'" size="xs" color="success" @click="updateProductStatus(p.id, 'active')">Approve</UButton>
-              <UButton v-if="p.status !== 'rejected'" size="xs" color="warning" variant="outline" @click="updateProductStatus(p.id, 'rejected')">Reject</UButton>
-              <NuxtLink :to="`/product/${p.id}`"><UButton icon="i-lucide-eye" variant="ghost" size="xs" /></NuxtLink>
-              <UButton icon="i-lucide-trash" variant="ghost" color="error" size="xs" @click="deleteProduct(p.id)" />
-            </div>
+          <div>
+            <h1 class="text-white font-bold text-lg capitalize">{{ navItems.find(n => n.value === tab)?.label || 'Dashboard' }}</h1>
+            <p class="text-xs text-gray-500">{{ new Date().toLocaleDateString('en-NG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) }}</p>
           </div>
         </div>
-      </div>
+        <div class="flex items-center gap-3">
+          <div class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+            <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+            <span class="text-emerald-400 text-xs font-medium">Live</span>
+          </div>
+          <UBadge color="error" icon="i-lucide-shield">Admin</UBadge>
+        </div>
+      </header>
 
-      <!-- Orders -->
-      <div v-else-if="tab === 'orders'" class="space-y-3">
-        <div v-for="o in orders" :key="o.id" class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm flex items-center gap-4">
-          <div class="text-3xl">📦</div>
-          <div class="flex-1 min-w-0">
-            <p class="font-bold truncate">{{ o.product?.title }}</p>
-            <p class="text-sm text-gray-500">{{ o.buyer?.full_name || 'Unknown buyer' }}</p>
-            <p class="text-xs text-gray-400">{{ new Date(o.created_at).toLocaleDateString() }}</p>
-          </div>
-          <p class="font-black text-primary-600 hidden md:block">₦{{ o.product?.price?.toLocaleString() }}</p>
-          <USelect :model-value="o.status" :items="['pending','processing','completed','cancelled']" size="xs" class="w-32" @update:model-value="updateOrderStatus(o.id, $event)" />
-        </div>
-      </div>
+      <!-- Content -->
+      <main class="flex-1 p-6">
 
-      <!-- Services -->
-      <div v-else-if="tab === 'services'">
-        <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
-          <div class="flex gap-2 flex-wrap">
-            <button v-for="f in ['pending','approved','rejected','all']" :key="f"
-              :class="['px-4 py-1.5 rounded-full text-sm font-medium transition border', serviceFilter === f ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-emerald-300']"
-              @click="serviceFilter = f as any">
-              {{ f.charAt(0).toUpperCase() + f.slice(1) }}
-              <span class="ml-1 text-xs opacity-70">({{ f === 'all' ? serviceProviders.length : serviceProviders.filter(s => s.status === f).length }})</span>
-            </button>
-          </div>
-          <UButton icon="i-lucide-refresh-cw" size="xs" variant="outline" @click="loadServiceProviders">Refresh</UButton>
+        <!-- Loading -->
+        <div v-if="loading" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div v-for="i in 4" :key="i" class="h-28 rounded-2xl bg-gray-800 animate-pulse" />
         </div>
-        <div v-if="loadingServices" class="space-y-3">
-          <div v-for="i in 4" :key="i" class="skeleton h-20 rounded-xl" />
-        </div>
-        <div v-else-if="filteredProviders.length === 0" class="text-center py-12 text-gray-500">
-          <UIcon name="i-lucide-wrench" class="w-10 h-10 mx-auto mb-2 opacity-30" />
-          <p>No {{ serviceFilter === 'all' ? '' : serviceFilter }} providers found</p>
-        </div>
-        <div v-else class="space-y-3">
-          <div v-for="s in filteredProviders" :key="s.id"
-            class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden border-l-4"
-            :class="s.status === 'pending' ? 'border-l-amber-400' : s.status === 'approved' ? 'border-l-emerald-400' : 'border-l-red-400'">
-            <div class="p-4 flex items-center gap-4">
-              <div class="w-12 h-12 rounded-full overflow-hidden bg-emerald-100 flex-shrink-0 flex items-center justify-center">
-                <img v-if="s.image" :src="s.image" class="w-full h-full object-cover" />
-                <span v-else class="text-emerald-600 font-bold text-lg">{{ s.service_name?.charAt(0) }}</span>
+
+        <template v-else>
+          <!-- Stat Cards -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div v-for="s in statCards" :key="s.label" class="relative overflow-hidden rounded-2xl p-5 bg-gray-900 border border-gray-800 hover:border-gray-700 transition">
+              <div :class="`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${s.bg} opacity-10 rounded-full -translate-y-6 translate-x-6`" />
+              <div :class="`w-10 h-10 rounded-xl bg-gradient-to-br ${s.bg} flex items-center justify-center mb-3`">
+                <UIcon :name="s.icon" class="w-5 h-5 text-white" />
               </div>
-              <div class="flex-1 min-w-0">
-                <p class="font-bold truncate">{{ s.service_name }}</p>
-                <p class="text-sm text-gray-500 capitalize">{{ s.category?.replace(/-/g,' ') }} · {{ s.location }}</p>
-                <p class="text-xs text-gray-400">{{ s.phone }} · {{ new Date(s.created_at).toLocaleDateString() }}</p>
-              </div>
-              <UBadge :color="s.status === 'approved' ? 'success' : s.status === 'rejected' ? 'error' : 'warning'" size="sm">{{ s.status }}</UBadge>
-              <div class="flex gap-1 flex-wrap">
-                <UButton v-if="s.status !== 'approved'" size="xs" color="success" @click="updateServiceStatus(s.id, 'approved')">Approve</UButton>
-                <UButton v-if="s.status !== 'rejected'" size="xs" color="warning" variant="outline" @click="updateServiceStatus(s.id, 'rejected')">Reject</UButton>
-                <NuxtLink :to="`/provider/${s.id}`" target="_blank"><UButton icon="i-lucide-eye" variant="ghost" size="xs" /></NuxtLink>
-                <UButton icon="i-lucide-trash" variant="ghost" color="error" size="xs" @click="deleteServiceProvider(s.id)" />
-              </div>
+              <p class="text-2xl font-black text-white">{{ s.value }}</p>
+              <p class="text-xs text-gray-500 mt-0.5">{{ s.label }}</p>
+              <span class="absolute top-4 right-4 text-xs text-emerald-400 font-semibold">{{ s.change }}</span>
             </div>
-            <div v-if="s.id_image || s.selfie_image" class="px-4 pb-4 border-t border-gray-100 dark:border-gray-700 pt-3">
-              <p class="text-xs font-semibold text-gray-500 mb-2 flex items-center gap-1">
-                <UIcon name="i-lucide-shield-check" class="w-3.5 h-3.5 text-amber-500" /> Verification Documents
-              </p>
-              <div class="flex gap-3 flex-wrap">
-                <div v-if="s.id_image">
-                  <p class="text-xs text-gray-400 mb-1">Government ID</p>
-                  <a :href="s.id_image" target="_blank"><img :src="s.id_image" class="w-28 h-20 object-cover rounded-lg border border-gray-200 dark:border-gray-700 hover:opacity-80 transition" /></a>
-                </div>
-                <div v-if="s.selfie_image">
-                  <p class="text-xs text-gray-400 mb-1">Selfie with ID</p>
-                  <a :href="s.selfie_image" target="_blank"><img :src="s.selfie_image" class="w-28 h-20 object-cover rounded-lg border border-gray-200 dark:border-gray-700 hover:opacity-80 transition" /></a>
+          </div>
+
+          <!-- Overview -->
+          <div v-if="tab === 'overview'" class="grid md:grid-cols-2 gap-6">
+            <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+              <h3 class="font-bold text-white mb-4 flex items-center gap-2"><UIcon name="i-lucide-users" class="w-4 h-4 text-emerald-400" /> Recent Users</h3>
+              <div class="space-y-3">
+                <div v-for="u in users.slice(0,6)" :key="u.id" class="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-800 transition">
+                  <div class="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                    {{ (u.full_name || u.email || '?').charAt(0).toUpperCase() }}
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold text-white truncate">{{ u.full_name || 'No name' }}</p>
+                    <p class="text-xs text-gray-500 truncate">{{ u.email }}</p>
+                  </div>
+                  <UBadge :color="u.role === 'admin' ? 'error' : u.role === 'seller' ? 'success' : 'neutral'" size="xs">{{ u.role || 'buyer' }}</UBadge>
                 </div>
               </div>
             </div>
-            <div v-else class="px-4 pb-3 flex items-center gap-1.5 text-xs text-red-400">
-              <UIcon name="i-lucide-alert-triangle" class="w-3.5 h-3.5" /> No verification documents submitted
+            <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+              <h3 class="font-bold text-white mb-4 flex items-center gap-2"><UIcon name="i-lucide-clock" class="w-4 h-4 text-amber-400" /> Pending Actions</h3>
+              <div class="space-y-3">
+                <button class="w-full flex items-center justify-between p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl hover:bg-amber-500/20 transition" @click="tab = 'products'; productFilter = 'pending'">
+                  <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-amber-500/20 rounded-xl flex items-center justify-center"><UIcon name="i-lucide-package" class="w-4 h-4 text-amber-400" /></div>
+                    <span class="text-sm font-semibold text-amber-300">Pending Products</span>
+                  </div>
+                  <span class="px-3 py-1 bg-amber-500 text-white text-xs font-bold rounded-full">{{ pendingProducts }}</span>
+                </button>
+                <button class="w-full flex items-center justify-between p-4 bg-purple-500/10 border border-purple-500/20 rounded-xl hover:bg-purple-500/20 transition" @click="tab = 'services'; serviceFilter = 'pending'">
+                  <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-purple-500/20 rounded-xl flex items-center justify-center"><UIcon name="i-lucide-wrench" class="w-4 h-4 text-purple-400" /></div>
+                    <span class="text-sm font-semibold text-purple-300">Pending Providers</span>
+                  </div>
+                  <span class="px-3 py-1 bg-purple-500 text-white text-xs font-bold rounded-full">{{ pendingProviders }}</span>
+                </button>
+                <button class="w-full flex items-center justify-between p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl hover:bg-blue-500/20 transition" @click="tab = 'orders'">
+                  <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-blue-500/20 rounded-xl flex items-center justify-center"><UIcon name="i-lucide-shopping-bag" class="w-4 h-4 text-blue-400" /></div>
+                    <span class="text-sm font-semibold text-blue-300">Total Orders</span>
+                  </div>
+                  <span class="px-3 py-1 bg-blue-500 text-white text-xs font-bold rounded-full">{{ orders.length }}</span>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Messages -->
-      <div v-else-if="tab === 'messages'" class="bg-white dark:bg-gray-800 rounded-2xl shadow-md overflow-hidden" style="height:68vh">
-        <div class="flex h-full">
-          <div class="w-full md:w-2/5 border-r border-gray-100 dark:border-gray-700 overflow-y-auto">
-            <div class="p-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
-              <h3 class="font-bold">Support Inbox</h3>
-              <UButton icon="i-lucide-refresh-cw" size="xs" variant="ghost" @click="loadConversations" />
+          <!-- Users -->
+          <div v-else-if="tab === 'users'" class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
+            <div class="p-5 border-b border-gray-800 flex items-center justify-between">
+              <h3 class="font-bold text-white">All Users <span class="text-gray-500 font-normal text-sm">({{ users.length }})</span></h3>
             </div>
-            <div v-if="loadingConvos" class="p-4 space-y-3"><div v-for="i in 4" :key="i" class="skeleton h-16 rounded-xl" /></div>
-            <div v-else-if="conversations.length === 0" class="p-8 text-center text-gray-400">
-              <UIcon name="i-lucide-inbox" class="w-10 h-10 mx-auto mb-2 opacity-40" />
-              <p class="text-sm">No messages yet</p>
-            </div>
-            <button v-for="convo in conversations" :key="convo.user_id"
-              class="w-full p-4 border-b border-gray-50 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition text-left"
-              :class="selectedUser?.user_id === convo.user_id ? 'bg-emerald-50 dark:bg-emerald-900/20 border-l-2 border-l-emerald-500' : ''"
-              @click="openThread(convo)">
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center font-bold text-emerald-600 flex-shrink-0 relative">
-                  {{ convo.user_name?.charAt(0)?.toUpperCase() || '?' }}
-                  <span v-if="convo.unread > 0" class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white text-xs flex items-center justify-center">{{ convo.unread }}</span>
+            <div class="divide-y divide-gray-800">
+              <div v-for="u in users" :key="u.id" class="flex items-center gap-4 p-4 hover:bg-gray-800/50 transition">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold flex-shrink-0">
+                  {{ (u.full_name || u.email || '?').charAt(0).toUpperCase() }}
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="font-semibold text-sm truncate">{{ convo.user_name || convo.user_email }}</p>
-                  <p class="text-xs text-gray-400 truncate">{{ convo.content }}</p>
+                  <p class="font-semibold text-white truncate">{{ u.full_name || 'No name' }}</p>
+                  <p class="text-sm text-gray-500 truncate">{{ u.email }}</p>
                 </div>
+                <UBadge :color="u.role === 'admin' ? 'error' : u.role === 'seller' ? 'success' : 'neutral'" size="sm">{{ u.role || 'buyer' }}</UBadge>
+                <p class="text-xs text-gray-600 hidden md:block">{{ new Date(u.created_at).toLocaleDateString() }}</p>
               </div>
-            </button>
-          </div>
-          <div class="hidden md:flex flex-1 flex-col">
-            <div v-if="!selectedUser" class="flex-1 flex items-center justify-center text-center text-gray-400">
-              <div><UIcon name="i-lucide-message-square" class="w-12 h-12 mx-auto mb-3 opacity-30" /><p class="text-sm">Select a conversation to reply</p></div>
             </div>
-            <template v-else>
-              <div class="p-4 border-b border-gray-100 dark:border-gray-700 flex items-center gap-3">
-                <div class="w-9 h-9 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center font-bold text-emerald-600">{{ selectedUser.user_name?.charAt(0)?.toUpperCase() || '?' }}</div>
-                <div><p class="font-bold text-sm">{{ selectedUser.user_name }}</p><p class="text-xs text-gray-400">{{ selectedUser.user_email }}</p></div>
+          </div>
+
+          <!-- Products -->
+          <div v-else-if="tab === 'products'">
+            <div class="flex gap-2 mb-4 flex-wrap">
+              <button v-for="f in ['pending','active','rejected','all']" :key="f"
+                :class="['px-4 py-2 rounded-xl text-sm font-medium transition border', productFilter === f ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-gray-900 border-gray-700 text-gray-400 hover:border-gray-600 hover:text-white']"
+                @click="productFilter = f as any">
+                {{ f.charAt(0).toUpperCase() + f.slice(1) }}
+                <span class="ml-1.5 px-1.5 py-0.5 bg-black/20 rounded-md text-xs">{{ f === 'all' ? products.length : products.filter(p => p.status === f).length }}</span>
+              </button>
+            </div>
+            <div class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
+              <div v-if="filteredProducts.length === 0" class="p-12 text-center text-gray-600">
+                <UIcon name="i-lucide-package" class="w-10 h-10 mx-auto mb-2 opacity-30" />
+                <p>No {{ productFilter }} products</p>
               </div>
-              <div class="flex-1 overflow-y-auto px-4 py-4 space-y-3">
-                <div v-for="msg in threadMessages" :key="msg.id" class="flex" :class="msg.is_admin ? 'justify-end' : 'justify-start'">
-                  <div class="flex items-end gap-2 max-w-sm">
-                    <div v-if="!msg.is_admin" class="w-7 h-7 bg-gray-200 dark:bg-gray-600 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mb-1">{{ selectedUser.user_name?.charAt(0)?.toUpperCase() }}</div>
-                    <div>
-                      <div class="px-4 py-2.5 rounded-2xl text-sm" :class="msg.is_admin ? 'bg-emerald-500 text-white rounded-tr-sm' : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-tl-sm'">{{ msg.content }}</div>
-                      <p class="text-xs text-gray-400 mt-1" :class="msg.is_admin ? 'text-right' : 'text-left'">{{ new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }}</p>
-                    </div>
+              <div v-else class="divide-y divide-gray-800">
+                <div v-for="p in filteredProducts" :key="p.id" class="flex items-center gap-4 p-4 hover:bg-gray-800/50 transition">
+                  <div class="w-14 h-14 rounded-xl bg-gray-800 overflow-hidden flex-shrink-0 border border-gray-700">
+                    <img v-if="p.images?.[0]" :src="p.images[0]" class="w-full h-full object-cover" />
+                    <div v-else class="w-full h-full flex items-center justify-center text-2xl">📦</div>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="font-semibold text-white truncate">{{ p.title }}</p>
+                    <p class="text-sm text-emerald-400 font-semibold">₦{{ p.price?.toLocaleString() }}</p>
+                    <p class="text-xs text-gray-500">{{ p.seller?.full_name || 'Unknown' }} · {{ p.category }}</p>
+                  </div>
+                  <div :class="['px-2.5 py-1 rounded-full text-xs font-semibold', p.status === 'active' ? 'bg-emerald-500/20 text-emerald-400' : p.status === 'rejected' ? 'bg-red-500/20 text-red-400' : 'bg-amber-500/20 text-amber-400']">{{ p.status }}</div>
+                  <div class="flex gap-1">
+                    <button v-if="p.status !== 'active'" class="px-3 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 rounded-lg text-xs font-semibold transition" @click="updateProductStatus(p.id, 'active')">Approve</button>
+                    <button v-if="p.status !== 'rejected'" class="px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg text-xs font-semibold transition" @click="updateProductStatus(p.id, 'rejected')">Reject</button>
+                    <button class="w-8 h-8 bg-gray-800 hover:bg-red-500/20 text-gray-400 hover:text-red-400 rounded-lg flex items-center justify-center transition" @click="deleteProduct(p.id)"><UIcon name="i-lucide-trash" class="w-3.5 h-3.5" /></button>
                   </div>
                 </div>
-                <div ref="threadEnd" />
               </div>
-              <div class="p-4 border-t border-gray-100 dark:border-gray-700 flex gap-2">
-                <input v-model="adminReply" type="text" placeholder="Reply as admin..." class="flex-1 px-4 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm focus:outline-none focus:border-emerald-400 transition" @keyup.enter="sendAdminReply" />
-                <button class="w-10 h-10 bg-emerald-500 hover:bg-emerald-600 rounded-xl flex items-center justify-center transition" @click="sendAdminReply"><UIcon name="i-lucide-send" class="w-4 h-4 text-white" /></button>
+            </div>
+          </div>
+
+          <!-- Orders -->
+          <div v-else-if="tab === 'orders'" class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
+            <div class="p-5 border-b border-gray-800">
+              <h3 class="font-bold text-white">All Orders <span class="text-gray-500 font-normal text-sm">({{ orders.length }})</span></h3>
+            </div>
+            <div v-if="orders.length === 0" class="p-12 text-center text-gray-600">
+              <UIcon name="i-lucide-shopping-bag" class="w-10 h-10 mx-auto mb-2 opacity-30" /><p>No orders yet</p>
+            </div>
+            <div v-else class="divide-y divide-gray-800">
+              <div v-for="o in orders" :key="o.id" class="flex items-center gap-4 p-4 hover:bg-gray-800/50 transition">
+                <div class="w-10 h-10 bg-amber-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <UIcon name="i-lucide-shopping-bag" class="w-5 h-5 text-amber-400" />
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="font-semibold text-white truncate">{{ o.product?.title || 'Unknown product' }}</p>
+                  <p class="text-sm text-gray-500">{{ o.buyer?.full_name || 'Unknown buyer' }} · {{ new Date(o.created_at).toLocaleDateString() }}</p>
+                </div>
+                <p class="font-bold text-emerald-400 hidden md:block">₦{{ o.product?.price?.toLocaleString() }}</p>
+                <USelect :model-value="o.status" :items="['pending','processing','completed','cancelled']" size="xs" class="w-36" @update:model-value="updateOrderStatus(o.id, $event)" />
               </div>
-            </template>
+            </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Add Provider -->
-      <div v-else-if="tab === 'addProvider'" class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md max-w-2xl">
-        <h3 class="font-black text-xl mb-6">Add Service Provider</h3>
-        <form class="space-y-4" @submit.prevent="submitProvider">
-          <UInput v-model="newProvider.service_name" required placeholder="Business / Service name" size="lg" />
-          <UTextarea v-model="newProvider.description" required placeholder="Description" :rows="3" />
-          <div class="grid grid-cols-2 gap-4">
-            <UInput v-model="newProvider.phone" required placeholder="Phone number" />
-            <USelect v-model="newProvider.location" :items="locations" placeholder="Select location" />
-          </div>
-          <div class="grid grid-cols-2 gap-4">
-            <UInput v-model="newProvider.experience" placeholder="Experience (e.g. 5 years)" />
-            <UInput v-model="newProvider.price_range" placeholder="Price range (e.g. ₦5k - ₦50k)" />
-          </div>
-          <USelect v-model="newProvider.category" :items="serviceCategories.map(c => ({ label: c.replace(/-/g,' ').replace(/\b\w/g, l => l.toUpperCase()), value: c }))" placeholder="Select category" />
-          <div class="rounded-xl border-2 p-4 transition-all" :class="locationPinned ? 'border-emerald-400 bg-emerald-50 dark:bg-emerald-900/20' : 'border-gray-200 dark:border-gray-700'">
-            <div class="flex items-center justify-between">
-              <div><p class="text-sm font-semibold">📍 Pin Location on Map</p><p class="text-xs text-gray-500 mt-0.5">Customers can get directions to this provider</p></div>
-              <UButton type="button" :loading="gettingLocation" :color="locationPinned ? 'success' : 'primary'" size="sm" :icon="locationPinned ? 'i-lucide-check' : 'i-lucide-map-pin'" @click="pinLocation">{{ locationPinned ? 'Pinned ✓' : 'Use GPS' }}</UButton>
+          <!-- Services -->
+          <div v-else-if="tab === 'services'">
+            <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+              <div class="flex gap-2 flex-wrap">
+                <button v-for="f in ['pending','approved','rejected','all']" :key="f"
+                  :class="['px-4 py-2 rounded-xl text-sm font-medium transition border', serviceFilter === f ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-gray-900 border-gray-700 text-gray-400 hover:border-gray-600 hover:text-white']"
+                  @click="serviceFilter = f as any">
+                  {{ f.charAt(0).toUpperCase() + f.slice(1) }}
+                  <span class="ml-1.5 px-1.5 py-0.5 bg-black/20 rounded-md text-xs">{{ f === 'all' ? serviceProviders.length : serviceProviders.filter(s => s.status === f).length }}</span>
+                </button>
+              </div>
+              <button class="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-xl text-sm transition" @click="loadServiceProviders">
+                <UIcon name="i-lucide-refresh-cw" class="w-4 h-4" /> Refresh
+              </button>
             </div>
-            <div v-if="locationPinned && newProvider.lat && newProvider.lng" class="mt-3 rounded-xl overflow-hidden border border-emerald-200">
-              <iframe :src="`https://maps.google.com/maps?q=${newProvider.lat},${newProvider.lng}&z=16&output=embed`" width="100%" height="180" style="border:0" loading="lazy" />
+            <div v-if="loadingServices" class="space-y-3">
+              <div v-for="i in 4" :key="i" class="h-24 rounded-2xl bg-gray-900 animate-pulse" />
+            </div>
+            <div v-else-if="filteredProviders.length === 0" class="bg-gray-900 border border-gray-800 rounded-2xl p-12 text-center text-gray-600">
+              <UIcon name="i-lucide-wrench" class="w-10 h-10 mx-auto mb-2 opacity-30" /><p>No {{ serviceFilter === 'all' ? '' : serviceFilter }} providers</p>
+            </div>
+            <div v-else class="space-y-3">
+              <div v-for="s in filteredProviders" :key="s.id" class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden hover:border-gray-700 transition">
+                <div class="p-4 flex items-center gap-4">
+                  <div class="w-12 h-12 rounded-xl overflow-hidden bg-gray-800 flex-shrink-0 flex items-center justify-center border border-gray-700">
+                    <img v-if="s.image" :src="s.image" class="w-full h-full object-cover" />
+                    <span v-else class="text-emerald-400 font-bold text-lg">{{ s.service_name?.charAt(0) }}</span>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="font-bold text-white truncate">{{ s.service_name }}</p>
+                    <p class="text-sm text-gray-500 capitalize">{{ s.category?.replace(/-/g,' ') }} · {{ s.location }}</p>
+                    <p class="text-xs text-gray-600">{{ s.phone }} · {{ new Date(s.created_at).toLocaleDateString() }}</p>
+                  </div>
+                  <div :class="['px-2.5 py-1 rounded-full text-xs font-semibold', s.status === 'approved' ? 'bg-emerald-500/20 text-emerald-400' : s.status === 'rejected' ? 'bg-red-500/20 text-red-400' : 'bg-amber-500/20 text-amber-400']">{{ s.status }}</div>
+                  <div class="flex gap-1.5">
+                    <button v-if="s.status !== 'approved'" class="px-3 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 rounded-lg text-xs font-semibold transition" @click="updateServiceStatus(s.id, 'approved')">Approve</button>
+                    <button v-if="s.status !== 'rejected'" class="px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg text-xs font-semibold transition" @click="updateServiceStatus(s.id, 'rejected')">Reject</button>
+                    <NuxtLink :to="`/provider/${s.id}`" target="_blank" class="w-8 h-8 bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white rounded-lg flex items-center justify-center transition"><UIcon name="i-lucide-eye" class="w-3.5 h-3.5" /></NuxtLink>
+                    <button class="w-8 h-8 bg-gray-800 hover:bg-red-500/20 text-gray-400 hover:text-red-400 rounded-lg flex items-center justify-center transition" @click="deleteServiceProvider(s.id)"><UIcon name="i-lucide-trash" class="w-3.5 h-3.5" /></button>
+                  </div>
+                </div>
+                <div v-if="s.id_image || s.selfie_image" class="px-4 pb-4 pt-3 border-t border-gray-800 flex gap-4">
+                  <div v-if="s.id_image">
+                    <p class="text-xs text-gray-600 mb-1.5">Government ID</p>
+                    <a :href="s.id_image" target="_blank"><img :src="s.id_image" class="w-24 h-16 object-cover rounded-lg border border-gray-700 hover:opacity-80 transition" /></a>
+                  </div>
+                  <div v-if="s.selfie_image">
+                    <p class="text-xs text-gray-600 mb-1.5">Selfie with ID</p>
+                    <a :href="s.selfie_image" target="_blank"><img :src="s.selfie_image" class="w-24 h-16 object-cover rounded-lg border border-gray-700 hover:opacity-80 transition" /></a>
+                  </div>
+                </div>
+                <div v-else class="px-4 pb-3 flex items-center gap-1.5 text-xs text-red-500/60 border-t border-gray-800 pt-3">
+                  <UIcon name="i-lucide-alert-triangle" class="w-3.5 h-3.5" /> No verification documents
+                </div>
+              </div>
             </div>
           </div>
-          <div>
-            <p class="text-sm font-semibold mb-2">Business Logo / Photo</p>
-            <input type="file" accept="image/*" class="w-full text-sm" @change="handleLogoUpload" />
-            <p v-if="uploading" class="text-xs text-emerald-500 mt-1">Uploading...</p>
-            <img v-if="newProvider.image" :src="newProvider.image" class="mt-2 w-24 h-24 object-cover rounded-xl" />
-          </div>
-          <div>
-            <p class="text-sm font-semibold mb-2">Gallery / Work Samples</p>
-            <input type="file" accept="image/*" multiple class="w-full text-sm" @change="handleGalleryUpload" />
-            <div v-if="newProvider.gallery.length" class="flex gap-2 mt-2 flex-wrap">
-              <img v-for="(url, i) in newProvider.gallery" :key="i" :src="url" class="w-16 h-16 object-cover rounded-lg" />
-            </div>
-          </div>
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <p class="text-sm font-semibold mb-2">Government ID (optional)</p>
-              <input type="file" accept="image/*" class="w-full text-sm" @change="handleIdUpload" />
-              <img v-if="newProvider.id_image" :src="newProvider.id_image" class="mt-2 w-24 h-16 object-cover rounded-lg" />
-            </div>
-            <div>
-              <p class="text-sm font-semibold mb-2">Selfie with ID (optional)</p>
-              <input type="file" accept="image/*" class="w-full text-sm" @change="handleSelfieUpload" />
-              <img v-if="newProvider.selfie_image" :src="newProvider.selfie_image" class="mt-2 w-24 h-16 object-cover rounded-lg" />
-            </div>
-          </div>
-          <UButton type="submit" color="primary" size="lg" block :loading="uploading">Add Provider</UButton>
-        </form>
-      </div>
 
+          <!-- Messages -->
+          <div v-else-if="tab === 'messages'" class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden" style="height:72vh">
+            <div class="flex h-full">
+              <div class="w-full md:w-80 border-r border-gray-800 flex flex-col">
+                <div class="p-4 border-b border-gray-800 flex items-center justify-between">
+                  <h3 class="font-bold text-white text-sm">Support Inbox</h3>
+                  <button class="w-8 h-8 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center justify-center transition" @click="loadConversations"><UIcon name="i-lucide-refresh-cw" class="w-3.5 h-3.5 text-gray-400" /></button>
+                </div>
+                <div class="flex-1 overflow-y-auto">
+                  <div v-if="loadingConvos" class="p-4 space-y-3"><div v-for="i in 4" :key="i" class="h-14 rounded-xl bg-gray-800 animate-pulse" /></div>
+                  <div v-else-if="conversations.length === 0" class="p-8 text-center text-gray-600"><UIcon name="i-lucide-inbox" class="w-8 h-8 mx-auto mb-2 opacity-40" /><p class="text-sm">No messages yet</p></div>
+                  <button v-for="convo in conversations" :key="convo.user_id"
+                    :class="['w-full p-4 border-b border-gray-800/50 hover:bg-gray-800/50 transition text-left', selectedUser?.user_id === convo.user_id ? 'bg-emerald-500/10 border-l-2 border-l-emerald-500' : '']"
+                    @click="openThread(convo)">
+                    <div class="flex items-center gap-3">
+                      <div class="w-9 h-9 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center font-bold text-white text-sm flex-shrink-0 relative">
+                        {{ convo.user_name?.charAt(0)?.toUpperCase() || '?' }}
+                        <span v-if="convo.unread > 0" class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white text-xs flex items-center justify-center">{{ convo.unread }}</span>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <p class="font-semibold text-white text-sm truncate">{{ convo.user_name || convo.user_email }}</p>
+                        <p class="text-xs text-gray-500 truncate">{{ convo.content }}</p>
+                      </div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+              <div class="hidden md:flex flex-1 flex-col">
+                <div v-if="!selectedUser" class="flex-1 flex items-center justify-center text-center text-gray-600">
+                  <div><UIcon name="i-lucide-message-square" class="w-12 h-12 mx-auto mb-3 opacity-20" /><p class="text-sm">Select a conversation</p></div>
+                </div>
+                <template v-else>
+                  <div class="p-4 border-b border-gray-800 flex items-center gap-3">
+                    <div class="w-9 h-9 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center font-bold text-white text-sm">{{ selectedUser.user_name?.charAt(0)?.toUpperCase() || '?' }}</div>
+                    <div><p class="font-bold text-white text-sm">{{ selectedUser.user_name }}</p><p class="text-xs text-gray-500">{{ selectedUser.user_email }}</p></div>
+                  </div>
+                  <div class="flex-1 overflow-y-auto p-4 space-y-3">
+                    <div v-for="msg in threadMessages" :key="msg.id" class="flex" :class="msg.is_admin ? 'justify-end' : 'justify-start'">
+                      <div :class="['px-4 py-2.5 rounded-2xl text-sm max-w-xs', msg.is_admin ? 'bg-emerald-500 text-white rounded-tr-sm' : 'bg-gray-800 text-gray-200 rounded-tl-sm']">{{ msg.content }}</div>
+                    </div>
+                    <div ref="threadEnd" />
+                  </div>
+                  <div class="p-4 border-t border-gray-800 flex gap-2">
+                    <input v-model="adminReply" type="text" placeholder="Reply as admin..." class="flex-1 px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-sm text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition" @keyup.enter="sendAdminReply" />
+                    <button class="w-10 h-10 bg-emerald-500 hover:bg-emerald-600 rounded-xl flex items-center justify-center transition" @click="sendAdminReply"><UIcon name="i-lucide-send" class="w-4 h-4 text-white" /></button>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </div>
+
+          <!-- Add Provider -->
+          <div v-else-if="tab === 'addProvider'" class="max-w-2xl">
+            <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+              <h3 class="font-bold text-white text-lg mb-6 flex items-center gap-2"><UIcon name="i-lucide-plus-circle" class="w-5 h-5 text-emerald-400" /> Add Service Provider</h3>
+              <form class="space-y-4" @submit.prevent="submitProvider">
+                <UInput v-model="newProvider.service_name" required placeholder="Business / Service name" size="lg" />
+                <UTextarea v-model="newProvider.description" required placeholder="Description" :rows="3" />
+                <div class="grid grid-cols-2 gap-4">
+                  <UInput v-model="newProvider.phone" required placeholder="Phone number" />
+                  <USelect v-model="newProvider.location" :items="locations" placeholder="Select location" />
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                  <UInput v-model="newProvider.experience" placeholder="Experience (e.g. 5 years)" />
+                  <UInput v-model="newProvider.price_range" placeholder="Price range" />
+                </div>
+                <USelect v-model="newProvider.category" :items="serviceCategories.map(c => ({ label: c.replace(/-/g,' ').replace(/\b\w/g, (l: string) => l.toUpperCase()), value: c }))" placeholder="Select category" />
+                <div class="rounded-xl border border-gray-700 p-4" :class="locationPinned ? 'border-emerald-500/50 bg-emerald-500/5' : ''">
+                  <div class="flex items-center justify-between">
+                    <div><p class="text-sm font-semibold text-white">📍 Pin Location</p><p class="text-xs text-gray-500 mt-0.5">Shows on the map for customers</p></div>
+                    <UButton type="button" :loading="gettingLocation" :color="locationPinned ? 'success' : 'primary'" size="sm" @click="pinLocation">{{ locationPinned ? 'Pinned ✓' : 'Use GPS' }}</UButton>
+                  </div>
+                </div>
+                <div>
+                  <p class="text-sm font-semibold text-gray-300 mb-2">Business Logo</p>
+                  <input type="file" accept="image/*" class="w-full text-sm text-gray-400" @change="async (e) => { const f = (e.target as HTMLInputElement).files?.[0]; if(f) { uploading = true; newProvider.image = await uploadImage(f); uploading = false } }" />
+                  <img v-if="newProvider.image" :src="newProvider.image" class="mt-2 w-20 h-20 object-cover rounded-xl border border-gray-700" />
+                </div>
+                <UButton type="submit" color="primary" size="lg" block :loading="uploading">Add Provider</UButton>
+              </form>
+            </div>
+          </div>
+
+        </template>
+      </main>
     </div>
   </div>
 </template>
