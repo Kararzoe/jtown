@@ -112,12 +112,27 @@ const onSelfieChange = async (e: Event) => {
 
 const submit = async () => {
   loading.value = true
-  const { error } = await supabase.from('service_providers').insert([{ ...form, status: 'pending' }])
-  if (error) {
-    console.error('Submit error:', error)
-    toast.add({ title: error.message || 'Failed to submit. Please try again.', color: 'error' })
-  } else {
-    submitted.value = true
+  try {
+    const res = await fetch('https://mtqggkguwshvpdbiwbup.supabase.co/rest/v1/service_providers', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10cWdna2d1d3NodnBkYml3YnVwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0NDc2OTgsImV4cCI6MjEwMjAyMzY5OH0.aMM3xSkpT7jHOrGZDcROtL1T5JGQcOrGa5ebruqAjMY',
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10cWdna2d1d3NodnBkYml3YnVwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0NDc2OTgsImV4cCI6MjEwMjAyMzY5OH0.aMM3xSkpT7jHOrGZDcROtL1T5JGQcOrGa5ebruqAjMY',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ ...form, status: 'pending' })
+    })
+    if (!res.ok) {
+      const err = await res.text()
+      console.error('Submit error:', err)
+      toast.add({ title: 'Failed to submit. Please try again.', color: 'error' })
+    } else {
+      submitted.value = true
+    }
+  } catch (e) {
+    console.error('Network error:', e)
+    toast.add({ title: 'Network error. Check your connection.', color: 'error' })
   }
   loading.value = false
 }
