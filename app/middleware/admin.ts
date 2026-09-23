@@ -16,5 +16,6 @@ export default defineNuxtRouteMiddleware(async () => {
     .eq('id', session.user.id)
     .single()
 
+  console.log('[admin middleware] profile role:', profile?.role, 'error fetching?', !profile)
   if (profile?.role !== 'admin') return navigateTo('/dashboard')
 })
