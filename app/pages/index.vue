@@ -43,6 +43,10 @@ const categories = [
 const categoryHref = (slug: string) => `/services?category=${slug}`
 
 const stats: any[] = []
+const heroSearch = ref('')
+const doHeroSearch = () => {
+  if (heroSearch.value.trim()) navigateTo(`/services?search=${encodeURIComponent(heroSearch.value)}`)
+}
 
 const howTab = ref<'customers' | 'providers'>('customers')
 
@@ -157,10 +161,12 @@ onMounted(async () => {
             <div class="flex items-center gap-2 p-2 rounded-2xl" style="background: rgba(255,255,255,0.07); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06);">
               <UIcon name="i-lucide-search" class="w-5 h-5 text-gray-400 ml-3 flex-shrink-0" />
               <UInput
+                v-model="heroSearch"
                 :placeholder="t('searchPlaceholder')"
                 class="flex-1"
+                @keyup.enter="doHeroSearch"
               />
-              <button class="px-5 py-2.5 rounded-xl text-white text-sm font-bold transition-all hover:scale-105 flex-shrink-0" style="background: linear-gradient(135deg, #16a34a, #0d9488); box-shadow: 0 4px 15px rgba(22,163,74,0.4);">
+              <button class="px-5 py-2.5 rounded-xl text-white text-sm font-bold transition-all hover:scale-105 flex-shrink-0" style="background: linear-gradient(135deg, #16a34a, #0d9488); box-shadow: 0 4px 15px rgba(22,163,74,0.4);" @click="doHeroSearch">
                 Search
               </button>
             </div>
