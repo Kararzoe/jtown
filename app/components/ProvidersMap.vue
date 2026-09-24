@@ -1,72 +1,59 @@
 <script setup lang="ts">
+import 'leaflet/dist/leaflet.css'
+
 const props = defineProps<{ providers: any[], height?: string }>()
-const config = useRuntimeConfig()
 const mapEl = ref<HTMLElement | null>(null)
 const selectedProvider = ref<any>(null)
-let googleMap: any = null
-
-const loadGoogleMaps = (): Promise<void> => {
-  return new Promise((resolve) => {
-    if ((window as any).google?.maps) return resolve()
-    const script = document.createElement('script')
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${config.public.googleMapsKey}&libraries=marker&v=weekly`
-    script.async = true
-    script.onload = () => resolve()
-    document.head.appendChild(script)
-  })
-}
+let leafletMap: any = null
 
 const initMap = async () => {
   await nextTick()
-  await loadGoogleMaps()
+  const L = (await import('leaflet')).default
 
-  const { Map } = (window as any).google.maps
-  const { AdvancedMarkerElement } = (window as any).google.maps.marker
-  const josCenter = { lat: 9.8965, lng: 8.8583 }
-
-  googleMap = new Map(mapEl.value!, {
-    center: josCenter,
-    zoom: 13,
-    mapId: 'josmkt_providers_map',
-    zoomControl: true,
-    streetViewControl: false,
-    fullscreenControl: true,
-    mapTypeControl: false,
+  // Fix default marker icon paths broken by bundlers
+  delete (L.Icon.Default.prototype as any)._getIconUrl
+  L.Icon.Default.mergeOptions({
+    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
   })
+
+  leafletMap = L.map(mapEl.value!, { zoomControl: true }).setView([9.8965, 8.8583], 13)
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    maxZoom: 19,
+  }).addTo(leafletMap)
 
   const withCoords = props.providers.filter(p => p.lat && p.lng)
 
+  const customIcon = (name: string) => L.divIcon({
+    html: `<div style="background:#10b981;color:white;padding:5px 10px;border-radius:20px;font-weight:700;font-size:11px;box-shadow:0 3px 10px rgba(16,185,129,0.5);white-space:nowrap;display:flex;align-items:center;gap:4px;border:2px solid white;cursor:pointer"><span style="font-size:13px">📍</span> ${name}</div>`,
+    className: '',
+    iconAnchor: [0, 0],
+  })
+
   withCoords.forEach(provider => {
-    const pin = document.createElement('div')
-    pin.innerHTML = `<div style="background:#10b981;color:white;padding:5px 10px;border-radius:20px;font-weight:700;font-size:11px;box-shadow:0 3px 10px rgba(16,185,129,0.5);white-space:nowrap;display:flex;align-items:center;gap:4px;border:2px solid white;cursor:pointer"><span style="font-size:13px">📍</span> ${provider.service_name}</div>`
-
-    const marker = new AdvancedMarkerElement({
-      map: googleMap,
-      position: { lat: Number(provider.lat), lng: Number(provider.lng) },
-      content: pin,
-      title: provider.service_name,
-    })
-
-    marker.addListener('click', () => {
+    const marker = L.marker([Number(provider.lat), Number(provider.lng)], { icon: customIcon(provider.service_name) })
+      .addTo(leafletMap)
+    marker.on('click', () => {
       selectedProvider.value = provider
-      googleMap.panTo({ lat: Number(provider.lat), lng: Number(provider.lng) })
-      googleMap.setZoom(16)
+      leafletMap.panTo([Number(provider.lat), Number(provider.lng)])
+      leafletMap.setZoom(16)
     })
   })
 
   if (withCoords.length > 1) {
-    const bounds = new (window as any).google.maps.LatLngBounds()
-    withCoords.forEach((p: any) => bounds.extend({ lat: Number(p.lat), lng: Number(p.lng) }))
-    googleMap.fitBounds(bounds, 80)
+    const bounds = L.latLngBounds(withCoords.map((p: any) => [Number(p.lat), Number(p.lng)]))
+    leafletMap.fitBounds(bounds, { padding: [40, 40] })
   }
 }
 
 onMounted(initMap)
 
 watch(() => props.providers, () => {
-  if (googleMap) {
-    googleMap.setCenter({ lat: 9.8965, lng: 8.8583 })
-    googleMap.setZoom(13)
+  if (leafletMap) {
+    leafletMap.setView([9.8965, 8.8583], 13)
     selectedProvider.value = null
   }
 })
@@ -76,9 +63,8 @@ watch(() => props.providers, () => {
   <div class="relative rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-lg">
     <div ref="mapEl" :style="`height: ${height || '420px'}; width: 100%;`" />
 
-    <!-- Provider popup card -->
     <Transition name="popup">
-      <div v-if="selectedProvider" class="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-80 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-4 border border-gray-100 dark:border-gray-700 z-10">
+      <div v-if="selectedProvider" class="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-80 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-4 border border-gray-100 dark:border-gray-700 z-[1000]">
         <button class="absolute top-3 right-3 w-6 h-6 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center" @click="selectedProvider = null">
           <UIcon name="i-lucide-x" class="w-3.5 h-3.5 text-gray-500" />
         </button>
@@ -107,8 +93,7 @@ watch(() => props.providers, () => {
       </div>
     </Transition>
 
-    <!-- No coords notice (non-blocking) -->
-    <div v-if="providers.filter(p => p.lat && p.lng).length === 0" class="absolute top-3 left-1/2 -translate-x-1/2 z-10 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm px-4 py-2 rounded-full shadow text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2 whitespace-nowrap">
+    <div v-if="providers.filter(p => p.lat && p.lng).length === 0" class="absolute top-3 left-1/2 -translate-x-1/2 z-[1000] bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm px-4 py-2 rounded-full shadow text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2 whitespace-nowrap">
       <span>📍</span> Providers will appear here once they add their location
     </div>
   </div>
