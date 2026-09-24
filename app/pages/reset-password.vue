@@ -10,43 +10,11 @@ const ready = ref(false)
 const expired = ref(false)
 
 onMounted(async () => {
-  const search = new URLSearchParams(window.location.search)
-  const hash = new URLSearchParams(window.location.hash.replace('#', ''))
-  const tokenHash = search.get('token_hash')
-  const type = search.get('type')
-  const code = search.get('code')
-  const accessToken = hash.get('access_token')
-  const refreshToken = hash.get('refresh_token') || ''
-
-  // token_hash flow
-  if (tokenHash && type === 'recovery') {
-    const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: 'recovery' })
-    window.history.replaceState(null, '', window.location.pathname)
-    if (error) { expired.value = true } else { ready.value = true }
-    return
-  }
-
-  // PKCE code flow
-  if (code) {
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
-    window.history.replaceState(null, '', window.location.pathname)
-    if (error) { expired.value = true } else { ready.value = true }
-    return
-  }
-
-  // Implicit flow
-  if (accessToken) {
-    const { error } = await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
-    window.history.replaceState(null, '', window.location.pathname)
-    if (error) { expired.value = true } else { ready.value = true }
-    return
-  }
-
-  // Session already set (redirected from /confirm)
+  // Session already set by /confirm page
   const { data: { session } } = await supabase.auth.getSession()
   if (session) { ready.value = true; return }
 
-  // Wait for PASSWORD_RECOVERY event
+  // Fallback: listen for auth event
   const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
     if ((event === 'PASSWORD_RECOVERY' || event === 'SIGNED_IN') && session) {
       subscription.unsubscribe(); ready.value = true

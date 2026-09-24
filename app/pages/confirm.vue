@@ -13,8 +13,7 @@ onMounted(async () => {
   if (code) {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code)
     if (error || !data.session) { status.value = 'error'; return }
-    // If recovery type, redirect to reset password page
-    if (type === 'recovery' || data.session.user.recovery_sent_at) {
+    if (type === 'recovery') {
       router.push('/reset-password')
       return
     }
