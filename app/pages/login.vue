@@ -16,9 +16,10 @@ const submit = async () => {
     if (isLogin.value) {
       const { error } = await supabase.auth.signInWithPassword({ email: form.email, password: form.password })
       if (error) throw error
+      toast.add({ title: 'Welcome back!', color: 'success' })
       router.push('/')
     } else {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email: form.email,
         password: form.password,
         options: {
@@ -27,7 +28,13 @@ const submit = async () => {
         }
       })
       if (error) throw error
-      emailSent.value = true
+      // If session exists immediately, email confirmation is disabled — log straight in
+      if (data.session) {
+        toast.add({ title: 'Account created! Welcome to JosMKT 🎉', color: 'success' })
+        router.push('/')
+      } else {
+        emailSent.value = true
+      }
     }
   } catch (e: any) {
     toast.add({ title: e.message, color: 'error' })
