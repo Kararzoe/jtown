@@ -128,15 +128,19 @@ onMounted(async () => {
             {{ t('tagline') }}
           </div>
 
-          <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight animate-slide-up">
-            {{ t('heroTitle1') }}
-            <span class="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent animate-gradient"> {{ t('heroHighlight1') }}</span>
-            <br />{{ t('heroTitle2') }}
-            <span class="bg-gradient-to-r from-amber-400 to-orange-300 bg-clip-text text-transparent"> {{ t('heroHighlight2') }}</span>
+          <h1 class="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-6 leading-[1.1] tracking-tight animate-slide-up">
+            Find the Right
+            <span class="relative inline-block">
+              <span class="bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent animate-gradient"> Artisan</span>
+              <svg class="absolute -bottom-1 left-0 w-full" viewBox="0 0 200 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 6 Q50 2 100 5 Q150 8 198 4" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
+            </span>
+            <br />
+            <span class="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-300">When You Need One</span>
           </h1>
 
-          <p class="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed animate-fade-up" style="animation-delay:0.3s">
-            {{ t('heroDescription') }}
+          <p class="text-base md:text-lg text-gray-400 mb-10 max-w-xl mx-auto leading-relaxed animate-fade-up" style="animation-delay:0.3s">
+            Plumbers, electricians, bakers, mechanics &amp; more —<br class="hidden md:block" />
+            find <span class="text-emerald-400 font-semibold">trusted artisans</span> in Jos, fast.
           </p>
 
           <div class="max-w-2xl mx-auto mb-10 animate-fade-up" style="animation-delay:0.5s">
