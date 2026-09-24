@@ -1,10 +1,13 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'default' })
 const supabase = useSupabaseClient()
+const user = useSupabaseUser()
 const toast = useToast()
 const tab = ref('overview')
 const sidebarOpen = ref(false)
 const loading = ref(true)
+const isAdmin = ref(false)
+const authChecked = ref(false)
 
 const stats = ref({ users: 0, products: 0, orders: 0, providers: 0 })
 const users = ref<any[]>([])
@@ -20,6 +23,14 @@ const serviceFilter = ref('pending')
 const loadingServices = ref(false)
 
 onMounted(async () => {
+  // Auth guard
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session) { await navigateTo('/login'); return }
+  const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).single()
+  if (profile?.role !== 'admin') { authChecked.value = true; loading.value = false; return }
+  isAdmin.value = true
+  authChecked.value = true
+
   const d = await $fetch<any>('/api/admin/data').catch(() => null)
   if (!d) { toast.add({ title: 'Failed to load admin data', color: 'error' }); loading.value = false; return }
   users.value = d.users
@@ -183,7 +194,20 @@ const statCards = computed(() => [
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-950 flex">
+  <div class="min-h-screen bg-gray-950 flex items-center justify-center" v-if="!authChecked">
+    <div class="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+  </div>
+
+  <div v-else-if="authChecked && !isAdmin" class="min-h-screen bg-gray-950 flex items-center justify-center">
+    <div class="text-center">
+      <div class="text-6xl mb-4">🚫</div>
+      <h1 class="text-2xl font-bold text-white mb-2">Access Denied</h1>
+      <p class="text-gray-400 mb-6">You don't have permission to view this page.</p>
+      <UButton to="/" color="primary">Back to Home</UButton>
+    </div>
+  </div>
+
+  <div v-else class="min-h-screen bg-gray-950 flex">
 
     <!-- Sidebar -->
     <aside :class="['fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 border-r border-gray-800 flex flex-col transition-transform duration-300', sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0']">
