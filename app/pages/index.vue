@@ -99,155 +99,210 @@ onMounted(async () => {
 <template>
   <div>
     <!-- Trending Banner -->
-    <div :class="`bg-gradient-to-r ${banners[currentBanner].bg} py-2.5 px-4 transition-all duration-700`">
-      <div class="max-w-7xl mx-auto flex items-center justify-center gap-3 text-white">
+    <div :class="`bg-gradient-to-r ${banners[currentBanner].bg} py-3 px-4 transition-all duration-700 relative overflow-hidden`">
+      <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle, rgba(255,255,255,0.3) 1px, transparent 1px); background-size: 20px 20px;" />
+      <div class="max-w-7xl mx-auto flex items-center justify-center gap-3 text-white relative z-10">
         <UIcon name="i-lucide-sparkles" class="w-4 h-4 flex-shrink-0 animate-spin-slow" />
         <p class="text-xs md:text-sm font-semibold text-center">{{ banners[currentBanner].text }}</p>
-        <NuxtLink to="/become-seller" class="px-3 py-1 bg-white/20 backdrop-blur-sm text-white rounded-full font-medium hover:bg-white/30 text-xs border border-white/30 transition whitespace-nowrap">
-          Get Started
+        <NuxtLink to="/become-seller" class="px-3.5 py-1.5 bg-white/20 backdrop-blur-sm text-white rounded-full font-semibold hover:bg-white/35 text-xs border border-white/30 transition-all hover:scale-105 whitespace-nowrap shadow-sm">
+          Get Started →
         </NuxtLink>
       </div>
     </div>
 
     <!-- Hero -->
-    <section class="relative min-h-[85vh] flex items-center bg-gradient-to-br from-gray-900 via-emerald-950 to-gray-900 overflow-hidden">
-      <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover opacity-30">
+    <section class="relative min-h-[92vh] flex items-center overflow-hidden" style="background: linear-gradient(135deg, #030a03 0%, #041a09 40%, #050e15 100%);">
+      <!-- Radial mesh overlays -->
+      <div class="absolute inset-0" style="background: radial-gradient(ellipse at 20% 50%, rgba(34,197,94,0.08) 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, rgba(20,184,166,0.06) 0%, transparent 50%);" />
+
+      <!-- Video -->
+      <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover opacity-[0.18]">
         <source :src="'/7669651-hd_1920_1080_25fps.mp4'" type="video/mp4" />
       </video>
-      <div class="absolute inset-0 bg-gradient-to-b from-gray-900/70 via-emerald-900/40 to-gray-900/80" />
 
-      <!-- Floating orbs -->
-      <div class="absolute top-20 left-10 w-32 h-32 bg-emerald-500/20 rounded-full blur-2xl animate-float" />
-      <div class="absolute bottom-20 right-10 w-48 h-48 bg-teal-500/15 rounded-full blur-3xl animate-float" style="animation-delay: 1.5s" />
+      <!-- Gradient Overlay -->
+      <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(3,10,3,0.55) 0%, rgba(4,26,9,0.3) 50%, rgba(3,10,3,0.75) 100%);" />
 
-      <div class="max-w-7xl mx-auto relative z-10 px-4 py-20 w-full">
+      <!-- Animated orbs -->
+      <div class="absolute top-16 left-8 w-40 h-40 bg-emerald-500/15 rounded-full blur-3xl animate-orb-pulse" />
+      <div class="absolute top-1/3 right-12 w-56 h-56 bg-teal-500/10 rounded-full blur-3xl animate-orb-pulse" style="animation-delay: 2s" />
+      <div class="absolute bottom-24 left-1/3 w-36 h-36 bg-emerald-400/10 rounded-full blur-3xl animate-orb-pulse" style="animation-delay: 4s" />
+      <div class="absolute bottom-16 right-8 w-48 h-48 bg-cyan-500/8 rounded-full blur-3xl animate-float" style="animation-delay: 1s" />
+
+      <!-- Geometric lines -->
+      <div class="absolute top-20 right-1/4 w-px h-32 bg-gradient-to-b from-transparent via-emerald-400/30 to-transparent" />
+      <div class="absolute bottom-20 left-1/4 w-px h-24 bg-gradient-to-b from-transparent via-teal-400/20 to-transparent" />
+
+      <div class="max-w-7xl mx-auto relative z-10 px-4 py-24 w-full">
         <div class="text-center">
-          <div class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/20 border border-emerald-500/30 rounded-full text-emerald-300 text-sm font-medium mb-8 backdrop-blur-sm animate-fade-up">
-            <UIcon name="i-lucide-zap" class="w-4 h-4" />
-            {{ t('tagline') }}
+          <!-- Premium badge -->
+          <div class="inline-flex items-center gap-2.5 px-5 py-2.5 mb-10 animate-fade-up" style="background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.25); border-radius: 100px; backdrop-filter: blur(12px);">
+            <div class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span class="text-emerald-300 text-sm font-semibold tracking-wide">{{ t('tagline') }}</span>
+            <UIcon name="i-lucide-zap" class="w-3.5 h-3.5 text-emerald-400" />
           </div>
 
-          <h1 class="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-6 leading-[1.1] tracking-tight animate-slide-up">
+          <!-- Main heading -->
+          <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-6 leading-[1.0] tracking-tight animate-slide-up">
             {{ t('heroTitle') }}
             <span class="relative inline-block">
-              <span class="bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent animate-gradient"> {{ t('heroHighlight') }}</span>
-              <svg class="absolute -bottom-1 left-0 w-full" viewBox="0 0 200 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 6 Q50 2 100 5 Q150 8 198 4" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
+              <span class="bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent animate-gradient" style="background-size: 200% 200%;"> {{ t('heroHighlight') }}</span>
+              <svg class="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 8 Q50 2 100 6 Q150 10 198 4" stroke="url(#heroGrad)" stroke-width="3" stroke-linecap="round" fill="none"/><defs><linearGradient id="heroGrad" x1="0" y1="0" x2="200" y2="0"><stop offset="0%" stop-color="#34d399"/><stop offset="100%" stop-color="#2dd4bf"/></linearGradient></defs></svg>
             </span>
             <br />
-            <span class="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-300">{{ t('heroSubtitle') }}</span>
+            <span class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-300 mt-2 block">{{ t('heroSubtitle') }}</span>
           </h1>
 
-          <p class="text-base md:text-lg text-gray-400 mb-10 max-w-xl mx-auto leading-relaxed animate-fade-up" style="animation-delay:0.3s">
+          <p class="text-base md:text-lg text-gray-400 mb-12 max-w-xl mx-auto leading-relaxed animate-fade-up" style="animation-delay:0.3s">
             {{ t('heroDescription') }}
           </p>
 
-          <div class="max-w-2xl mx-auto mb-10 animate-fade-up" style="animation-delay:0.5s">
-            <UInput
-              :placeholder="t('searchPlaceholder')"
-            />
+          <!-- Search Bar -->
+          <div class="max-w-2xl mx-auto mb-12 animate-fade-up" style="animation-delay:0.5s">
+            <div class="flex items-center gap-2 p-2 rounded-2xl" style="background: rgba(255,255,255,0.07); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06);">
+              <UIcon name="i-lucide-search" class="w-5 h-5 text-gray-400 ml-3 flex-shrink-0" />
+              <UInput
+                :placeholder="t('searchPlaceholder')"
+                class="flex-1"
+              />
+              <button class="px-5 py-2.5 rounded-xl text-white text-sm font-bold transition-all hover:scale-105 flex-shrink-0" style="background: linear-gradient(135deg, #16a34a, #0d9488); box-shadow: 0 4px 15px rgba(22,163,74,0.4);">
+                Search
+              </button>
+            </div>
           </div>
 
-          <div class="flex flex-wrap justify-center gap-3 animate-fade-up" style="animation-delay:0.7s">
-            <span class="text-gray-400 text-sm">{{ t('popular') }}:</span>
+          <!-- Popular tags -->
+          <div class="flex flex-wrap justify-center gap-2.5 animate-fade-up" style="animation-delay:0.7s">
+            <span class="text-gray-500 text-sm self-center">{{ t('popular') }}:</span>
             <button
               v-for="tag in [t('plumbing'), t('electricians'), t('acRepair'), t('bakers')]"
               :key="tag"
-              class="px-5 py-2.5 bg-white/10 backdrop-blur-sm text-white rounded-full border border-white/20 hover:bg-emerald-500/20 hover:border-emerald-400/40 hover:scale-105 transition-all text-sm font-medium"
+              class="px-4 py-2 text-white rounded-xl border text-sm font-medium transition-all hover:scale-105 hover:bg-emerald-500/20 hover:border-emerald-400/40"
+              style="background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.12); backdrop-filter: blur(8px);"
               @click="navigateTo(`/services?category=${tag.toLowerCase()}`)"
             >
               {{ tag }}
             </button>
+          </div>
+
+          <!-- Scroll indicator -->
+          <div class="mt-20 flex justify-center animate-fade-up" style="animation-delay:1s">
+            <div class="flex flex-col items-center gap-2 text-gray-500">
+              <span class="text-xs font-medium tracking-widest uppercase">Scroll</span>
+              <div class="w-px h-10 bg-gradient-to-b from-gray-500 to-transparent" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <section class="py-12 px-4 relative overflow-hidden" style="background: linear-gradient(135deg, #16a34a 0%, #0d9488 100%);">
+      <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle, rgba(255,255,255,0.4) 1px, transparent 1px); background-size: 24px 24px;" />
+      <div class="max-w-7xl mx-auto relative z-10">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+          <div v-for="stat in stats" :key="stat.label" class="text-center text-white">
+            <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl mb-3" style="background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);">
+              <UIcon :name="stat.icon" class="w-6 h-6" />
+            </div>
+            <div class="text-3xl md:text-4xl font-black mb-1">{{ stat.value }}</div>
+            <div class="text-emerald-100 text-sm font-medium">{{ stat.label }}</div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Categories -->
-    <section id="services" class="py-20 px-4 bg-white dark:bg-gray-900 relative overflow-hidden">
-      <div class="absolute top-0 left-0 w-72 h-72 bg-emerald-300/20 rounded-full blur-3xl" />
-      <div class="absolute bottom-0 right-0 w-72 h-72 bg-teal-300/20 rounded-full blur-3xl" />
+    <section id="services" class="py-24 px-4 bg-white dark:bg-gray-950 relative overflow-hidden">
+      <div class="absolute top-0 left-0 w-96 h-96 bg-emerald-100/60 dark:bg-emerald-900/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+      <div class="absolute bottom-0 right-0 w-96 h-96 bg-teal-100/60 dark:bg-teal-900/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
 
       <div class="max-w-7xl mx-auto relative z-10">
-        <div class="text-center mb-14 reveal">
-          <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
+        <div class="text-center mb-16 reveal">
+          <div class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-emerald-700 dark:text-emerald-400 text-sm font-semibold mb-5" style="background: linear-gradient(135deg, rgba(34,197,94,0.1), rgba(20,184,166,0.1)); border: 1px solid rgba(34,197,94,0.2);">
+            <div class="w-1.5 h-1.5 rounded-full bg-emerald-500" />
             {{ t('ourServices') }}
           </div>
-          <h2 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+          <h2 class="text-4xl md:text-5xl font-black text-gray-900 dark:text-white mb-5 leading-tight">
             {{ t('findA') }} <span class="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">{{ t('findServiceProvider') }}</span>
           </h2>
+          <div class="section-divider" />
           <p class="text-gray-500 dark:text-gray-400 text-lg max-w-xl mx-auto">{{ t('trustedProfessionals') }}</p>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
           <NuxtLink
             v-for="(cat, i) in categories"
             :key="cat.slug"
             :to="categoryHref(cat.slug)"
-            class="reveal-scale group bg-white dark:bg-gray-800 rounded-2xl p-5 md:p-7 shadow-sm hover:shadow-xl transition-all border border-gray-100 dark:border-gray-700 hover:border-emerald-200 dark:hover:border-emerald-700 hover:-translate-y-1"
+            class="reveal-scale category-card group bg-white dark:bg-gray-900 rounded-2xl p-4 md:p-5 shadow-sm border border-gray-100/80 dark:border-gray-800 text-center"
             :style="`transition-delay: ${(i % 8) * 0.05}s`"
           >
-            <div class="text-3xl md:text-4xl mx-auto mb-4 text-center group-hover:scale-125 group-hover:rotate-6 transition-transform duration-300">{{ cat.icon }}</div>
-            <h3 class="text-center font-semibold text-sm md:text-base text-gray-900 dark:text-white">{{ cat.label }}</h3>
-            <p class="text-center text-xs text-gray-400 mt-1 hidden md:block group-hover:text-emerald-500 transition-colors">Explore →</p>
+            <div class="text-3xl mb-3 group-hover:scale-125 group-hover:rotate-6 transition-transform duration-300">{{ cat.icon }}</div>
+            <h3 class="font-semibold text-xs md:text-sm text-gray-800 dark:text-gray-200 leading-tight">{{ cat.label }}</h3>
+            <p class="text-[10px] text-emerald-500 mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity font-medium">Explore →</p>
           </NuxtLink>
         </div>
       </div>
     </section>
 
     <!-- Map Section -->
-    <section class="py-16 px-4 bg-white dark:bg-gray-900">
-      <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-8 reveal">
-          <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
+    <section class="py-20 px-4 bg-gray-50 dark:bg-gray-900 relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-emerald-50/50 to-teal-50/30 dark:from-emerald-950/30 dark:to-transparent" />
+      <div class="max-w-7xl mx-auto relative z-10">
+        <div class="text-center mb-10 reveal">
+          <div class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-emerald-700 dark:text-emerald-400 text-sm font-semibold mb-5" style="background: linear-gradient(135deg, rgba(34,197,94,0.1), rgba(20,184,166,0.1)); border: 1px solid rgba(34,197,94,0.2);">
             <UIcon name="i-lucide-map-pin" class="w-4 h-4" /> {{ t('liveServiceMap') }}
           </div>
-          <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3">
+          <h2 class="text-3xl md:text-4xl font-black text-gray-900 dark:text-white mb-3">
             {{ t('findServicesNear') }} <span class="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">{{ t('nearYou') }}</span>
           </h2>
+          <div class="section-divider" />
           <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto">{{ t('mapDesc') }}</p>
         </div>
-        <ProvidersMap :providers="allProviders" height="480px" />
-        <div class="text-center mt-6">
+        <div class="rounded-3xl overflow-hidden" style="box-shadow: 0 25px 60px rgba(0,0,0,0.12), 0 0 0 1px rgba(34,197,94,0.08);">
+          <ProvidersMap :providers="allProviders" height="500px" />
+        </div>
+        <div class="text-center mt-8">
           <UButton to="/services" color="primary" size="lg" trailing-icon="i-lucide-arrow-right">{{ t('browseAllServices') }}</UButton>
         </div>
       </div>
     </section>
 
     <!-- Featured Products -->
-    <section class="py-16 px-4 bg-gray-50 dark:bg-gray-800">
+    <section class="py-20 px-4 bg-white dark:bg-gray-950">
       <div class="max-w-7xl mx-auto">
-        <div class="flex items-center justify-between mb-12 reveal">
+        <div class="flex items-end justify-between mb-12 reveal">
           <div>
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">{{ t('featuredListings') }}</h2>
-            <p class="text-gray-600 dark:text-gray-400">{{ t('discoverServices') }}</p>
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-emerald-700 dark:text-emerald-400 text-xs font-semibold mb-3" style="background: linear-gradient(135deg, rgba(34,197,94,0.1), rgba(20,184,166,0.1)); border: 1px solid rgba(34,197,94,0.2);">
+              <UIcon name="i-lucide-star" class="w-3.5 h-3.5" /> Featured
+            </div>
+            <h2 class="text-3xl md:text-4xl font-black text-gray-900 dark:text-white mb-2">{{ t('featuredListings') }}</h2>
+            <p class="text-gray-500 dark:text-gray-400">{{ t('discoverServices') }}</p>
           </div>
           <UButton to="/products" variant="outline" color="primary" trailing-icon="i-lucide-arrow-right">{{ t('viewAll') }}</UButton>
         </div>
 
         <div v-if="loading" class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-          <div v-for="i in 8" :key="i" class="rounded-2xl overflow-hidden shadow-md">
+          <div v-for="i in 8" :key="i" class="rounded-2xl overflow-hidden">
             <div class="skeleton aspect-square" />
-            <div class="p-4 space-y-2">
+            <div class="p-4 space-y-2.5">
               <div class="skeleton h-4 rounded w-3/4" />
-              <div class="skeleton h-4 rounded w-1/2" />
+              <div class="skeleton h-3 rounded w-1/2" />
+              <div class="skeleton h-8 rounded w-full" />
             </div>
           </div>
         </div>
 
-        <div v-else-if="products.length === 0" class="text-center py-16 reveal">
-          <div class="text-6xl mb-4 animate-bounce">🏪</div>
+        <div v-else-if="products.length === 0" class="text-center py-20 reveal">
+          <div class="w-24 h-24 rounded-3xl bg-gray-50 dark:bg-gray-900 flex items-center justify-center mx-auto mb-6 text-5xl shadow-inner">🏪</div>
           <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">{{ t('noListingsYet') }}</h3>
           <p class="text-gray-500 mb-6">{{ t('beFirstToList') }}</p>
           <UButton to="/upload-product" color="primary" size="lg">{{ t('listYourService') }}</UButton>
         </div>
 
         <div v-else class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-          <div
-            v-for="(product, i) in products"
-            :key="product.id"
-            class="reveal-scale"
-            :style="`transition-delay: ${i * 0.07}s`"
-          >
+          <div v-for="(product, i) in products" :key="product.id" class="reveal-scale" :style="`transition-delay: ${i * 0.07}s`">
             <ProductCard :product="product" />
           </div>
         </div>
@@ -255,27 +310,32 @@ onMounted(async () => {
     </section>
 
     <!-- How It Works -->
-    <section class="py-20 px-4 bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
+    <section class="py-24 px-4 bg-gray-50 dark:bg-gray-900 relative overflow-hidden">
+      <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-300/50 to-transparent dark:via-emerald-700/30" />
+      <div class="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-300/50 to-transparent dark:via-emerald-700/30" />
+
       <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-10 reveal">
-          <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
+        <div class="text-center mb-12 reveal">
+          <div class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-emerald-700 dark:text-emerald-400 text-sm font-semibold mb-5" style="background: linear-gradient(135deg, rgba(34,197,94,0.1), rgba(20,184,166,0.1)); border: 1px solid rgba(34,197,94,0.2);">
+            <div class="w-1.5 h-1.5 rounded-full bg-emerald-500" />
             {{ t('simpleProcess') }}
           </div>
-          <h2 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">{{ t('howItWorks') }}</h2>
+          <h2 class="text-4xl md:text-5xl font-black text-gray-900 dark:text-white mb-4">{{ t('howItWorks') }}</h2>
+          <div class="section-divider" />
           <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto">{{ t('howItWorksDesc') }}</p>
         </div>
 
-        <!-- Tabs -->
-        <div class="flex justify-center mb-10">
-          <div class="inline-flex bg-gray-100 dark:bg-gray-800 rounded-2xl p-1 gap-1">
+        <!-- Tab switcher -->
+        <div class="flex justify-center mb-12">
+          <div class="inline-flex rounded-2xl p-1.5 gap-1" style="background: rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.06);">
             <button
-              :class="['px-6 py-2.5 rounded-xl text-sm font-semibold transition-all', howTab === 'customers' ? 'bg-white dark:bg-gray-700 text-emerald-600 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300']"
+              :class="['px-7 py-3 rounded-xl text-sm font-bold transition-all duration-300', howTab === 'customers' ? 'bg-white dark:bg-gray-800 text-emerald-600 shadow-md' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300']"
               @click="howTab = 'customers'"
             >
               🔍 {{ t('forCustomers') }}
             </button>
             <button
-              :class="['px-6 py-2.5 rounded-xl text-sm font-semibold transition-all', howTab === 'providers' ? 'bg-white dark:bg-gray-700 text-emerald-600 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300']"
+              :class="['px-7 py-3 rounded-xl text-sm font-bold transition-all duration-300', howTab === 'providers' ? 'bg-white dark:bg-gray-800 text-emerald-600 shadow-md' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300']"
               @click="howTab = 'providers'"
             >
               💼 {{ t('forProviders') }}
@@ -287,24 +347,24 @@ onMounted(async () => {
           <div
             v-for="(step, i) in (howTab === 'customers' ? howItWorksCustomers : howItWorksProviders)"
             :key="i"
-            class="reveal relative text-center"
+            class="reveal relative text-center group"
             :style="`transition-delay: ${i * 0.1}s`"
           >
-            <div class="relative inline-block mb-4">
-              <div class="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg text-3xl hover:scale-110 hover:rotate-3 transition-transform duration-300">
+            <div v-if="i < 3" class="hidden md:block absolute top-10 left-[60%] right-[-40%] h-px" style="background: linear-gradient(90deg, rgba(34,197,94,0.4), transparent);" />
+            <div class="relative inline-block mb-5">
+              <div class="w-20 h-20 rounded-3xl flex items-center justify-center mx-auto shadow-lg text-3xl group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300" style="background: linear-gradient(135deg, #16a34a, #0d9488); box-shadow: 0 12px 30px rgba(22,163,74,0.3);">
                 {{ step.icon }}
               </div>
-              <div class="absolute -top-2 -right-2 w-7 h-7 bg-gray-900 dark:bg-white rounded-full flex items-center justify-center text-white dark:text-gray-900 font-bold text-xs shadow-md">
+              <div class="absolute -top-2 -right-2 w-7 h-7 rounded-full flex items-center justify-center font-black text-xs shadow-md text-white" style="background: linear-gradient(135deg, #1e293b, #0f172a);">
                 {{ i + 1 }}
               </div>
             </div>
-            <h3 class="font-bold text-sm md:text-lg mb-2 text-gray-900 dark:text-white">{{ step.title }}</h3>
+            <h3 class="font-bold text-sm md:text-base mb-2 text-gray-900 dark:text-white">{{ step.title }}</h3>
             <p class="text-xs md:text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{{ step.desc }}</p>
           </div>
         </div>
 
-        <!-- CTA under providers tab -->
-        <div v-if="howTab === 'providers'" class="text-center mt-10">
+        <div v-if="howTab === 'providers'" class="text-center mt-12">
           <UButton to="/become-seller" color="primary" size="lg" trailing-icon="i-lucide-arrow-right">{{ t('registerBusinessCta') }}</UButton>
         </div>
       </div>
@@ -314,13 +374,15 @@ onMounted(async () => {
     <NewsletterSection />
 
     <!-- FAQ -->
-    <section class="py-20 px-4 bg-white dark:bg-gray-900">
+    <section class="py-24 px-4 bg-white dark:bg-gray-950">
       <div class="max-w-3xl mx-auto">
-        <div class="text-center mb-14 reveal">
-          <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
-            {{ t('faqTitle') }}
+        <div class="text-center mb-16 reveal">
+          <div class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-emerald-700 dark:text-emerald-400 text-sm font-semibold mb-5" style="background: linear-gradient(135deg, rgba(34,197,94,0.1), rgba(20,184,166,0.1)); border: 1px solid rgba(34,197,94,0.2);">
+            <div class="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            FAQ
           </div>
-          <h2 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">{{ t('faqTitle') }}</h2>
+          <h2 class="text-4xl md:text-5xl font-black text-gray-900 dark:text-white mb-4">{{ t('faqTitle') }}</h2>
+          <div class="section-divider" />
           <p class="text-gray-500 dark:text-gray-400">{{ t('faqSubtitle') }}</p>
         </div>
 
@@ -328,20 +390,22 @@ onMounted(async () => {
           <div
             v-for="(faq, i) in faqs"
             :key="i"
-            class="reveal border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden hover:border-emerald-200 dark:hover:border-emerald-700 transition-all"
+            class="reveal rounded-2xl overflow-hidden border transition-all duration-300"
+            :class="openFaq === i ? 'border-emerald-200 dark:border-emerald-800 shadow-md' : 'border-gray-100 dark:border-gray-800 hover:border-emerald-100 dark:hover:border-emerald-900'"
             :style="`transition-delay: ${i * 0.08}s`"
           >
             <button
-              class="w-full px-6 py-4 flex items-center justify-between hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10 transition"
+              class="w-full px-6 py-5 flex items-center justify-between transition-colors duration-200"
+              :class="openFaq === i ? 'bg-emerald-50/50 dark:bg-emerald-950/30' : 'hover:bg-gray-50 dark:hover:bg-gray-900/50'"
               @click="openFaq = openFaq === i ? null : i"
             >
               <span class="font-semibold text-left text-gray-900 dark:text-white text-sm md:text-base">{{ faq.q }}</span>
-              <div :class="`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300 ${openFaq === i ? 'bg-emerald-500 text-white rotate-180' : 'bg-gray-100 dark:bg-gray-800 text-gray-400'}`">
+              <div class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ml-4 transition-all duration-300" :class="openFaq === i ? 'text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-500'" :style="openFaq === i ? 'background: linear-gradient(135deg, #16a34a, #0d9488);' : ''">
                 <UIcon :name="openFaq === i ? 'i-lucide-minus' : 'i-lucide-plus'" class="w-4 h-4" />
               </div>
             </button>
             <Transition name="faq">
-              <div v-if="openFaq === i" class="px-6 pb-4 text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+              <div v-if="openFaq === i" class="px-6 pb-5 text-gray-600 dark:text-gray-400 text-sm leading-relaxed border-t border-emerald-100 dark:border-emerald-900/50 pt-4">
                 {{ faq.a }}
               </div>
             </Transition>
@@ -350,19 +414,28 @@ onMounted(async () => {
       </div>
     </section>
 
-    <!-- CTA -->
-    <section class="py-16 px-4 bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-600 animate-gradient text-white text-center">
-      <div class="max-w-3xl mx-auto reveal">
-        <h2 class="text-3xl md:text-4xl font-bold mb-4">{{ t('readyToGrow') }}</h2>
-        <p class="text-emerald-100 mb-8 text-lg">{{ t('joinThousands') }}</p>
-        <UButton to="/become-seller" size="xl" color="white" class="font-bold hover:scale-105 transition-transform">{{ t('getStartedFree') }}</UButton>
+    <!-- Final CTA -->
+    <section class="py-20 px-4 relative overflow-hidden" style="background: linear-gradient(135deg, #064e3b 0%, #065f46 40%, #059669 100%);">
+      <div class="absolute inset-0 opacity-40" style="background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 30px 30px;" />
+      <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-300/30 to-transparent" />
+      <div class="absolute top-10 left-10 w-40 h-40 bg-white/5 rounded-full blur-3xl animate-float" />
+      <div class="absolute bottom-10 right-10 w-56 h-56 bg-teal-300/10 rounded-full blur-3xl animate-float" style="animation-delay:2s" />
+
+      <div class="max-w-3xl mx-auto text-center relative z-10 reveal">
+        <div class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-emerald-200 text-sm font-semibold mb-8" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); backdrop-filter: blur(8px);">
+          <UIcon name="i-lucide-rocket" class="w-4 h-4" />
+          Join the Revolution
+        </div>
+        <h2 class="text-4xl md:text-5xl font-black text-white mb-5 leading-tight">{{ t('readyToGrow') }}</h2>
+        <p class="text-emerald-100/80 mb-10 text-lg max-w-lg mx-auto">{{ t('joinThousands') }}</p>
+        <UButton to="/become-seller" size="xl" color="white" class="font-black hover:scale-105 transition-transform shadow-2xl animate-pulse-glow-white">{{ t('getStartedFree') }}</UButton>
       </div>
     </section>
   </div>
 </template>
 
 <style scoped>
-.faq-enter-active { transition: all 0.3s ease; }
-.faq-leave-active { transition: all 0.2s ease; }
-.faq-enter-from, .faq-leave-to { opacity: 0; transform: translateY(-8px); }
+.faq-enter-active { transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+.faq-leave-active { transition: all 0.25s ease; }
+.faq-enter-from, .faq-leave-to { opacity: 0; transform: translateY(-10px); }
 </style>
