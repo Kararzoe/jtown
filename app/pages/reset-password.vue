@@ -10,18 +10,19 @@ const ready = ref(false)
 const expired = ref(false)
 
 onMounted(async () => {
-  // Session already set by /confirm page
+  // Wait a tick for session to be stored after redirect
+  await new Promise(r => setTimeout(r, 500))
+
   const { data: { session } } = await supabase.auth.getSession()
   if (session) { ready.value = true; return }
 
-  // Fallback: listen for auth event
   const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
     if ((event === 'PASSWORD_RECOVERY' || event === 'SIGNED_IN') && session) {
       subscription.unsubscribe(); ready.value = true
     }
   })
 
-  setTimeout(() => { if (!ready.value) { expired.value = true; subscription.unsubscribe() } }, 5000)
+  setTimeout(() => { if (!ready.value) { expired.value = true; subscription.unsubscribe() } }, 6000)
 })
 
 const submit = async () => {
