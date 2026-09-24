@@ -41,6 +41,20 @@ const locations = ['Bukuru', 'Rayfield', 'Terminus', 'Sukuwa', 'Lamingo', 'Hwols
 const gettingLocation = ref(false)
 const locationPinned = ref(false)
 
+let pinMap: any = null
+
+const showPinMap = async (lat: number, lng: number) => {
+  await nextTick()
+  const L = (await import('leaflet')).default
+  await import('leaflet/dist/leaflet.css')
+  const el = document.getElementById('pin-map')
+  if (!el) return
+  if (pinMap) { pinMap.remove(); pinMap = null }
+  pinMap = L.map(el, { zoomControl: false, dragging: false, scrollWheelZoom: false }).setView([lat, lng], 16)
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap', maxZoom: 19 }).addTo(pinMap)
+  L.marker([lat, lng]).addTo(pinMap)
+}
+
 const pinMyLocation = () => {
   if (!navigator.geolocation) {
     toast.add({ title: 'GPS not supported on this device', color: 'error' })
@@ -54,6 +68,7 @@ const pinMyLocation = () => {
       locationPinned.value = true
       gettingLocation.value = false
       toast.add({ title: 'Location pinned!', color: 'success' })
+      showPinMap(pos.coords.latitude, pos.coords.longitude)
     },
     () => {
       gettingLocation.value = false
@@ -219,14 +234,7 @@ const submit = async () => {
               </UButton>
             </div>
             <div v-if="locationPinned && form.lat && form.lng" class="mt-3 rounded-xl overflow-hidden border border-emerald-200">
-              <iframe
-                :src="`https://maps.google.com/maps?q=${form.lat},${form.lng}&z=16&output=embed`"
-                width="100%"
-                height="180"
-                style="border:0"
-                loading="lazy"
-                allowfullscreen
-              />
+              <div :id="'pin-map'" style="height:180px;width:100%" />
             </div>
           </div>
 
