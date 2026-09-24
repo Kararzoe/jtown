@@ -1,26 +1,13 @@
 <script setup lang="ts">
+import 'leaflet/dist/leaflet.css'
 const route = useRoute()
 const supabase = useSupabaseClient()
-const config = useRuntimeConfig()
+const { t } = useLanguage()
 const provider = ref<any>(null)
 const loading = ref(true)
 const selectedImage = ref<string | null>(null)
 const mapEl = ref<HTMLElement | null>(null)
-const mapType = ref<'roadmap' | 'satellite'>('roadmap')
-let googleMap: any = null
 
-const loadGoogleMaps = (): Promise<void> => {
-  return new Promise((resolve) => {
-    if ((window as any).google?.maps) return resolve()
-    const script = document.createElement('script')
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${config.public.googleMapsKey}&libraries=marker&v=weekly`
-    script.async = true
-    script.onload = () => resolve()
-    document.head.appendChild(script)
-  })
-}
-
-// Cloudinary WebP optimization helper
 const imgUrl = (url: string, w = 800) => {
   if (!url || !url.includes('cloudinary.com')) return url
   return url.replace('/upload/', `/upload/f_auto,q_auto,w_${w}/`)
@@ -38,43 +25,25 @@ onMounted(async () => {
 })
 
 const initMap = async (lat: number, lng: number, title: string) => {
-  await loadGoogleMaps()
-
-  const { Map } = (window as any).google.maps
-  const { AdvancedMarkerElement } = (window as any).google.maps.marker
-
-  googleMap = new Map(mapEl.value!, {
-    center: { lat, lng },
-    zoom: 16,
-    mapId: 'josmkt_provider_map',
-    mapTypeId: mapType.value,
-    disableDefaultUI: false,
-    zoomControl: true,
-    streetViewControl: true,
-    fullscreenControl: true,
-    mapTypeControl: false,
+  const L = (await import('leaflet')).default
+  delete (L.Icon.Default.prototype as any)._getIconUrl
+  L.Icon.Default.mergeOptions({
+    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
   })
-
-  // Custom marker pin
-  const pin = document.createElement('div')
-  pin.innerHTML = `<div style="background:#10b981;color:white;padding:8px 14px;border-radius:20px;font-weight:700;font-size:13px;box-shadow:0 4px 15px rgba(16,185,129,0.4);white-space:nowrap;display:flex;align-items:center;gap:6px;"><span style="font-size:16px">📍</span> ${title}</div>`
-
-  new AdvancedMarkerElement({
-    map: googleMap,
-    position: { lat, lng },
-    content: pin,
-    title,
+  const map = L.map(mapEl.value!, { zoomControl: true }).setView([lat, lng], 16)
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    maxZoom: 19,
+  }).addTo(map)
+  const icon = L.divIcon({
+    html: `<div style="background:#10b981;color:white;padding:8px 14px;border-radius:20px;font-weight:700;font-size:13px;box-shadow:0 4px 15px rgba(16,185,129,0.4);white-space:nowrap;display:flex;align-items:center;gap:6px;border:2px solid white"><span style="font-size:16px">📍</span> ${title}</div>`,
+    className: '',
+    iconAnchor: [0, 0],
   })
+  L.marker([lat, lng], { icon }).addTo(map)
 }
-
-const toggleMapType = () => {
-  mapType.value = mapType.value === 'roadmap' ? 'satellite' : 'roadmap'
-  if (googleMap) googleMap.setMapTypeId(mapType.value)
-}
-
-watch(mapType, (val) => {
-  if (googleMap) googleMap.setMapTypeId(val)
-})
 </script>
 
 <template>
@@ -86,8 +55,8 @@ watch(mapType, (val) => {
     <div v-else-if="!provider" class="flex items-center justify-center min-h-screen">
       <div class="text-center">
         <div class="text-6xl mb-4">😕</div>
-        <p class="text-gray-500 text-lg">Provider not found</p>
-        <UButton to="/services" class="mt-4" color="primary">Browse Services</UButton>
+        <p class="text-gray-500 text-lg">{{ t('providerNotFound') || 'Provider not found' }}</p>
+        <UButton to="/services" class="mt-4" color="primary">{{ t('browseAllServices') }}</UButton>
       </div>
     </div>
 
@@ -97,7 +66,7 @@ watch(mapType, (val) => {
         <div class="absolute inset-0 bg-black/20" />
         <div class="max-w-5xl mx-auto px-4 h-full flex items-start pt-4 relative z-10">
           <button class="flex items-center gap-2 text-white/80 hover:text-white transition" @click="$router.back()">
-            <UIcon name="i-lucide-arrow-left" class="w-5 h-5" /> Back
+            <UIcon name="i-lucide-arrow-left" class="w-5 h-5" /> {{ t('back') || 'Back' }}
           </button>
         </div>
       </div>
@@ -107,12 +76,7 @@ watch(mapType, (val) => {
         <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 shadow-xl mb-6">
           <div class="flex flex-col md:flex-row gap-6">
             <div class="flex-shrink-0">
-              <img
-                v-if="provider.image"
-                :src="imgUrl(provider.image, 300)"
-                :alt="provider.service_name"
-                class="w-28 h-28 md:w-36 md:h-36 rounded-2xl object-cover border-4 border-white shadow-lg"
-              />
+              <img v-if="provider.image" :src="imgUrl(provider.image, 300)" :alt="provider.service_name" class="w-28 h-28 md:w-36 md:h-36 rounded-2xl object-cover border-4 border-white shadow-lg" />
               <div v-else class="w-28 h-28 md:w-36 md:h-36 rounded-2xl bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/40 dark:to-teal-900/40 flex items-center justify-center text-emerald-600 font-bold text-4xl border-4 border-white shadow-lg">
                 {{ provider.service_name?.charAt(0) }}
               </div>
@@ -132,7 +96,7 @@ watch(mapType, (val) => {
                 </div>
                 <div v-if="provider.experience" class="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                   <UIcon name="i-lucide-clock" class="w-5 h-5 text-emerald-500" />
-                  <span>{{ provider.experience }} experience</span>
+                  <span>{{ provider.experience }} {{ t('experience') }}</span>
                 </div>
                 <div v-if="provider.price_range" class="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                   <span class="text-emerald-500 font-bold">₦</span>
@@ -140,36 +104,28 @@ watch(mapType, (val) => {
                 </div>
                 <div v-if="provider.rating > 0" class="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                   <UIcon name="i-lucide-star" class="w-5 h-5 text-yellow-400" />
-                  <span>{{ provider.rating }} ({{ provider.total_reviews }} reviews)</span>
+                  <span>{{ provider.rating }}</span>
                 </div>
               </div>
 
               <div class="flex gap-3 flex-wrap">
                 <a :href="`tel:${provider.phone}`" class="flex items-center gap-2 px-6 py-3 bg-emerald-500 text-white rounded-xl font-semibold hover:bg-emerald-600 transition">
-                  <UIcon name="i-lucide-phone" class="w-5 h-5" /> Call Now
+                  <UIcon name="i-lucide-phone" class="w-5 h-5" /> {{ t('call') }}
                 </a>
                 <a :href="`https://wa.me/${provider.phone?.replace(/[^0-9]/g, '')}?text=Hi, I found you on JosMKT. I need your ${provider.service_name} service.`" target="_blank" class="flex items-center gap-2 px-6 py-3 bg-green-500 text-white rounded-xl font-semibold hover:bg-green-600 transition">
-                  <UIcon name="i-lucide-message-circle" class="w-5 h-5" /> WhatsApp
+                  <UIcon name="i-lucide-message-circle" class="w-5 h-5" /> {{ t('whatsapp') }}
                 </a>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Google Map -->
+        <!-- Map -->
         <div v-if="provider.lat && provider.lng" class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm mb-6 overflow-hidden">
-          <div class="p-4 md:p-6 pb-3 flex items-center justify-between">
+          <div class="p-4 md:p-6 pb-3">
             <h2 class="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-              <UIcon name="i-lucide-map-pin" class="w-5 h-5 text-emerald-500" /> Location
+              <UIcon name="i-lucide-map-pin" class="w-5 h-5 text-emerald-500" /> {{ t('location') || 'Location' }}
             </h2>
-            <button
-              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition"
-              :class="mapType === 'satellite' ? 'bg-gray-900 text-white border-gray-700' : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-600'"
-              @click="toggleMapType"
-            >
-              <UIcon :name="mapType === 'satellite' ? 'i-lucide-map' : 'i-lucide-satellite'" class="w-3.5 h-3.5" />
-              {{ mapType === 'satellite' ? 'Map View' : 'Satellite' }}
-            </button>
           </div>
           <div ref="mapEl" style="height: 320px; width: 100%;" />
           <div class="p-4">
@@ -178,21 +134,21 @@ watch(mapType, (val) => {
               target="_blank"
               class="flex items-center justify-center gap-2 w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-sm font-semibold transition"
             >
-              <UIcon name="i-lucide-navigation" class="w-4 h-4" /> Get Directions
+              <UIcon name="i-lucide-navigation" class="w-4 h-4" /> {{ t('getDirections') || 'Get Directions' }}
             </a>
           </div>
         </div>
 
         <!-- About -->
         <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 shadow-sm mb-6">
-          <h2 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">About</h2>
+          <h2 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">{{ t('about') || 'About' }}</h2>
           <p class="text-gray-600 dark:text-gray-400 leading-relaxed whitespace-pre-line">{{ provider.description }}</p>
         </div>
 
         <!-- Gallery -->
         <div v-if="provider.gallery?.length" class="bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 shadow-sm mb-6">
           <h2 class="text-xl font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
-            <UIcon name="i-lucide-image" class="w-5 h-5" /> Gallery
+            <UIcon name="i-lucide-image" class="w-5 h-5" /> {{ t('gallery') || 'Gallery' }}
           </h2>
           <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             <img
@@ -208,14 +164,14 @@ watch(mapType, (val) => {
 
         <!-- CTA -->
         <div class="bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl p-6 md:p-8 shadow-sm text-white">
-          <h2 class="text-xl font-bold mb-2">Need this service?</h2>
-          <p class="text-emerald-100 mb-4">Contact {{ provider.service_name }} directly and get started today.</p>
+          <h2 class="text-xl font-bold mb-2">{{ t('needThisService') || 'Need this service?' }}</h2>
+          <p class="text-emerald-100 mb-4">{{ t('contactDirectly') || 'Contact' }} {{ provider.service_name }} {{ t('directly') || 'directly and get started today.' }}</p>
           <div class="flex flex-wrap gap-3">
             <a :href="`tel:${provider.phone}`" class="px-5 py-2.5 bg-white text-emerald-600 rounded-xl font-semibold hover:bg-emerald-50 transition flex items-center gap-2">
               <UIcon name="i-lucide-phone" class="w-4 h-4" /> {{ provider.phone }}
             </a>
             <a :href="`https://wa.me/${provider.phone?.replace(/[^0-9]/g, '')}?text=Hi, I need your service.`" target="_blank" class="px-5 py-2.5 bg-white/20 text-white border border-white/30 rounded-xl font-semibold hover:bg-white/30 transition flex items-center gap-2">
-              <UIcon name="i-lucide-message-circle" class="w-4 h-4" /> WhatsApp
+              <UIcon name="i-lucide-message-circle" class="w-4 h-4" /> {{ t('whatsapp') }}
             </a>
           </div>
         </div>

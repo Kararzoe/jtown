@@ -63,6 +63,10 @@ const translations = {
     registerYourBusiness: 'Register Your Business', areYouProvider: 'Are you a service provider?',
     listBusinessDesc: 'Join thousands of professionals getting discovered by customers in Jos every day.',
     call: 'Call', whatsapp: 'WhatsApp', verified: 'Verified', kmAway: 'km away',
+    back: 'Back', location: 'Location', getDirections: 'Get Directions',
+    about: 'About', gallery: 'Gallery', needThisService: 'Need this service?',
+    contactDirectly: 'Contact', directly: 'directly and get started today.',
+    providerNotFound: 'Provider not found',
     // Become seller
     registerBusiness: 'Register Your Business', getStartedOnJosMKT: 'Get Started on JosMKT',
     becomeSellerdesc: 'List your service or business and get discovered by thousands of customers in Jos',
@@ -146,6 +150,10 @@ const translations = {
     registerYourBusiness: 'Yi Rajistan Kasuwancin ku', areYouProvider: 'Kuna mai bayar da sabis?',
     listBusinessDesc: 'Ku shiga tare da dubban ƙwararru da ake gano su ta hanyar abokan ciniki a Jos kowace rana.',
     call: 'Kira', whatsapp: 'WhatsApp', verified: 'An Tabbatar', kmAway: 'km nesa',
+    back: 'Koma', location: 'Wuri', getDirections: 'Nemo Hanya',
+    about: 'Game da', gallery: 'Gidan Hoto', needThisService: 'Kuna buƙatar wannan sabis?',
+    contactDirectly: 'Tuntuɓi', directly: 'kai tsaye kuma fara yau.',
+    providerNotFound: 'Ba a sami mai bayarwa ba',
     // Become seller
     registerBusiness: 'Yi Rajistan Kasuwancin ku', getStartedOnJosMKT: 'Fara a JosMKT',
     becomeSellerdesc: 'Jera sabis ko kasuwancin ku kuma dubban abokan ciniki a Jos za su same ku',
@@ -229,6 +237,10 @@ const translations = {
     registerYourBusiness: 'Register Your Business', areYouProvider: 'You be service provider?',
     listBusinessDesc: 'Join thousands of professionals wey customers dey find for Jos every day.',
     call: 'Call', whatsapp: 'WhatsApp', verified: 'Verified', kmAway: 'km away',
+    back: 'Go Back', location: 'Location', getDirections: 'Get Directions',
+    about: 'About', gallery: 'Gallery', needThisService: 'You need this service?',
+    contactDirectly: 'Contact', directly: 'directly and start today.',
+    providerNotFound: 'Provider no dey',
     // Become seller
     registerBusiness: 'Register Your Business', getStartedOnJosMKT: 'Start for JosMKT',
     becomeSellerdesc: 'List your service or business and thousands of customers for Jos go find you',
