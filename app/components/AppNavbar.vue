@@ -140,7 +140,7 @@ const userMenuItems = computed(() => [[
               </button>
             </UDropdownMenu>
           </div>
-          <UButton v-else class="hidden md:flex" to="/login" size="sm" class="rounded-xl font-semibold" variant="outline" color="primary">{{ t('login') }}</UButton>
+          <UButton v-else class="hidden md:flex rounded-xl font-semibold" to="/login" size="sm" variant="outline" color="primary">{{ t('login') }}</UButton>
 
           <!-- Mobile Menu Button -->
           <button
