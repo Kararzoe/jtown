@@ -18,7 +18,6 @@ const categories = [
   { label: 'Electricians', icon: '⚡', slug: 'electrical' },
   { label: 'AC Installation', icon: '❄️', slug: 'ac' },
   { label: 'Furniture', icon: '🛋️', slug: 'furniture' },
-  { label: 'Catering & Food', icon: '🍰', slug: 'catering' },
   { label: 'Painting', icon: '🎨', slug: 'painting' },
   { label: 'Auto Mechanic', icon: '🚗', slug: 'mechanic' },
   { label: 'Barbing & Salon', icon: '✂️', slug: 'barbing' },

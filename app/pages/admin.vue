@@ -161,7 +161,7 @@ watch(tab, (val) => {
   if (val === 'messages') loadConversations()
 })
 
-const serviceCategories = ['plumbing','electrical','ac','furniture','catering','painting','mechanic','barbing','carpentry','fashion-design','shoemaking','photography','tech','logistics','laundry','education','perfumery','makeup','event-planning','rentals','mason','phone-accessories','legal','housing-agent','e-wallet']
+const serviceCategories = ['plumbing','electrical','ac','furniture','painting','mechanic','barbing','carpentry','fashion-design','shoemaking','photography','tech','logistics','laundry','education','perfumery','makeup','event-planning','rentals','mason','phone-accessories','legal','housing-agent','e-wallet']
 const locations = ['Bukuru','Rayfield','Terminus','Sukuwa','Lamingo','Hwolshe','Tudun Wada','Nassarawa','Old Airport','Polo','British','Other']
 
 const navItems = [

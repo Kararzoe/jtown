@@ -30,7 +30,7 @@ const form = reactive({
 })
 
 const categories = [
-  'plumbing', 'electrical', 'ac', 'furniture', 'catering', 'painting',
+  'plumbing', 'electrical', 'ac', 'furniture', 'painting',
   'mechanic', 'barbing', 'carpentry', 'fashion-design', 'shoemaking',
   'photography', 'tech', 'logistics', 'laundry', 'education',
   'perfumery', 'makeup', 'event-planning', 'rentals', 'mason',
