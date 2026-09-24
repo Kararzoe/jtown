@@ -66,6 +66,12 @@ const getDistance = (lat1: number, lng1: number, lat2: number, lng2: number) => 
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
 }
 
+const distanceLabel = (provider: any) => {
+  if (!userLat.value || !userLng.value || !provider.lat || !provider.lng) return null
+  const d = getDistance(userLat.value, userLng.value, provider.lat, provider.lng)
+  return d < 1 ? `${Math.round(d * 1000)}m away` : `${d.toFixed(1)}km away`
+}
+
 const findNearest = () => {
   if (!navigator.geolocation) return
   gettingLocation.value = true
@@ -80,6 +86,17 @@ const findNearest = () => {
     { enableHighAccuracy: true }
   )
 }
+
+// Silently try to get location on mount
+onMounted(() => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => { userLat.value = pos.coords.latitude; userLng.value = pos.coords.longitude; sortByNearest.value = true },
+      () => {}, // silent fail
+      { enableHighAccuracy: false, timeout: 5000 }
+    )
+  }
+})
 
 const selectCategory = (slug: string) => {
   category.value = slug
@@ -237,7 +254,7 @@ const filtered = computed(() => {
             <UIcon name="i-lucide-map" class="w-4 h-4 text-emerald-500" />
             <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Map View — {{ filtered.filter(p => p.lat && p.lng).length }} providers pinned</p>
           </div>
-          <ProvidersMap :providers="filtered" height="380px" />
+          <ProvidersMap :providers="filtered" :user-lat="userLat" :user-lng="userLng" height="380px" />
         </div>
 
         <div class="flex items-center justify-between mb-5">
@@ -279,9 +296,9 @@ const filtered = computed(() => {
                       <span class="flex items-center gap-1 px-2 py-0.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-xs font-semibold rounded-full border border-emerald-100 dark:border-emerald-800">
                         <UIcon name="i-lucide-badge-check" class="w-3 h-3" /> Verified
                       </span>
-                      <span v-if="sortByNearest && userLat && userLng && provider.lat && provider.lng" class="flex items-center gap-1 px-2 py-0.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-semibold rounded-full border border-blue-100 dark:border-blue-800">
+                      <span v-if="distanceLabel(provider)" class="flex items-center gap-1 px-2 py-0.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-semibold rounded-full border border-blue-100 dark:border-blue-800">
                         <UIcon name="i-lucide-navigation" class="w-3 h-3" />
-                        {{ getDistance(userLat, userLng, provider.lat, provider.lng).toFixed(1) }} km
+                        {{ distanceLabel(provider) }}
                       </span>
                     </div>
                   </div>

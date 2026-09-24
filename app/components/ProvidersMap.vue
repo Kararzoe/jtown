@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import 'leaflet/dist/leaflet.css'
 
-const props = defineProps<{ providers: any[], height?: string }>()
+const props = defineProps<{ providers: any[], height?: string, userLat?: number | null, userLng?: number | null }>()
 const mapEl = ref<HTMLElement | null>(null)
 const selectedProvider = ref<any>(null)
 let leafletMap: any = null
@@ -24,6 +24,18 @@ const initMap = async () => {
     attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     maxZoom: 19,
   }).addTo(leafletMap)
+
+  // "You are here" marker
+  if (props.userLat && props.userLng) {
+    const youIcon = L.divIcon({
+      html: `<div style="width:16px;height:16px;background:#3b82f6;border:3px solid white;border-radius:50%;box-shadow:0 0 0 4px rgba(59,130,246,0.3)"></div>`,
+      className: '',
+      iconAnchor: [8, 8],
+    })
+    L.marker([props.userLat, props.userLng], { icon: youIcon })
+      .addTo(leafletMap)
+      .bindPopup('📍 You are here')
+  }
 
   const withCoords = props.providers.filter(p => p.lat && p.lng)
 
