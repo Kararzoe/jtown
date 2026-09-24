@@ -10,17 +10,15 @@ const ready = ref(false)
 const expired = ref(false)
 
 onMounted(async () => {
-  // Read URL before anything touches it
   const search = new URLSearchParams(window.location.search)
   const hash = new URLSearchParams(window.location.hash.replace('#', ''))
-
   const tokenHash = search.get('token_hash')
   const type = search.get('type')
   const code = search.get('code')
   const accessToken = hash.get('access_token')
   const refreshToken = hash.get('refresh_token') || ''
 
-  // token_hash flow (from email template)
+  // token_hash flow
   if (tokenHash && type === 'recovery') {
     const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: 'recovery' })
     window.history.replaceState(null, '', window.location.pathname)
@@ -28,7 +26,7 @@ onMounted(async () => {
     return
   }
 
-  // PKCE flow — ?code= in query string
+  // PKCE code flow
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     window.history.replaceState(null, '', window.location.pathname)
@@ -36,7 +34,7 @@ onMounted(async () => {
     return
   }
 
-  // Implicit flow — #access_token in hash
+  // Implicit flow
   if (accessToken) {
     const { error } = await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
     window.history.replaceState(null, '', window.location.pathname)
@@ -44,13 +42,16 @@ onMounted(async () => {
     return
   }
 
-  // Listen for PASSWORD_RECOVERY event
-  const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-    if (event === 'PASSWORD_RECOVERY' && session) { subscription.unsubscribe(); ready.value = true }
-  })
-
+  // Session already set (redirected from /confirm)
   const { data: { session } } = await supabase.auth.getSession()
-  if (session) { ready.value = true; subscription.unsubscribe(); return }
+  if (session) { ready.value = true; return }
+
+  // Wait for PASSWORD_RECOVERY event
+  const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    if ((event === 'PASSWORD_RECOVERY' || event === 'SIGNED_IN') && session) {
+      subscription.unsubscribe(); ready.value = true
+    }
+  })
 
   setTimeout(() => { if (!ready.value) { expired.value = true; subscription.unsubscribe() } }, 5000)
 })

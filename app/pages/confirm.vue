@@ -13,6 +13,11 @@ onMounted(async () => {
   if (code) {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code)
     if (error || !data.session) { status.value = 'error'; return }
+    // If recovery type, redirect to reset password page
+    if (type === 'recovery' || data.session.user.recovery_sent_at) {
+      router.push('/reset-password')
+      return
+    }
     status.value = 'success'
     toast.add({ title: 'Email verified! Welcome to JosMKT 🎉', color: 'success' })
     setTimeout(() => router.push('/dashboard'), 2000)
