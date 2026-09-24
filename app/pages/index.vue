@@ -51,19 +51,19 @@ const stats = [
 
 const howTab = ref<'customers' | 'providers'>('customers')
 
-const howItWorksCustomers = [
-  { icon: '🔍', title: 'Search a Service', desc: 'Browse categories or search for exactly what you need — plumber, caterer, electrician and more.' },
-  { icon: '📍', title: 'Find Nearby Providers', desc: 'See verified professionals near you on the map. Filter by location across Jos.' },
-  { icon: '📞', title: 'Call or WhatsApp', desc: 'Contact the provider directly — no middleman, no commission. One tap to call or chat.' },
-  { icon: '✅', title: 'Get the Job Done', desc: 'Meet your provider, get the work done, and leave a review to help others.' },
-]
+const howItWorksCustomers = computed(() => [
+  { icon: '🔍', title: t('hiw1Title'), desc: t('hiw1Desc') },
+  { icon: '📍', title: t('hiw2Title'), desc: t('hiw2Desc') },
+  { icon: '📞', title: t('hiw3Title'), desc: t('hiw3Desc') },
+  { icon: '✅', title: t('hiw4Title'), desc: t('hiw4Desc') },
+])
 
-const howItWorksProviders = [
-  { icon: '📝', title: 'Register Your Business', desc: 'Fill in your business details, upload photos of your work, and pin your location on the map.' },
-  { icon: '🛡️', title: 'Get Verified', desc: 'Upload your ID for a quick identity check. Verified badges build trust with customers.' },
-  { icon: '🌍', title: 'Go Live on JosMKT', desc: 'Once approved, your profile is visible to thousands of customers searching in Jos every day.' },
-  { icon: '📈', title: 'Grow Your Business', desc: 'Receive calls, WhatsApp messages, and bookings directly. Track your visibility and grow.' },
-]
+const howItWorksProviders = computed(() => [
+  { icon: '📝', title: t('hiw5Title'), desc: t('hiw5Desc') },
+  { icon: '🛡️', title: t('hiw6Title'), desc: t('hiw6Desc') },
+  { icon: '🌍', title: t('hiw7Title'), desc: t('hiw7Desc') },
+  { icon: '📈', title: t('hiw8Title'), desc: t('hiw8Desc') },
+])
 
 const faqs = computed(() => [
   { q: t('faq1Q'), a: t('faq1A') },
@@ -259,7 +259,7 @@ onMounted(async () => {
       <div class="max-w-7xl mx-auto">
         <div class="text-center mb-10 reveal">
           <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
-            Simple Process
+            {{ t('simpleProcess') }}
           </div>
           <h2 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">{{ t('howItWorks') }}</h2>
           <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto">{{ t('howItWorksDesc') }}</p>

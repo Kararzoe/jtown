@@ -145,14 +145,14 @@ const userMenuItems = computed(() => [[
               {{ link.label }}
             </NuxtLink>
             <template v-if="user">
-              <NuxtLink to="/dashboard" class="text-gray-700 dark:text-gray-300 font-medium px-2 py-1" @click="isOpen = false">Dashboard</NuxtLink>
-              <NuxtLink to="/profile" class="text-gray-700 dark:text-gray-300 font-medium px-2 py-1" @click="isOpen = false">Profile</NuxtLink>
-              <NuxtLink to="/seller-dashboard" class="text-gray-700 dark:text-gray-300 font-medium px-2 py-1" @click="isOpen = false">Seller Dashboard</NuxtLink>
-              <NuxtLink to="/orders" class="text-gray-700 dark:text-gray-300 font-medium px-2 py-1" @click="isOpen = false">Orders</NuxtLink>
-              <NuxtLink to="/wishlist" class="text-gray-700 dark:text-gray-300 font-medium px-2 py-1" @click="isOpen = false">Wishlist</NuxtLink>
-              <NuxtLink to="/compare" class="text-gray-700 dark:text-gray-300 font-medium px-2 py-1" @click="isOpen = false">Compare</NuxtLink>
-              <NuxtLink to="/saved-searches" class="text-gray-700 dark:text-gray-300 font-medium px-2 py-1" @click="isOpen = false">Saved Searches</NuxtLink>
-              <NuxtLink v-if="isAdmin" to="/admin" class="text-gray-700 dark:text-gray-300 font-medium px-2 py-1" @click="isOpen = false">Admin Dashboard</NuxtLink>
+              <NuxtLink to="/dashboard" class="text-gray-700 dark:text-gray-300 font-medium px-2 py-1" @click="isOpen = false">{{ t('dashboard') }}</NuxtLink>
+              <NuxtLink to="/profile" class="text-gray-700 dark:text-gray-300 font-medium px-2 py-1" @click="isOpen = false">{{ t('profile') }}</NuxtLink>
+              <NuxtLink to="/seller-dashboard" class="text-gray-700 dark:text-gray-300 font-medium px-2 py-1" @click="isOpen = false">{{ t('sellerDashboard') }}</NuxtLink>
+              <NuxtLink to="/orders" class="text-gray-700 dark:text-gray-300 font-medium px-2 py-1" @click="isOpen = false">{{ t('orders') }}</NuxtLink>
+              <NuxtLink to="/wishlist" class="text-gray-700 dark:text-gray-300 font-medium px-2 py-1" @click="isOpen = false">{{ t('wishlist') }}</NuxtLink>
+              <NuxtLink to="/compare" class="text-gray-700 dark:text-gray-300 font-medium px-2 py-1" @click="isOpen = false">{{ t('compare') }}</NuxtLink>
+              <NuxtLink to="/saved-searches" class="text-gray-700 dark:text-gray-300 font-medium px-2 py-1" @click="isOpen = false">{{ t('savedSearches') }}</NuxtLink>
+              <NuxtLink v-if="isAdmin" to="/admin" class="text-gray-700 dark:text-gray-300 font-medium px-2 py-1" @click="isOpen = false">{{ t('adminDashboard') }}</NuxtLink>
               <button class="text-left text-red-500 font-medium px-2 py-1" @click="logout">{{ t('logout') }}</button>
             </template>
             <NuxtLink v-else to="/login" class="text-gray-700 dark:text-gray-300 font-medium px-2 py-1" @click="isOpen = false">{{ t('login') }}</NuxtLink>

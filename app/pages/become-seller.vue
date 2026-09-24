@@ -173,7 +173,7 @@ const submit = async () => {
         <div class="text-center mb-8">
           <div class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
             <UIcon name="i-lucide-store" class="w-4 h-4" />
-            Register Your Business
+            {{ t('registerBusiness') }}
           </div>
           <h1 class="text-3xl md:text-4xl font-bold mb-3 text-gray-900 dark:text-white">{{ t('getStartedOnJosMKT') }}</h1>
           <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto">{{ t('becomeSellerdesc') }}</p>
@@ -203,7 +203,7 @@ const submit = async () => {
             <UFormField :label="t('phoneWhatsapp')">
               <UInput v-model="form.phone" type="tel" placeholder="e.g. 08012345678" required class="w-full" />
             </UFormField>
-            <UFormField :label="t('location') + ' *'">
+            <UFormField :label="t('locationLabel')">
               <USelect
                 v-model="form.location"
                 :items="locations"

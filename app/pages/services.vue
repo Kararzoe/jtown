@@ -222,8 +222,8 @@ const filtered = computed(() => {
         <div class="w-24 h-24 bg-emerald-50 dark:bg-emerald-900/20 rounded-3xl flex items-center justify-center mx-auto mb-6 text-4xl">
           🗂️
         </div>
-        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Pick a category to get started</h3>
-        <p class="text-gray-500 dark:text-gray-400 max-w-sm mx-auto">Choose from the categories above to see verified service providers in Jos</p>
+        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">{{ t('pickCategory') }}</h3>
+        <p class="text-gray-500 dark:text-gray-400 max-w-sm mx-auto">{{ t('pickCategoryDesc') }}</p>
       </div>
 
       <!-- Empty Results -->
@@ -235,7 +235,7 @@ const filtered = computed(() => {
           {{ search ? t('noResultsFor') + ' "' + search + '"' : t('noProvidersIn') + ' ' + activeCat?.label }}
         </h3>
         <p class="text-gray-500 dark:text-gray-400 mb-8 max-w-sm mx-auto">
-          {{ search ? 'Try a different search term or clear the filter.' : 'Be the first verified professional in this category.' }}
+          {{ search ? t('tryDifferentSearch') : t('beFirstInCategory') }}
         </p>
         <div class="flex gap-3 justify-center flex-wrap">
           <button v-if="search" class="px-5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition" @click="search = ''">
@@ -251,7 +251,7 @@ const filtered = computed(() => {
         <div class="mb-8">
           <div class="flex items-center gap-2 mb-3">
             <UIcon name="i-lucide-map" class="w-4 h-4 text-emerald-500" />
-            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Map View — {{ filtered.filter(p => p.lat && p.lng).length }} {{ t('providersPinned') }}</p>
+            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">{{ t('mapView') }} — {{ filtered.filter(p => p.lat && p.lng).length }} {{ t('providersPinned') }}</p>
           </div>
           <ProvidersMap :providers="filtered" :user-lat="userLat" :user-lng="userLng" height="380px" />
         </div>
