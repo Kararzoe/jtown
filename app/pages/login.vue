@@ -6,6 +6,7 @@ const router = useRouter()
 const toast = useToast()
 const isLogin = ref(true)
 const loading = ref(false)
+const emailSent = ref(false)
 
 const form = reactive({ email: '', password: '', name: '', phone: '' })
 
@@ -18,18 +19,14 @@ const submit = async () => {
       toast.add({ title: 'Welcome back! 👋', color: 'success' })
       router.push('/dashboard')
     } else {
-      const { data, error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email: form.email,
         password: form.password,
         options: { data: { full_name: form.name, phone: form.phone } }
       })
       if (error) throw error
-      if (data.session) {
-        toast.add({ title: 'Account created! Welcome to JosMKT 🎉', color: 'success' })
-        router.push('/dashboard')
-      } else {
-        toast.add({ title: 'Check your email to confirm your account', color: 'info' })
-      }
+      emailSent.value = true
+      toast.add({ title: 'Verification email sent! Check your inbox 📧', color: 'success' })
     }
   } catch (e: any) {
     toast.add({ title: e.message, color: 'error' })
@@ -47,7 +44,21 @@ const submit = async () => {
         <p class="text-gray-500 text-sm mt-1">{{ isLogin ? 'Login to your account' : 'Join Jos Marketplace today' }}</p>
       </div>
 
-        <UCard class="shadow-xl">
+        <!-- Email Sent Screen -->
+        <UCard v-if="emailSent" class="shadow-xl text-center">
+          <div class="py-6">
+            <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style="background: linear-gradient(135deg, rgba(34,197,94,0.15), rgba(20,184,166,0.15)); border: 1px solid rgba(34,197,94,0.25);">
+              <UIcon name="i-lucide-mail-check" class="w-8 h-8 text-emerald-500" />
+            </div>
+            <h2 class="text-xl font-black text-gray-900 dark:text-white mb-2">Check your email</h2>
+            <p class="text-gray-500 text-sm mb-1">We sent a verification link to</p>
+            <p class="text-emerald-600 font-semibold text-sm mb-6">{{ form.email }}</p>
+            <p class="text-gray-400 text-xs mb-6">Click the link in the email to verify your account, then come back to login.</p>
+            <UButton color="primary" block @click="isLogin = true; emailSent = false">Go to Login</UButton>
+          </div>
+        </UCard>
+
+        <UCard v-else class="shadow-xl">
           <form class="space-y-4" @submit.prevent="submit">
             <UFormField v-if="!isLogin" label="Full Name">
               <UInput v-model="form.name" placeholder="Your full name" icon="i-lucide-user" size="lg" class="w-full" required />
