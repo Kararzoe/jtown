@@ -4,7 +4,7 @@ const { t } = useLanguage()
 const route = useRoute()
 const router = useRouter()
 const category = ref((route.query.category as string) || '')
-const search = ref('')
+const search = ref((route.query.search as string) || '')
 const providers = ref<any[]>([])
 const loading = ref(false)
 
@@ -41,13 +41,11 @@ const categories = [
 ]
 
 const loadProviders = async () => {
-  if (!category.value) return
+  if (!category.value && !search.value) return
   loading.value = true
-  const { data } = await supabase
-    .from('service_providers')
-    .select('*')
-    .eq('category', category.value)
-    .eq('status', 'approved')
+  let query = supabase.from('service_providers').select('*').eq('status', 'approved')
+  if (category.value) query = query.eq('category', category.value)
+  const { data } = await query
   providers.value = data || []
   loading.value = false
 }
@@ -241,7 +239,7 @@ const filtered = computed(() => {
       </div>
 
       <!-- No Category Selected -->
-      <div v-else-if="!category" class="text-center py-24">
+      <div v-else-if="!category && !search" class="text-center py-24">
         <div class="w-24 h-24 bg-emerald-50 dark:bg-emerald-900/20 rounded-3xl flex items-center justify-center mx-auto mb-6 text-4xl">
           🗂️
         </div>
