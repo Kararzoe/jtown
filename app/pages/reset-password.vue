@@ -14,50 +14,45 @@ onMounted(async () => {
   const search = new URLSearchParams(window.location.search)
   const hash = new URLSearchParams(window.location.hash.replace('#', ''))
 
+  const tokenHash = search.get('token_hash')
+  const type = search.get('type')
   const code = search.get('code')
   const accessToken = hash.get('access_token')
   const refreshToken = hash.get('refresh_token') || ''
-  const type = hash.get('type')
+
+  // token_hash flow (from email template)
+  if (tokenHash && type === 'recovery') {
+    const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: 'recovery' })
+    window.history.replaceState(null, '', window.location.pathname)
+    if (error) { expired.value = true } else { ready.value = true }
+    return
+  }
 
   // PKCE flow — ?code= in query string
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     window.history.replaceState(null, '', window.location.pathname)
-    if (error) {
-      console.error('[reset] PKCE exchange error:', error.message)
-      expired.value = true
-    } else { ready.value = true }
+    if (error) { expired.value = true } else { ready.value = true }
     return
   }
 
   // Implicit flow — #access_token in hash
-  if (accessToken && type === 'recovery') {
+  if (accessToken) {
     const { error } = await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
     window.history.replaceState(null, '', window.location.pathname)
-    if (error) {
-      console.error('[reset] implicit setSession error:', error.message)
-      expired.value = true
-    } else { ready.value = true }
+    if (error) { expired.value = true } else { ready.value = true }
     return
   }
 
   // Listen for PASSWORD_RECOVERY event
   const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-    console.log('[reset] auth event:', event)
-    if (event === 'PASSWORD_RECOVERY' && session) {
-      subscription.unsubscribe()
-      ready.value = true
-    }
+    if (event === 'PASSWORD_RECOVERY' && session) { subscription.unsubscribe(); ready.value = true }
   })
 
   const { data: { session } } = await supabase.auth.getSession()
   if (session) { ready.value = true; subscription.unsubscribe(); return }
 
-  console.log('[reset] no code, no hash, no session — full URL was:', window.location.href)
-
-  setTimeout(() => {
-    if (!ready.value) { expired.value = true; subscription.unsubscribe() }
-  }, 5000)
+  setTimeout(() => { if (!ready.value) { expired.value = true; subscription.unsubscribe() } }, 5000)
 })
 
 const submit = async () => {
