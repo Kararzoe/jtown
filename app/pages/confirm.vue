@@ -8,12 +8,15 @@ const status = ref<'loading' | 'success' | 'error'>('loading')
 
 onMounted(async () => {
   const code = route.query.code as string
-  const type = route.query.type as string
+  const type = (route.query.type as string) || ''
 
   if (code) {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code)
     if (error || !data.session) { status.value = 'error'; return }
-    if (type === 'recovery') {
+    // Check if this is a password recovery session
+    const isRecovery = data.session.user.recovery_sent_at &&
+      new Date(data.session.user.recovery_sent_at).getTime() > Date.now() - 1000 * 60 * 60
+    if (isRecovery || type === 'recovery') {
       router.push('/reset-password')
       return
     }
@@ -23,7 +26,7 @@ onMounted(async () => {
     return
   }
 
-  // Session already set by @nuxtjs/supabase callback handler
+  // No code — check if session exists already
   const { data: { session } } = await supabase.auth.getSession()
   if (session) {
     status.value = 'success'
