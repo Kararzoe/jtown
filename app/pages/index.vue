@@ -42,12 +42,7 @@ const categories = [
 
 const categoryHref = (slug: string) => `/services?category=${slug}`
 
-const stats = [
-  { label: 'Monthly Views', value: '50,000+', icon: 'i-lucide-eye' },
-  { label: 'Businesses Listed', value: '1,000+', icon: 'i-lucide-store' },
-  { label: 'Growth Rate', value: '98%', icon: 'i-lucide-trending-up' },
-  { label: 'Happy Customers', value: '25,000+', icon: 'i-lucide-users' },
-]
+const stats: any[] = []
 
 const howTab = ref<'customers' | 'providers'>('customers')
 
@@ -196,21 +191,7 @@ onMounted(async () => {
       </div>
     </section>
 
-    <!-- Stats Bar -->
-    <section class="py-12 px-4 relative overflow-hidden" style="background: linear-gradient(135deg, #16a34a 0%, #0d9488 100%);">
-      <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle, rgba(255,255,255,0.4) 1px, transparent 1px); background-size: 24px 24px;" />
-      <div class="max-w-7xl mx-auto relative z-10">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-          <div v-for="stat in stats" :key="stat.label" class="text-center text-white">
-            <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl mb-3" style="background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);">
-              <UIcon :name="stat.icon" class="w-6 h-6" />
-            </div>
-            <div class="text-3xl md:text-4xl font-black mb-1">{{ stat.value }}</div>
-            <div class="text-emerald-100 text-sm font-medium">{{ stat.label }}</div>
-          </div>
-        </div>
-      </div>
-    </section>
+
 
     <!-- Categories -->
     <section id="services" class="py-24 px-4 bg-white dark:bg-gray-950 relative overflow-hidden">
