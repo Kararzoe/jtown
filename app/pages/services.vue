@@ -86,13 +86,20 @@ const findNearest = () => {
   )
 }
 
-// Silently try to get location on mount
+const locationStatus = ref<'idle' | 'detecting' | 'found' | 'denied'>('idle')
+
 onMounted(() => {
   if (navigator.geolocation) {
+    locationStatus.value = 'detecting'
     navigator.geolocation.getCurrentPosition(
-      (pos) => { userLat.value = pos.coords.latitude; userLng.value = pos.coords.longitude; sortByNearest.value = true },
-      () => {}, // silent fail
-      { enableHighAccuracy: false, timeout: 5000 }
+      (pos) => {
+        userLat.value = pos.coords.latitude
+        userLng.value = pos.coords.longitude
+        sortByNearest.value = true
+        locationStatus.value = 'found'
+      },
+      () => { locationStatus.value = 'denied' },
+      { enableHighAccuracy: true, timeout: 8000 }
     )
   }
 })
@@ -163,8 +170,24 @@ const filtered = computed(() => {
           <p class="text-emerald-300 text-sm">{{ t('trustedProfessionals') }}</p>
         </div>
 
+        <!-- Location status -->
+        <div class="mt-4 flex items-center gap-2 text-xs">
+          <template v-if="locationStatus === 'detecting'">
+            <UIcon name="i-lucide-loader" class="w-3.5 h-3.5 text-emerald-400 animate-spin" />
+            <span class="text-emerald-300">Detecting your location...</span>
+          </template>
+          <template v-else-if="locationStatus === 'found'">
+            <UIcon name="i-lucide-navigation" class="w-3.5 h-3.5 text-emerald-400" />
+            <span class="text-emerald-300">Sorted by nearest to you</span>
+          </template>
+          <template v-else-if="locationStatus === 'denied'">
+            <UIcon name="i-lucide-map-pin-off" class="w-3.5 h-3.5 text-gray-400" />
+            <span class="text-gray-400">Location access denied — <button class="underline hover:text-white" @click="findNearest">try again</button></span>
+          </template>
+        </div>
+
         <!-- Search -->
-        <div class="mt-6 relative max-w-lg">
+        <div class="mt-4 relative max-w-lg">
           <UIcon name="i-lucide-search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 z-10" />
           <input
             v-model="search"
