@@ -129,27 +129,22 @@ onMounted(async () => {
           </div>
 
           <h1 class="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-6 leading-[1.1] tracking-tight animate-slide-up">
-            Find the Right
+            {{ t('heroTitle') }}
             <span class="relative inline-block">
-              <span class="bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent animate-gradient"> Artisan</span>
+              <span class="bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent animate-gradient"> {{ t('heroHighlight') }}</span>
               <svg class="absolute -bottom-1 left-0 w-full" viewBox="0 0 200 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 6 Q50 2 100 5 Q150 8 198 4" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
             </span>
             <br />
-            <span class="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-300">When You Need One</span>
+            <span class="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-300">{{ t('heroSubtitle') }}</span>
           </h1>
 
           <p class="text-base md:text-lg text-gray-400 mb-10 max-w-xl mx-auto leading-relaxed animate-fade-up" style="animation-delay:0.3s">
-            Plumbers, electricians, bakers, mechanics &amp; more —<br class="hidden md:block" />
-            find <span class="text-emerald-400 font-semibold">trusted artisans</span> in Jos, fast.
+            {{ t('heroDescription') }}
           </p>
 
           <div class="max-w-2xl mx-auto mb-10 animate-fade-up" style="animation-delay:0.5s">
             <UInput
               :placeholder="t('searchPlaceholder')"
-              size="xl"
-              icon="i-lucide-search"
-              class="w-full"
-              @keyup.enter="(e: any) => navigateTo(`/products?search=${e.target.value}`)"
             />
           </div>
 
@@ -205,16 +200,16 @@ onMounted(async () => {
       <div class="max-w-7xl mx-auto">
         <div class="text-center mb-8 reveal">
           <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
-            <UIcon name="i-lucide-map-pin" class="w-4 h-4" /> Live Service Map
+            <UIcon name="i-lucide-map-pin" class="w-4 h-4" /> {{ t('liveServiceMap') }}
           </div>
           <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3">
-            Find Services <span class="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">Near You</span>
+            {{ t('findServicesNear') }} <span class="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">{{ t('nearYou') }}</span>
           </h2>
-          <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto">Browse verified service providers across Jos on the map. Click any pin to contact them instantly.</p>
+          <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto">{{ t('mapDesc') }}</p>
         </div>
         <ProvidersMap :providers="allProviders" height="480px" />
         <div class="text-center mt-6">
-          <UButton to="/services" color="primary" size="lg" trailing-icon="i-lucide-arrow-right">Browse All Services</UButton>
+          <UButton to="/services" color="primary" size="lg" trailing-icon="i-lucide-arrow-right">{{ t('browseAllServices') }}</UButton>
         </div>
       </div>
     </section>
@@ -267,8 +262,8 @@ onMounted(async () => {
           <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
             Simple Process
           </div>
-          <h2 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">How It Works</h2>
-          <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto">Whether you're looking for a service or offering one — JosMKT makes it simple.</p>
+          <h2 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">{{ t('howItWorks') }}</h2>
+          <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto">{{ t('howItWorksDesc') }}</p>
         </div>
 
         <!-- Tabs -->
@@ -278,13 +273,13 @@ onMounted(async () => {
               :class="['px-6 py-2.5 rounded-xl text-sm font-semibold transition-all', howTab === 'customers' ? 'bg-white dark:bg-gray-700 text-emerald-600 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300']"
               @click="howTab = 'customers'"
             >
-              🔍 For Customers
+              🔍 {{ t('forCustomers') }}
             </button>
             <button
               :class="['px-6 py-2.5 rounded-xl text-sm font-semibold transition-all', howTab === 'providers' ? 'bg-white dark:bg-gray-700 text-emerald-600 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300']"
               @click="howTab = 'providers'"
             >
-              💼 For Providers
+              💼 {{ t('forProviders') }}
             </button>
           </div>
         </div>
@@ -311,7 +306,7 @@ onMounted(async () => {
 
         <!-- CTA under providers tab -->
         <div v-if="howTab === 'providers'" class="text-center mt-10">
-          <UButton to="/become-seller" color="primary" size="lg" trailing-icon="i-lucide-arrow-right">Register Your Business — It's Free</UButton>
+          <UButton to="/become-seller" color="primary" size="lg" trailing-icon="i-lucide-arrow-right">{{ t('registerBusinessCta') }}</UButton>
         </div>
       </div>
     </section>

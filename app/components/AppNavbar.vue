@@ -6,7 +6,7 @@ const router = useRouter()
 const isOpen = ref(false)
 const searchOpen = ref(false)
 const searchQuery = ref('')
-const { currentLang, setLang } = useLanguage()
+const { t, currentLang, setLang } = useLanguage()
 const isAdmin = ref(false)
 
 watch(user, async (u) => {
@@ -33,24 +33,24 @@ const logout = async () => {
   router.push('/')
 }
 
-const navLinks = [
-  { label: 'Home', to: '/' },
-  { label: 'Products', to: '/products' },
-  { label: 'Services', to: '/services' },
-  { label: 'Trending', to: '/trending' },
-]
+const navLinks = computed(() => [
+  { label: t('home'), to: '/' },
+  { label: t('products'), to: '/products' },
+  { label: t('services'), to: '/services' },
+  { label: t('trending'), to: '/trending' },
+])
 
 const userMenuItems = computed(() => [[
-  { label: 'Dashboard', icon: 'i-lucide-layout-dashboard', to: '/dashboard' },
-  { label: 'Profile', icon: 'i-lucide-user-circle', to: '/profile' },
-  { label: 'Messages', icon: 'i-lucide-message-square', to: '/chat' },
-  { label: 'Seller Dashboard', icon: 'i-lucide-store', to: '/seller-dashboard' },
-  { label: 'Orders', icon: 'i-lucide-package', to: '/orders' },
-  { label: 'Wishlist', icon: 'i-lucide-heart', to: '/wishlist' },
-  { label: 'Compare', icon: 'i-lucide-scale', to: '/compare' },
-  { label: 'Saved Searches', icon: 'i-lucide-bookmark', to: '/saved-searches' },
-  ...(isAdmin.value ? [{ label: 'Admin Dashboard', icon: 'i-lucide-shield', to: '/admin' }] : []),
-  { label: 'Logout', icon: 'i-lucide-log-out', onSelect: logout }
+  { label: t('dashboard'), icon: 'i-lucide-layout-dashboard', to: '/dashboard' },
+  { label: t('profile'), icon: 'i-lucide-user-circle', to: '/profile' },
+  { label: t('messages'), icon: 'i-lucide-message-square', to: '/chat' },
+  { label: t('sellerDashboard'), icon: 'i-lucide-store', to: '/seller-dashboard' },
+  { label: t('orders'), icon: 'i-lucide-package', to: '/orders' },
+  { label: t('wishlist'), icon: 'i-lucide-heart', to: '/wishlist' },
+  { label: t('compare'), icon: 'i-lucide-scale', to: '/compare' },
+  { label: t('savedSearches'), icon: 'i-lucide-bookmark', to: '/saved-searches' },
+  ...(isAdmin.value ? [{ label: t('adminDashboard'), icon: 'i-lucide-shield', to: '/admin' }] : []),
+  { label: t('logout'), icon: 'i-lucide-log-out', onSelect: logout }
 ]])
 </script>
 
@@ -77,7 +77,7 @@ const userMenuItems = computed(() => [[
             <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300" />
           </NuxtLink>
           <NuxtLink to="/become-seller" class="px-4 py-2 bg-primary-600 text-white rounded-xl font-semibold hover:bg-primary-700 transition-all hover:scale-105">
-            Get Started
+            {{ t('sell') }}
           </NuxtLink>
         </div>
 
@@ -111,7 +111,7 @@ const userMenuItems = computed(() => [[
               <UButton variant="ghost" color="neutral" icon="i-lucide-user-circle" />
             </UDropdownMenu>
           </div>
-          <UButton v-else class="hidden md:flex" to="/login" variant="outline" color="primary" size="sm">Login</UButton>
+          <UButton v-else class="hidden md:flex" to="/login" variant="outline" color="primary" size="sm">{{ t('login') }}</UButton>
 
           <!-- Mobile Menu -->
           <UButton class="md:hidden" icon="i-lucide-menu" variant="ghost" color="neutral" @click="isOpen = !isOpen" />
@@ -124,7 +124,7 @@ const userMenuItems = computed(() => [[
           <div class="relative">
             <UInput
               v-model="searchQuery"
-              placeholder="Search products, categories..."
+              :placeholder="t('searchPlaceholderNav')"
               icon="i-lucide-search"
               size="lg"
               class="w-full"
@@ -153,14 +153,14 @@ const userMenuItems = computed(() => [[
               <NuxtLink to="/compare" class="text-gray-700 dark:text-gray-300 font-medium px-2 py-1" @click="isOpen = false">Compare</NuxtLink>
               <NuxtLink to="/saved-searches" class="text-gray-700 dark:text-gray-300 font-medium px-2 py-1" @click="isOpen = false">Saved Searches</NuxtLink>
               <NuxtLink v-if="isAdmin" to="/admin" class="text-gray-700 dark:text-gray-300 font-medium px-2 py-1" @click="isOpen = false">Admin Dashboard</NuxtLink>
-              <button class="text-left text-red-500 font-medium px-2 py-1" @click="logout">Logout</button>
+              <button class="text-left text-red-500 font-medium px-2 py-1" @click="logout">{{ t('logout') }}</button>
             </template>
-            <NuxtLink v-else to="/login" class="text-gray-700 dark:text-gray-300 font-medium px-2 py-1" @click="isOpen = false">Login</NuxtLink>
+            <NuxtLink v-else to="/login" class="text-gray-700 dark:text-gray-300 font-medium px-2 py-1" @click="isOpen = false">{{ t('login') }}</NuxtLink>
             <div class="flex items-center gap-3 px-2 pt-2 border-t border-gray-100 dark:border-gray-800">
               <ClientOnly><UColorModeButton /></ClientOnly>
             </div>
             <NuxtLink to="/become-seller" class="mx-2 px-4 py-2 bg-primary-600 text-white rounded-xl font-semibold text-center" @click="isOpen = false">
-              Get Started
+              {{ t('sell') }}
             </NuxtLink>
           </div>
         </div>

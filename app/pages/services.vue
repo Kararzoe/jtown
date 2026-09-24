@@ -144,7 +144,7 @@ const filtered = computed(() => {
           >
             <UIcon name="i-lucide-arrow-left" class="w-4 h-4" />
           </button>
-          <span class="text-sm text-emerald-300 font-medium">All Services</span>
+          <span class="text-sm text-emerald-300 font-medium">{{ t('allServices') }}</span>
         </div>
 
         <div v-if="activeCat" class="flex items-center gap-4 mb-4">
@@ -155,13 +155,13 @@ const filtered = computed(() => {
             <h1 class="text-3xl md:text-4xl font-bold">{{ activeCat.label }}</h1>
             <p class="text-emerald-300 text-sm mt-1 flex items-center gap-1.5">
               <UIcon name="i-lucide-map-pin" class="w-3.5 h-3.5" />
-              Jos, Plateau State · Verified professionals
+              Jos, Plateau State · {{ t('verifiedProfessionals') }}
             </p>
           </div>
         </div>
         <div v-else>
-          <h1 class="text-3xl md:text-4xl font-bold mb-2">Find a Service Provider</h1>
-          <p class="text-emerald-300 text-sm">Browse trusted professionals in Jos</p>
+          <h1 class="text-3xl md:text-4xl font-bold mb-2">{{ t('findA') }} {{ t('findServiceProvider') }}</h1>
+          <p class="text-emerald-300 text-sm">{{ t('trustedProfessionals') }}</p>
         </div>
 
         <!-- Search -->
@@ -170,7 +170,7 @@ const filtered = computed(() => {
           <input
             v-model="search"
             type="text"
-            placeholder="Search by name, location..."
+            :placeholder="t('searchServices')"
             class="w-full pl-11 pr-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition text-sm"
           />
         </div>
@@ -233,16 +233,16 @@ const filtered = computed(() => {
           {{ activeCat?.icon || '🔧' }}
         </div>
         <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
-          {{ search ? 'No results for "' + search + '"' : 'No providers yet in ' + activeCat?.label }}
+          {{ search ? t('noResultsFor') + ' "' + search + '"' : t('noProvidersIn') + ' ' + activeCat?.label }}
         </h3>
         <p class="text-gray-500 dark:text-gray-400 mb-8 max-w-sm mx-auto">
           {{ search ? 'Try a different search term or clear the filter.' : 'Be the first verified professional in this category.' }}
         </p>
         <div class="flex gap-3 justify-center flex-wrap">
           <button v-if="search" class="px-5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition" @click="search = ''">
-            Clear Search
+            {{ t('clearSearch') }}
           </button>
-          <UButton to="/become-seller" color="primary" size="lg">Register Your Business</UButton>
+          <UButton to="/become-seller" color="primary" size="lg">{{ t('registerYourBusiness') }}</UButton>
         </div>
       </div>
 
@@ -252,14 +252,14 @@ const filtered = computed(() => {
         <div class="mb-8">
           <div class="flex items-center gap-2 mb-3">
             <UIcon name="i-lucide-map" class="w-4 h-4 text-emerald-500" />
-            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Map View — {{ filtered.filter(p => p.lat && p.lng).length }} providers pinned</p>
+            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Map View — {{ filtered.filter(p => p.lat && p.lng).length }} {{ t('providersPinned') }}</p>
           </div>
           <ProvidersMap :providers="filtered" :user-lat="userLat" :user-lng="userLng" height="380px" />
         </div>
 
         <div class="flex items-center justify-between mb-5">
           <p class="text-sm text-gray-500 dark:text-gray-400">
-            <span class="font-semibold text-gray-900 dark:text-white">{{ filtered.length }}</span> provider{{ filtered.length !== 1 ? 's' : '' }} found
+            <span class="font-semibold text-gray-900 dark:text-white">{{ filtered.length }}</span> {{ filtered.length !== 1 ? t('providersFoundPlural') : t('providersFound') }}
           </p>
           <UButton
             :loading="gettingLocation"
@@ -269,7 +269,7 @@ const filtered = computed(() => {
             variant="outline"
             @click="findNearest"
           >
-            {{ sortByNearest ? 'Sorted by Distance' : 'Find Nearest to Me' }}
+            {{ sortByNearest ? t('sortedByDistance') : t('findNearestToMe') }}
           </UButton>
         </div>
 
@@ -294,7 +294,7 @@ const filtered = computed(() => {
                     <h3 class="font-bold text-gray-900 dark:text-white leading-tight truncate">{{ provider.service_name }}</h3>
                     <div class="flex flex-col items-end gap-1 flex-shrink-0">
                       <span class="flex items-center gap-1 px-2 py-0.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-xs font-semibold rounded-full border border-emerald-100 dark:border-emerald-800">
-                        <UIcon name="i-lucide-badge-check" class="w-3 h-3" /> Verified
+                        <UIcon name="i-lucide-badge-check" class="w-3 h-3" /> {{ t('verified') }}
                       </span>
                       <span v-if="distanceLabel(provider)" class="flex items-center gap-1 px-2 py-0.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-semibold rounded-full border border-blue-100 dark:border-blue-800">
                         <UIcon name="i-lucide-navigation" class="w-3 h-3" />
@@ -344,14 +344,14 @@ const filtered = computed(() => {
                   :href="`tel:${provider.phone}`"
                   class="flex-1 flex items-center justify-center gap-2 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-sm font-semibold transition-all hover:shadow-lg hover:shadow-emerald-500/25"
                 >
-                  <UIcon name="i-lucide-phone" class="w-4 h-4" /> Call
+                  <UIcon name="i-lucide-phone" class="w-4 h-4" /> {{ t('call') }}
                 </a>
                 <a
                   :href="`https://wa.me/${provider.phone?.replace(/[^0-9]/g, '')}?text=Hi, I found you on JosMKT. I need your ${provider.service_name} service`"
                   target="_blank"
                   class="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-xl text-sm font-semibold transition-all hover:shadow-lg hover:shadow-green-500/25"
                 >
-                  <UIcon name="i-lucide-message-circle" class="w-4 h-4" /> WhatsApp
+                  <UIcon name="i-lucide-message-circle" class="w-4 h-4" /> {{ t('whatsapp') }}
                 </a>
                 <NuxtLink :to="`/provider/${provider.id}`" class="flex items-center justify-center px-3 py-2.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-xl transition-all">
                   <UIcon name="i-lucide-eye" class="w-4 h-4" />
@@ -367,10 +367,10 @@ const filtered = computed(() => {
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-white/10 via-transparent to-transparent" />
         <div class="relative z-10">
           <div class="text-4xl mb-4">💼</div>
-          <h3 class="text-2xl md:text-3xl font-bold mb-3">Are you a service provider?</h3>
-          <p class="text-emerald-100 mb-8 max-w-md mx-auto">Join thousands of professionals getting discovered by customers in Jos every day.</p>
+          <h3 class="text-2xl md:text-3xl font-bold mb-3">{{ t('areYouProvider') }}</h3>
+          <p class="text-emerald-100 mb-8 max-w-md mx-auto">{{ t('listBusinessDesc') }}</p>
           <UButton to="/become-seller" color="white" size="lg" class="font-bold hover:scale-105 transition-transform">
-            Register Your Business — It's Free
+            {{ t('registerBusinessCta') }}
           </UButton>
         </div>
       </div>

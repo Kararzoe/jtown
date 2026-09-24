@@ -1,3 +1,7 @@
+<script setup lang="ts">
+const { t } = useLanguage()
+</script>
+
 <template>
   <footer class="bg-gray-950 text-gray-400 py-16 px-4">
     <div class="max-w-7xl mx-auto">
@@ -7,7 +11,7 @@
           <div class="flex items-center gap-2 mb-4">
             <span class="text-2xl font-black text-white">JosMKT</span>
           </div>
-          <p class="text-sm mb-5 leading-relaxed">Showcase your business to thousands of buyers in Jos — get discovered, get promoted, get results</p>
+          <p class="text-sm mb-5 leading-relaxed">{{ t('footerDesc') }}</p>
           <div class="flex space-x-3">
             <a href="https://facebook.com/josmarketplace" target="_blank" class="p-2.5 bg-gray-800/80 rounded-xl hover:bg-emerald-600 transition-all">
               <UIcon name="i-lucide-facebook" class="w-4 h-4" />
@@ -26,32 +30,32 @@
 
         <!-- Categories -->
         <div>
-          <h4 class="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Categories</h4>
+          <h4 class="text-white font-semibold mb-4 text-sm uppercase tracking-wider">{{ t('categories') }}</h4>
           <ul class="space-y-2.5 text-sm">
-            <li><NuxtLink to="/products?category=electronics" class="hover:text-emerald-400 transition">Electronics</NuxtLink></li>
-            <li><NuxtLink to="/products?category=fashion" class="hover:text-emerald-400 transition">Fashion</NuxtLink></li>
-            <li><NuxtLink to="/products?category=food" class="hover:text-emerald-400 transition">Food & Catering</NuxtLink></li>
-            <li><NuxtLink to="/products?category=tech" class="hover:text-emerald-400 transition">Tech & Repairs</NuxtLink></li>
-            <li><NuxtLink to="/products?category=plumbing" class="hover:text-emerald-400 transition">Plumbing</NuxtLink></li>
+            <li><NuxtLink to="/products?category=electronics" class="hover:text-emerald-400 transition">{{ t('electronics') }}</NuxtLink></li>
+            <li><NuxtLink to="/products?category=fashion" class="hover:text-emerald-400 transition">{{ t('fashion') }}</NuxtLink></li>
+            <li><NuxtLink to="/products?category=food" class="hover:text-emerald-400 transition">{{ t('foodCatering') }}</NuxtLink></li>
+            <li><NuxtLink to="/products?category=tech" class="hover:text-emerald-400 transition">{{ t('techRepairs') }}</NuxtLink></li>
+            <li><NuxtLink to="/products?category=plumbing" class="hover:text-emerald-400 transition">{{ t('plumbing') }}</NuxtLink></li>
           </ul>
         </div>
 
         <!-- Company -->
         <div>
-          <h4 class="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Company</h4>
+          <h4 class="text-white font-semibold mb-4 text-sm uppercase tracking-wider">{{ t('company') }}</h4>
           <ul class="space-y-2.5 text-sm">
-            <li><NuxtLink to="/about" class="hover:text-emerald-400 transition">About Us</NuxtLink></li>
-            <li><NuxtLink to="/contact" class="hover:text-emerald-400 transition">Contact Us</NuxtLink></li>
-            <li><NuxtLink to="/privacy" class="hover:text-emerald-400 transition">Privacy Policy</NuxtLink></li>
-            <li><NuxtLink to="/terms" class="hover:text-emerald-400 transition">Terms of Service</NuxtLink></li>
-            <li><NuxtLink to="/trending" class="hover:text-emerald-400 transition">Trending</NuxtLink></li>
-            <li><NuxtLink to="/become-seller" class="hover:text-emerald-400 transition">Become a Seller</NuxtLink></li>
+            <li><NuxtLink to="/about" class="hover:text-emerald-400 transition">{{ t('aboutUs') }}</NuxtLink></li>
+            <li><NuxtLink to="/contact" class="hover:text-emerald-400 transition">{{ t('contact') }}</NuxtLink></li>
+            <li><NuxtLink to="/privacy" class="hover:text-emerald-400 transition">{{ t('privacy') }}</NuxtLink></li>
+            <li><NuxtLink to="/terms" class="hover:text-emerald-400 transition">{{ t('terms') }}</NuxtLink></li>
+            <li><NuxtLink to="/trending" class="hover:text-emerald-400 transition">{{ t('trending') }}</NuxtLink></li>
+            <li><NuxtLink to="/become-seller" class="hover:text-emerald-400 transition">{{ t('becomeSeller') }}</NuxtLink></li>
           </ul>
         </div>
 
         <!-- Contact -->
         <div>
-          <h4 class="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Contact Us</h4>
+          <h4 class="text-white font-semibold mb-4 text-sm uppercase tracking-wider">{{ t('contactUs') }}</h4>
           <ul class="space-y-3 text-sm">
             <li class="flex items-center gap-2">
               <UIcon name="i-lucide-mail" class="w-4 h-4 text-emerald-500" />
@@ -70,8 +74,8 @@
       </div>
 
       <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
-        <p>&copy; 2024 JosMKT. All rights reserved.</p>
-        <p class="text-gray-600">Powered by <span class="text-emerald-500 font-medium">Plero Digitals</span></p>
+        <p>&copy; 2024 JosMKT. {{ t('allRightsReserved') }}</p>
+        <p class="text-gray-600">{{ t('poweredBy') }} <span class="text-emerald-500 font-medium">Plero Digitals</span></p>
       </div>
     </div>
   </footer>
