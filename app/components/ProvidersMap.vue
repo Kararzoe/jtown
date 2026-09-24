@@ -20,8 +20,8 @@ const initMap = async () => {
 
   leafletMap = L.map(mapEl.value!, { zoomControl: true }).setView([9.8965, 8.8583], 13)
 
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-    attribution: '© <a href="https://carto.com/">CARTO</a>',
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     maxZoom: 19,
   }).addTo(leafletMap)
 
