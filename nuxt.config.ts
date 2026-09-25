@@ -60,6 +60,7 @@ export default defineNuxtConfig({
         '/trending',
         '/provider/*',
         '/qr',
+        '/admin',
       ]
     }
   }
