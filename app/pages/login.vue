@@ -17,7 +17,7 @@ const submit = async () => {
       const { error } = await supabase.auth.signInWithPassword({ email: form.email, password: form.password })
       if (error) throw error
       toast.add({ title: 'Welcome back! 👋', color: 'success' })
-      router.push('/dashboard')
+      router.push(form.email === 'kararzoe@gmail.com' ? '/admin' : '/dashboard')
     } else {
       const { error } = await supabase.auth.signUp({
         email: form.email,
