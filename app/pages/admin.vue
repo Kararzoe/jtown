@@ -209,7 +209,7 @@ const statCards = computed(() => [
     </div>
   </div>
 
-  <div v-else class="min-h-screen bg-gray-950 flex">
+  <div v-else-if="authChecked && isAdmin" class="min-h-screen bg-gray-950 flex">
 
     <!-- Sidebar -->
     <aside :class="['fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 border-r border-gray-800 flex flex-col transition-transform duration-300', sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0']">
