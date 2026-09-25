@@ -25,10 +25,7 @@ const loadingServices = ref(false)
 onMounted(async () => {
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) { await navigateTo('/login'); return }
-  const check = await $fetch<{ isAdmin: boolean }>('/api/admin/check', {
-    headers: { authorization: `Bearer ${session.access_token}` }
-  }).catch(() => ({ isAdmin: false }))
-  if (!check.isAdmin) { authChecked.value = true; loading.value = false; return }
+  if (session.user.email !== 'kararzoe@gmail.com') { authChecked.value = true; loading.value = false; return }
   isAdmin.value = true
   authChecked.value = true
 
