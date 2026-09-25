@@ -26,8 +26,10 @@ onMounted(async () => {
   // Auth guard
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) { await navigateTo('/login'); return }
-  const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).single()
-  if (profile?.role !== 'admin') { authChecked.value = true; loading.value = false; return }
+  const check = await $fetch<{ isAdmin: boolean }>('/api/admin/check', {
+    headers: { authorization: `Bearer ${session.access_token}` }
+  }).catch(() => ({ isAdmin: false }))
+  if (!check.isAdmin) { authChecked.value = true; loading.value = false; return }
   isAdmin.value = true
   authChecked.value = true
 
