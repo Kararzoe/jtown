@@ -26,7 +26,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY ?? '',
     public: {
-      supabaseUrl: 'https://mtqggkguwshvpdbiwbup.supabase.co'
+      supabaseUrl: 'https://mtqggkguwshvpdbiwbup.supabase.co',
+      mapboxToken: process.env.NUXT_PUBLIC_MAPBOX_TOKEN ?? ''
     }
   },
   supabase: {
