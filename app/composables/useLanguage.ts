@@ -67,6 +67,15 @@ const translations = {
     about: 'About', gallery: 'Gallery', needThisService: 'Need this service?',
     contactDirectly: 'Contact', directly: 'directly and get started today.',
     providerNotFound: 'Provider not found',
+    // Categories
+    plumbingCat: 'Plumbing', electriciansCat: 'Electricians', acCat: 'AC Installation',
+    furnitureCat: 'Furniture', paintingCat: 'Painting', mechanicCat: 'Auto Mechanic',
+    barbingCat: 'Barbing & Salon', carpentryCat: 'Carpentry', fashionDesignCat: 'Fashion Design',
+    shoemakerCat: 'Shoe Making', photographyCat: 'Photography', techCat: 'Tech & Repairs',
+    logisticsCat: 'Logistics', laundryCat: 'Laundry & Cleaning', educationCat: 'Education',
+    perfumeryCat: 'Perfumery', makeupCat: 'Make Up', eventCat: 'Event Planning',
+    rentalsCat: 'Rentals', masonCat: 'Mason', phoneAccCat: 'Phone Accessories',
+    legalCat: 'Legal & Solicitors', housingCat: 'Housing Agent', ewalletCat: 'E-Wallet Services',
     // Services empty states
     pickCategory: 'Pick a category to get started',
     pickCategoryDesc: 'Choose from the categories above to see verified service providers in Jos',
@@ -169,6 +178,15 @@ const translations = {
     about: 'Game da', gallery: 'Gidan Hoto', needThisService: 'Kuna buƙatar wannan sabis?',
     contactDirectly: 'Tuntuɓi', directly: 'kai tsaye kuma fara yau.',
     providerNotFound: 'Ba a sami mai bayarwa ba',
+    // Categories
+    plumbingCat: 'Bututu', electriciansCat: 'Lantarki', acCat: 'Sanyaya Iska',
+    furnitureCat: 'Kayan Gida', paintingCat: 'Fenti', mechanicCat: 'Injiniya',
+    barbingCat: 'Aski da Salon', carpentryCat: 'Kafinta', fashionDesignCat: 'Dinki',
+    shoemakerCat: 'Takalmi', photographyCat: 'Daukar Hoto', techCat: 'Fasaha da Gyara',
+    logisticsCat: 'Jigilar Kaya', laundryCat: 'Wanka da Tsaftace', educationCat: 'Ilimi',
+    perfumeryCat: 'Turare', makeupCat: 'Kwalliya', eventCat: 'Shirya Biki',
+    rentalsCat: 'Hayar Kaya', masonCat: 'Gini', phoneAccCat: 'Kayan Waya',
+    legalCat: 'Lauyoyi', housingCat: 'Dillalin Gida', ewalletCat: 'Kuɗin Dijital',
     // Services empty states
     pickCategory: 'Zaɓi nau\'i don fara',
     pickCategoryDesc: 'Zaɓi daga nau\'i da ke sama don ganin masu bayar da sabis a Jos',
@@ -271,6 +289,15 @@ const translations = {
     about: 'About', gallery: 'Gallery', needThisService: 'You need this service?',
     contactDirectly: 'Contact', directly: 'directly and start today.',
     providerNotFound: 'Provider no dey',
+    // Categories
+    plumbingCat: 'Plumbing', electriciansCat: 'Electricians', acCat: 'AC Installation',
+    furnitureCat: 'Furniture', paintingCat: 'Painting', mechanicCat: 'Auto Mechanic',
+    barbingCat: 'Barbing & Salon', carpentryCat: 'Carpentry', fashionDesignCat: 'Fashion Design',
+    shoemakerCat: 'Shoe Making', photographyCat: 'Photography', techCat: 'Tech & Repairs',
+    logisticsCat: 'Logistics', laundryCat: 'Laundry & Cleaning', educationCat: 'Education',
+    perfumeryCat: 'Perfumery', makeupCat: 'Make Up', eventCat: 'Event Planning',
+    rentalsCat: 'Rentals', masonCat: 'Mason', phoneAccCat: 'Phone Accessories',
+    legalCat: 'Legal & Solicitors', housingCat: 'Housing Agent', ewalletCat: 'E-Wallet Services',
     // Services empty states
     pickCategory: 'Pick category to start',
     pickCategoryDesc: 'Choose from the categories above to see verified service providers for Jos',

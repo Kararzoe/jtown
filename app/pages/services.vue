@@ -13,32 +13,32 @@ const imgUrl = (url: string, w = 400) => {
   return url.replace('/upload/', `/upload/f_auto,q_auto,w_${w}/`)
 }
 
-const categories = [
-  { label: 'Plumbing', icon: '🔧', slug: 'plumbing' },
-  { label: 'Electricians', icon: '⚡', slug: 'electrical' },
-  { label: 'AC Installation', icon: '❄️', slug: 'ac' },
-  { label: 'Furniture', icon: '🛋️', slug: 'furniture' },
-  { label: 'Painting', icon: '🎨', slug: 'painting' },
-  { label: 'Auto Mechanic', icon: '🚗', slug: 'mechanic' },
-  { label: 'Barbing & Salon', icon: '✂️', slug: 'barbing' },
-  { label: 'Carpentry', icon: '🔨', slug: 'carpentry' },
-  { label: 'Fashion Design', icon: '👗', slug: 'fashion-design' },
-  { label: 'Shoe Making', icon: '👟', slug: 'shoemaking' },
-  { label: 'Photography', icon: '📷', slug: 'photography' },
-  { label: 'Tech & Repairs', icon: '💻', slug: 'tech' },
-  { label: 'Logistics', icon: '🚚', slug: 'logistics' },
-  { label: 'Laundry & Cleaning', icon: '🧺', slug: 'laundry' },
-  { label: 'Education', icon: '🎓', slug: 'education' },
-  { label: 'Perfumery', icon: '✨', slug: 'perfumery' },
-  { label: 'Make Up', icon: '💄', slug: 'makeup' },
-  { label: 'Event Planning', icon: '📅', slug: 'event-planning' },
-  { label: 'Rentals', icon: '🏠', slug: 'rentals' },
-  { label: 'Mason', icon: '🧱', slug: 'mason' },
-  { label: 'Phone Accessories', icon: '📱', slug: 'phone-accessories' },
-  { label: 'Legal & Solicitors', icon: '⚖️', slug: 'legal' },
-  { label: 'Housing Agent', icon: '🏡', slug: 'housing-agent' },
-  { label: 'E-Wallet Services', icon: '💳', slug: 'e-wallet' },
-]
+const categories = computed(() => [
+  { label: t('plumbingCat'), icon: '🔧', slug: 'plumbing' },
+  { label: t('electriciansCat'), icon: '⚡', slug: 'electrical' },
+  { label: t('acCat'), icon: '❄️', slug: 'ac' },
+  { label: t('furnitureCat'), icon: '🛋️', slug: 'furniture' },
+  { label: t('paintingCat'), icon: '🎨', slug: 'painting' },
+  { label: t('mechanicCat'), icon: '🚗', slug: 'mechanic' },
+  { label: t('barbingCat'), icon: '✂️', slug: 'barbing' },
+  { label: t('carpentryCat'), icon: '🔨', slug: 'carpentry' },
+  { label: t('fashionDesignCat'), icon: '👗', slug: 'fashion-design' },
+  { label: t('shoemakerCat'), icon: '👟', slug: 'shoemaking' },
+  { label: t('photographyCat'), icon: '📷', slug: 'photography' },
+  { label: t('techCat'), icon: '💻', slug: 'tech' },
+  { label: t('logisticsCat'), icon: '🚚', slug: 'logistics' },
+  { label: t('laundryCat'), icon: '🧺', slug: 'laundry' },
+  { label: t('educationCat'), icon: '🎓', slug: 'education' },
+  { label: t('perfumeryCat'), icon: '✨', slug: 'perfumery' },
+  { label: t('makeupCat'), icon: '💄', slug: 'makeup' },
+  { label: t('eventCat'), icon: '📅', slug: 'event-planning' },
+  { label: t('rentalsCat'), icon: '🏠', slug: 'rentals' },
+  { label: t('masonCat'), icon: '🧱', slug: 'mason' },
+  { label: t('phoneAccCat'), icon: '📱', slug: 'phone-accessories' },
+  { label: t('legalCat'), icon: '⚖️', slug: 'legal' },
+  { label: t('housingCat'), icon: '🏡', slug: 'housing-agent' },
+  { label: t('ewalletCat'), icon: '💳', slug: 'e-wallet' },
+])
 
 const loadProviders = async () => {
   if (!category.value && !search.value) return
