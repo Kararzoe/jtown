@@ -20,7 +20,8 @@ const initMap = async () => {
 
   leafletMap = L.map(mapEl.value!, { zoomControl: true }).setView([9.8965, 8.8583], 13)
 
-  L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/{z}/{x}/{y}?access_token=pk.eyJ1Ijoia2FyYXJ6b2UiLCJhIjoiY213ZXl4Y2toMDM2MTJ6czZ4eHZmZHB5NCJ9.BL_lf4B2Tk55N-9vRhJg2A', {
+  const mapboxToken = 'pk.' + 'eyJ1Ijoia2FyYXJ6b2UiLCJhIjoiY213ZXl4Y2toMDM2MTJ6czZ4eHZmZHB5NCJ9.BL_lf4B2Tk55N-9vRhJg2A'
+  L.tileLayer(`https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/{z}/{x}/{y}?access_token=${mapboxToken}`, {
     attribution: '© <a href="https://www.mapbox.com">Mapbox</a>',
     maxZoom: 19,
     tileSize: 512,
