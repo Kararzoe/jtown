@@ -84,24 +84,6 @@ const findNearest = () => {
   )
 }
 
-const locationStatus = ref<'idle' | 'detecting' | 'found' | 'denied'>('idle')
-
-onMounted(() => {
-  if (navigator.geolocation) {
-    locationStatus.value = 'detecting'
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        userLat.value = pos.coords.latitude
-        userLng.value = pos.coords.longitude
-        sortByNearest.value = true
-        locationStatus.value = 'found'
-      },
-      () => { locationStatus.value = 'denied' },
-      { enableHighAccuracy: true, timeout: 8000 }
-    )
-  }
-})
-
 const selectCategory = (slug: string) => {
   category.value = slug
   search.value = ''
@@ -122,13 +104,6 @@ const filtered = computed(() => {
       p.location?.toLowerCase().includes(q) ||
       p.description?.toLowerCase().includes(q)
     )
-  }
-  if (sortByNearest.value && userLat.value && userLng.value) {
-    list = [...list].sort((a, b) => {
-      const dA = a.lat && a.lng ? getDistance(userLat.value!, userLng.value!, a.lat, a.lng) : 9999
-      const dB = b.lat && b.lng ? getDistance(userLat.value!, userLng.value!, b.lat, b.lng) : 9999
-      return dA - dB
-    })
   }
   return list
 })
@@ -168,23 +143,7 @@ const filtered = computed(() => {
           <p class="text-emerald-300 text-sm">{{ t('trustedProfessionals') }}</p>
         </div>
 
-        <!-- Location status -->
-        <div class="mt-4 flex items-center gap-2 text-xs">
-          <template v-if="locationStatus === 'detecting'">
-            <UIcon name="i-lucide-loader" class="w-3.5 h-3.5 text-emerald-400 animate-spin" />
-            <span class="text-emerald-300">Detecting your location...</span>
-          </template>
-          <template v-else-if="locationStatus === 'found'">
-            <UIcon name="i-lucide-navigation" class="w-3.5 h-3.5 text-emerald-400" />
-            <span class="text-emerald-300">Sorted by nearest to you</span>
-          </template>
-          <template v-else-if="locationStatus === 'denied'">
-            <UIcon name="i-lucide-map-pin-off" class="w-3.5 h-3.5 text-gray-400" />
-            <span class="text-gray-400">Location access denied — <button class="underline hover:text-white" @click="findNearest">try again</button></span>
-          </template>
-        </div>
-
-        <!-- Search -->
+<!-- Search -->
         <div class="mt-4 relative max-w-lg">
           <UIcon name="i-lucide-search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 z-10" />
           <input
@@ -272,16 +231,6 @@ const filtered = computed(() => {
           <p class="text-sm text-gray-500 dark:text-gray-400">
             <span class="font-semibold text-gray-900 dark:text-white">{{ filtered.length }}</span> {{ filtered.length !== 1 ? t('providersFoundPlural') : t('providersFound') }}
           </p>
-          <UButton
-            :loading="gettingLocation"
-            :color="sortByNearest ? 'success' : 'primary'"
-            size="sm"
-            :icon="sortByNearest ? 'i-lucide-check' : 'i-lucide-navigation'"
-            variant="outline"
-            @click="findNearest"
-          >
-            {{ sortByNearest ? t('sortedByDistance') : t('findNearestToMe') }}
-          </UButton>
         </div>
 
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -306,10 +255,6 @@ const filtered = computed(() => {
                     <div class="flex flex-col items-end gap-1 flex-shrink-0">
                       <span class="flex items-center gap-1 px-2 py-0.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-xs font-semibold rounded-full border border-emerald-100 dark:border-emerald-800">
                         <UIcon name="i-lucide-badge-check" class="w-3 h-3" /> {{ t('verified') }}
-                      </span>
-                      <span v-if="distanceLabel(provider)" class="flex items-center gap-1 px-2 py-0.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-semibold rounded-full border border-blue-100 dark:border-blue-800">
-                        <UIcon name="i-lucide-navigation" class="w-3 h-3" />
-                        {{ distanceLabel(provider) }}
                       </span>
                     </div>
                   </div>
