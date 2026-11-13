@@ -55,7 +55,7 @@
           <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">9. Contact</h2>
           <p>
             Questions about these terms? Contact us:<br />
-            📧 support@josmkt.com.ng<br />
+            📧 josmktforyou@gmail.com<br />
             📞 +234 904 383 2380
           </p>
         </div>

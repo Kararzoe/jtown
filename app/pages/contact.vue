@@ -40,7 +40,7 @@ const handleSubmit = () => {
         </div>
         <div class="flex items-center gap-3 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm">
           <UIcon name="i-lucide-mail" class="w-5 h-5 text-emerald-500" />
-          <span class="text-gray-700 dark:text-gray-300">support@josmkt.com.ng</span>
+          <span class="text-gray-700 dark:text-gray-300">josmktforyou@gmail.com</span>
         </div>
         <a href="https://wa.me/2349043832380" target="_blank" class="flex items-center gap-3 bg-green-50 dark:bg-green-900/20 p-4 rounded-xl shadow-sm hover:bg-green-100 dark:hover:bg-green-900/30 transition">
           <UIcon name="i-lucide-message-circle" class="w-5 h-5 text-green-500" />

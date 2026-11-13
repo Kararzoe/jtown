@@ -61,7 +61,7 @@
           <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">7. Contact</h2>
           <p>
             For privacy-related questions, contact us at:<br />
-            📧 support@josmkt.com.ng<br />
+            📧 josmktforyou@gmail.com<br />
             📞 +234 904 383 2380
           </p>
         </div>

@@ -107,11 +107,11 @@ const { t } = useLanguage()
           </h4>
           <ul class="space-y-4 text-sm">
             <li>
-              <a href="mailto:support@josmkt.com.ng" class="flex items-start gap-3 group">
+              <a href="mailto:josmktforyou@gmail.com" class="flex items-start gap-3 group">
                 <div class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5" style="background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.15);">
                   <UIcon name="i-lucide-mail" class="w-3.5 h-3.5 text-emerald-500" />
                 </div>
-                <span class="text-gray-500 group-hover:text-emerald-400 transition-colors break-all">support@josmkt.com.ng</span>
+                <span class="text-gray-500 group-hover:text-emerald-400 transition-colors break-all">josmktforyou@gmail.com</span>
               </a>
             </li>
             <li>

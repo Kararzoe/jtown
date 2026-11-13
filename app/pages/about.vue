@@ -24,7 +24,7 @@
         <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Contact Us</h2>
         <p>
           📞 +234 904 383 2380<br />
-          📧 support@josmkt.com.ng<br />
+          📧 josmktforyou@gmail.com<br />
           📍 Jos, Plateau State, Nigeria
         </p>
       </div>
