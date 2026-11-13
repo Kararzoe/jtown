@@ -24,18 +24,20 @@ const submit = async () => {
       router.push(form.email === 'kararzoe@gmail.com' ? '/admin' : '/dashboard')
     } else {
       if (!form.name.trim()) throw new Error('Please enter your full name')
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email: form.email,
         password: form.password,
-        options: {
-          data: { full_name: form.name, phone: form.phone },
-          emailRedirectTo: 'https://josmkt.com.ng/confirm'
-        }
+        options: { data: { full_name: form.name, phone: form.phone } }
       })
       if (error) throw error
-      sentEmail.value = form.email
-      emailSent.value = true
-      toast.add({ title: 'Verification email sent! Check your inbox 📧', color: 'success' })
+      if (data.session) {
+        toast.add({ title: 'Account created! Welcome 🎉', color: 'success' })
+        router.push('/dashboard')
+      } else {
+        sentEmail.value = form.email
+        emailSent.value = true
+        toast.add({ title: 'Check your email to verify your account 📧', color: 'success' })
+      }
     }
   } catch (e: any) {
     toast.add({ title: e.message, color: 'error' })
