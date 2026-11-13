@@ -274,7 +274,7 @@ const filtered = computed(() => {
             <UIcon name="i-lucide-map" class="w-4 h-4 text-emerald-500" />
             <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">{{ t('mapView') }} — {{ filtered.filter(p => p.lat && p.lng).length }} {{ t('providersPinned') }}</p>
           </div>
-          <ProvidersMap :providers="filtered" :user-lat="userLat" :user-lng="userLng" height="380px" />
+          <ProvidersMap :providers="filtered" :user-lat="userLat" :user-lng="userLng" />
         </div>
 
         <div class="flex items-center justify-between mb-5">

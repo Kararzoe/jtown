@@ -4,6 +4,7 @@ import 'leaflet/dist/leaflet.css'
 const props = defineProps<{ providers: any[], height?: string, userLat?: number | null, userLng?: number | null }>()
 const mapEl = ref<HTMLElement | null>(null)
 const selectedProvider = ref<any>(null)
+const expanded = ref(false)
 let leafletMap: any = null
 
 const initMap = async () => {
@@ -73,11 +74,23 @@ watch(() => props.providers, () => {
     selectedProvider.value = null
   }
 })
+
+watch(expanded, () => {
+  nextTick(() => leafletMap?.invalidateSize())
+})
 </script>
 
 <template>
-  <div class="relative rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-lg">
-    <div ref="mapEl" :style="`height: ${height || '420px'}; width: 100%;`" />
+  <div :class="['relative rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-sm transition-all duration-300', expanded ? 'fixed inset-4 z-[2000] shadow-2xl' : '']">
+    <!-- Expand/Collapse button -->
+    <button
+      class="absolute top-2 right-2 z-[1001] flex items-center gap-1.5 px-3 py-1.5 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-xl text-xs font-semibold text-gray-700 dark:text-gray-300 shadow border border-gray-200 dark:border-gray-700 hover:bg-white dark:hover:bg-gray-800 transition"
+      @click="expanded = !expanded"
+    >
+      <UIcon :name="expanded ? 'i-lucide-minimize-2' : 'i-lucide-maximize-2'" class="w-3.5 h-3.5" />
+      {{ expanded ? 'Collapse' : 'Expand map' }}
+    </button>
+    <div ref="mapEl" :style="`height: ${expanded ? '100%' : (height || '200px')}; width: 100%;`" />
 
     <Transition name="popup">
       <div v-if="selectedProvider" class="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-80 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-4 border border-gray-100 dark:border-gray-700 z-[1000]">
@@ -112,6 +125,8 @@ watch(() => props.providers, () => {
     <div v-if="providers.filter(p => p.lat && p.lng).length === 0" class="absolute top-3 left-1/2 -translate-x-1/2 z-[1000] bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm px-4 py-2 rounded-full shadow text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2 whitespace-nowrap">
       <span>📍</span> Providers will appear here once they add their location
     </div>
+    <!-- Backdrop when expanded -->
+    <div v-if="expanded" class="fixed inset-0 bg-black/50 -z-10" @click="expanded = false" />
   </div>
 </template>
 
