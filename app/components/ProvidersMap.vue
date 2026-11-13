@@ -20,9 +20,11 @@ const initMap = async () => {
 
   leafletMap = L.map(mapEl.value!, { zoomControl: true }).setView([9.8965, 8.8583], 13)
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/{z}/{x}/{y}?access_token=pk.eyJ1Ijoia2FyYXJ6b2UiLCJhIjoiY213ZXl4Y2toMDM2MTJ6czZ4eHZmZHB5NCJ9.BL_lf4B2Tk55N-9vRhJg2A', {
+    attribution: '© <a href="https://www.mapbox.com">Mapbox</a>',
     maxZoom: 19,
+    tileSize: 512,
+    zoomOffset: -1,
   }).addTo(leafletMap)
 
   // "You are here" marker
