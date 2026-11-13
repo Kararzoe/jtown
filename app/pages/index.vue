@@ -358,7 +358,6 @@ onMounted(async () => {
     </section>
 
     <!-- Newsletter -->
-    <NewsletterSection />
 
     <!-- FAQ -->
     <section class="py-24 px-4 bg-white dark:bg-gray-950">
