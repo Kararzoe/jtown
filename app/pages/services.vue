@@ -268,15 +268,6 @@ const filtered = computed(() => {
 
       <!-- Providers Grid -->
       <div v-else>
-        <!-- Map View -->
-        <div class="mb-8">
-          <div class="flex items-center gap-2 mb-3">
-            <UIcon name="i-lucide-map" class="w-4 h-4 text-emerald-500" />
-            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">{{ t('mapView') }} — {{ filtered.filter(p => p.lat && p.lng).length }} {{ t('providersPinned') }}</p>
-          </div>
-          <ProvidersMap :providers="filtered" :user-lat="userLat" :user-lng="userLng" />
-        </div>
-
         <div class="flex items-center justify-between mb-5">
           <p class="text-sm text-gray-500 dark:text-gray-400">
             <span class="font-semibold text-gray-900 dark:text-white">{{ filtered.length }}</span> {{ filtered.length !== 1 ? t('providersFoundPlural') : t('providersFound') }}
@@ -376,6 +367,9 @@ const filtered = computed(() => {
                 <NuxtLink :to="`/provider/${provider.id}`" class="flex items-center justify-center px-3 py-2.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-xl transition-all">
                   <UIcon name="i-lucide-eye" class="w-4 h-4" />
                 </NuxtLink>
+                <a v-if="provider.lat && provider.lng" :href="`https://www.google.com/maps?q=${provider.lat},${provider.lng}`" target="_blank" class="flex items-center justify-center px-3 py-2.5 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 text-blue-600 dark:text-blue-400 rounded-xl transition-all" title="View on Google Maps">
+                  <UIcon name="i-lucide-map-pin" class="w-4 h-4" />
+                </a>
               </div>
             </div>
           </div>
