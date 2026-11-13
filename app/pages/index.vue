@@ -256,45 +256,6 @@ onMounted(async () => {
       </div>
     </section>
 
-    <!-- Featured Products -->
-    <section class="py-20 px-4 bg-white dark:bg-gray-950">
-      <div class="max-w-7xl mx-auto">
-        <div class="flex items-end justify-between mb-12 reveal">
-          <div>
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-emerald-700 dark:text-emerald-400 text-xs font-semibold mb-3" style="background: linear-gradient(135deg, rgba(34,197,94,0.1), rgba(20,184,166,0.1)); border: 1px solid rgba(34,197,94,0.2);">
-              <UIcon name="i-lucide-star" class="w-3.5 h-3.5" /> Featured
-            </div>
-            <h2 class="text-3xl md:text-4xl font-black text-gray-900 dark:text-white mb-2">{{ t('featuredListings') }}</h2>
-            <p class="text-gray-500 dark:text-gray-400">{{ t('discoverServices') }}</p>
-          </div>
-          <UButton to="/products" variant="outline" color="primary" trailing-icon="i-lucide-arrow-right">{{ t('viewAll') }}</UButton>
-        </div>
-
-        <div v-if="loading" class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-          <div v-for="i in 8" :key="i" class="rounded-2xl overflow-hidden">
-            <div class="skeleton aspect-square" />
-            <div class="p-4 space-y-2.5">
-              <div class="skeleton h-4 rounded w-3/4" />
-              <div class="skeleton h-3 rounded w-1/2" />
-              <div class="skeleton h-8 rounded w-full" />
-            </div>
-          </div>
-        </div>
-
-        <div v-else-if="products.length === 0" class="text-center py-20 reveal">
-          <div class="w-24 h-24 rounded-3xl bg-gray-50 dark:bg-gray-900 flex items-center justify-center mx-auto mb-6 text-5xl shadow-inner">🏪</div>
-          <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">{{ t('noListingsYet') }}</h3>
-          <p class="text-gray-500 mb-6">{{ t('beFirstToList') }}</p>
-          <UButton to="/upload-product" color="primary" size="lg">{{ t('listYourService') }}</UButton>
-        </div>
-
-        <div v-else class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-          <div v-for="(product, i) in products" :key="product.id" class="reveal-scale" :style="`transition-delay: ${i * 0.07}s`">
-            <ProductCard :product="product" />
-          </div>
-        </div>
-      </div>
-    </section>
 
     <!-- How It Works -->
     <section class="py-24 px-4 bg-gray-50 dark:bg-gray-900 relative overflow-hidden">
