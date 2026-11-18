@@ -93,7 +93,7 @@ const selectCategory = (slug: string) => {
 watch(category, loadProviders)
 onMounted(loadProviders)
 
-const activeCat = computed(() => categories.find(c => c.slug === category.value))
+const activeCat = computed(() => categories.value.find(c => c.slug === category.value))
 
 const filtered = computed(() => {
   let list = providers.value
@@ -221,7 +221,6 @@ const filtered = computed(() => {
           <button v-if="search" class="px-5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition" @click="search = ''">
             {{ t('clearSearch') }}
           </button>
-          <UButton to="/become-seller" color="primary" size="lg">{{ t('registerYourBusiness') }}</UButton>
         </div>
       </div>
 
