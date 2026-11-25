@@ -49,7 +49,7 @@ const initMap = async (lat: number, lng: number, title: string) => {
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
     <div v-if="loading" class="flex items-center justify-center min-h-screen">
-      <div class="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+      <div class="w-10 h-10 border-4 border-green-500 border-t-transparent rounded-full animate-spin" />
     </div>
 
     <div v-else-if="!provider" class="flex items-center justify-center min-h-screen">
@@ -62,7 +62,7 @@ const initMap = async (lat: number, lng: number, title: string) => {
 
     <div v-else>
       <!-- Hero Banner -->
-      <div class="relative h-48 md:h-64 bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500">
+      <div class="relative h-48 md:h-64 bg-gradient-to-r from-green-600 via-teal-500 to-cyan-500">
         <div class="absolute inset-0 bg-black/20" />
         <div class="max-w-5xl mx-auto px-4 h-full flex items-start pt-4 relative z-10">
           <button class="flex items-center gap-2 text-white/80 hover:text-white transition" @click="$router.back()">
@@ -77,7 +77,7 @@ const initMap = async (lat: number, lng: number, title: string) => {
           <div class="flex flex-col md:flex-row gap-6">
             <div class="flex-shrink-0">
               <img v-if="provider.image" :src="imgUrl(provider.image, 300)" :alt="provider.service_name" class="w-28 h-28 md:w-36 md:h-36 rounded-2xl object-cover border-4 border-white shadow-lg" />
-              <div v-else class="w-28 h-28 md:w-36 md:h-36 rounded-2xl bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/40 dark:to-teal-900/40 flex items-center justify-center text-emerald-600 font-bold text-4xl border-4 border-white shadow-lg">
+              <div v-else class="w-28 h-28 md:w-36 md:h-36 rounded-2xl bg-gradient-to-br from-green-100 to-teal-100 dark:from-green-900/40 dark:to-teal-900/40 flex items-center justify-center text-green-600 font-bold text-4xl border-4 border-white shadow-lg">
                 {{ provider.service_name?.charAt(0) }}
               </div>
             </div>
@@ -85,21 +85,21 @@ const initMap = async (lat: number, lng: number, title: string) => {
             <div class="flex-1">
               <div class="flex items-center gap-3 mb-2">
                 <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{{ provider.service_name }}</h1>
-                <UIcon name="i-lucide-check-circle" class="w-6 h-6 text-emerald-500" />
+                <UIcon name="i-lucide-check-circle" class="w-6 h-6 text-green-500" />
               </div>
               <p class="text-gray-500 capitalize mb-4">{{ provider.category?.replace(/-/g, ' ') }}</p>
 
               <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
                 <div class="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                  <UIcon name="i-lucide-map-pin" class="w-5 h-5 text-emerald-500" />
+                  <UIcon name="i-lucide-map-pin" class="w-5 h-5 text-green-500" />
                   <span>{{ provider.location }}</span>
                 </div>
                 <div v-if="provider.experience" class="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                  <UIcon name="i-lucide-clock" class="w-5 h-5 text-emerald-500" />
+                  <UIcon name="i-lucide-clock" class="w-5 h-5 text-green-500" />
                   <span>{{ provider.experience }} {{ t('experience') }}</span>
                 </div>
                 <div v-if="provider.price_range" class="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                  <span class="text-emerald-500 font-bold">₦</span>
+                  <span class="text-green-500 font-bold">₦</span>
                   <span>{{ provider.price_range }}</span>
                 </div>
                 <div v-if="provider.rating > 0" class="flex items-center gap-2 text-gray-600 dark:text-gray-400">
@@ -109,7 +109,7 @@ const initMap = async (lat: number, lng: number, title: string) => {
               </div>
 
               <div class="flex gap-3 flex-wrap">
-                <a :href="`tel:${provider.phone}`" class="flex items-center gap-2 px-6 py-3 bg-emerald-500 text-white rounded-xl font-semibold hover:bg-emerald-600 transition">
+                <a :href="`tel:${provider.phone}`" class="flex items-center gap-2 px-6 py-3 bg-green-500 text-white rounded-xl font-semibold hover:bg-green-600 transition">
                   <UIcon name="i-lucide-phone" class="w-5 h-5" /> {{ t('call') }}
                 </a>
                 <a :href="`https://wa.me/${provider.phone?.replace(/[^0-9]/g, '')}?text=Hi, I found you on JosMKT. I need your ${provider.service_name} service.`" target="_blank" class="flex items-center gap-2 px-6 py-3 bg-green-500 text-white rounded-xl font-semibold hover:bg-green-600 transition">
@@ -124,7 +124,7 @@ const initMap = async (lat: number, lng: number, title: string) => {
         <div v-if="provider.lat && provider.lng" class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm mb-6 overflow-hidden">
           <div class="p-4 md:p-6 pb-3">
             <h2 class="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-              <UIcon name="i-lucide-map-pin" class="w-5 h-5 text-emerald-500" /> {{ t('location') || 'Location' }}
+              <UIcon name="i-lucide-map-pin" class="w-5 h-5 text-green-500" /> {{ t('location') || 'Location' }}
             </h2>
           </div>
           <div ref="mapEl" style="height: 320px; width: 100%;" />
@@ -132,7 +132,7 @@ const initMap = async (lat: number, lng: number, title: string) => {
             <a
               :href="`https://www.google.com/maps/dir/?api=1&destination=${provider.lat},${provider.lng}`"
               target="_blank"
-              class="flex items-center justify-center gap-2 w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-sm font-semibold transition"
+              class="flex items-center justify-center gap-2 w-full py-2.5 bg-green-500 hover:bg-green-600 text-white rounded-xl text-sm font-semibold transition"
             >
               <UIcon name="i-lucide-navigation" class="w-4 h-4" /> {{ t('getDirections') || 'Get Directions' }}
             </a>
@@ -156,18 +156,18 @@ const initMap = async (lat: number, lng: number, title: string) => {
               :key="idx"
               :src="imgUrl(img, 400)"
               :alt="`Work ${idx + 1}`"
-              class="w-full h-40 object-cover rounded-xl border border-gray-200 dark:border-gray-700 hover:border-emerald-300 transition cursor-pointer hover:scale-105"
+              class="w-full h-40 object-cover rounded-xl border border-gray-200 dark:border-gray-700 hover:border-green-300 transition cursor-pointer hover:scale-105"
               @click="selectedImage = img"
             />
           </div>
         </div>
 
         <!-- CTA -->
-        <div class="bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl p-6 md:p-8 shadow-sm text-white">
+        <div class="bg-gradient-to-r from-green-500 to-teal-500 rounded-2xl p-6 md:p-8 shadow-sm text-white">
           <h2 class="text-xl font-bold mb-2">{{ t('needThisService') || 'Need this service?' }}</h2>
-          <p class="text-emerald-100 mb-4">{{ t('contactDirectly') || 'Contact' }} {{ provider.service_name }} {{ t('directly') || 'directly and get started today.' }}</p>
+          <p class="text-green-100 mb-4">{{ t('contactDirectly') || 'Contact' }} {{ provider.service_name }} {{ t('directly') || 'directly and get started today.' }}</p>
           <div class="flex flex-wrap gap-3">
-            <a :href="`tel:${provider.phone}`" class="px-5 py-2.5 bg-white text-emerald-600 rounded-xl font-semibold hover:bg-emerald-50 transition flex items-center gap-2">
+            <a :href="`tel:${provider.phone}`" class="px-5 py-2.5 bg-white text-green-600 rounded-xl font-semibold hover:bg-green-50 transition flex items-center gap-2">
               <UIcon name="i-lucide-phone" class="w-4 h-4" /> {{ provider.phone }}
             </a>
             <a :href="`https://wa.me/${provider.phone?.replace(/[^0-9]/g, '')}?text=Hi, I need your service.`" target="_blank" class="px-5 py-2.5 bg-white/20 text-white border border-white/30 rounded-xl font-semibold hover:bg-white/30 transition flex items-center gap-2">

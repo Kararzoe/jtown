@@ -47,7 +47,7 @@ const submit = async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-emerald-50 to-white dark:from-gray-900 dark:to-gray-800 flex items-center justify-center px-4 py-16">
+  <div class="min-h-screen bg-gradient-to-br from-green-50 to-white dark:from-gray-900 dark:to-gray-800 flex items-center justify-center px-4 py-16">
     <div class="w-full max-w-md">
 
       <div class="text-center mb-8">
@@ -64,11 +64,11 @@ const submit = async () => {
       <UCard v-if="emailSent" class="shadow-xl text-center">
         <div class="py-6">
           <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style="background: linear-gradient(135deg, rgba(34,197,94,0.15), rgba(20,184,166,0.15)); border: 1px solid rgba(34,197,94,0.25);">
-            <UIcon name="i-lucide-mail-check" class="w-8 h-8 text-emerald-500" />
+            <UIcon name="i-lucide-mail-check" class="w-8 h-8 text-green-500" />
           </div>
           <h2 class="text-xl font-black text-gray-900 dark:text-white mb-2">Check your email</h2>
           <p class="text-gray-500 text-sm mb-1">We sent a verification link to</p>
-          <p class="text-emerald-600 font-semibold text-sm mb-4">{{ sentEmail }}</p>
+          <p class="text-green-600 font-semibold text-sm mb-4">{{ sentEmail }}</p>
           <p class="text-gray-400 text-xs mb-6">Click the link in the email to verify your account, then come back to login.</p>
           <UButton color="primary" block @click="isLogin = true; emailSent = false">Go to Login</UButton>
         </div>
@@ -79,11 +79,11 @@ const submit = async () => {
         <!-- Tab switcher -->
         <div class="flex rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 mb-6">
           <button
-            :class="['flex-1 py-2.5 text-sm font-bold transition', isLogin ? 'bg-emerald-500 text-white' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300']"
+            :class="['flex-1 py-2.5 text-sm font-bold transition', isLogin ? 'bg-green-500 text-white' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300']"
             @click="isLogin = true"
           >Login</button>
           <button
-            :class="['flex-1 py-2.5 text-sm font-bold transition', !isLogin ? 'bg-emerald-500 text-white' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300']"
+            :class="['flex-1 py-2.5 text-sm font-bold transition', !isLogin ? 'bg-green-500 text-white' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300']"
             @click="isLogin = false"
           >Sign Up</button>
         </div>
@@ -102,13 +102,13 @@ const submit = async () => {
             <UInput v-model="form.password" type="password" placeholder="Min 6 characters" icon="i-lucide-lock" size="lg" class="w-full" required minlength="6" />
           </UFormField>
 
-          <UButton type="submit" color="primary" size="lg" block :loading="loading" class="bg-gradient-to-r from-emerald-500 to-teal-500">
+          <UButton type="submit" color="primary" size="lg" block :loading="loading" class="bg-gradient-to-r from-green-500 to-teal-500">
             {{ isLogin ? 'Login' : 'Create Account' }}
           </UButton>
         </form>
 
         <div v-if="isLogin" class="mt-4 text-center">
-          <NuxtLink to="/forgot-password" class="text-gray-400 hover:text-emerald-600 text-xs">Forgot password?</NuxtLink>
+          <NuxtLink to="/forgot-password" class="text-gray-400 hover:text-green-600 text-xs">Forgot password?</NuxtLink>
         </div>
       </UCard>
 

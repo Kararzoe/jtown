@@ -41,7 +41,7 @@ const submit = async () => {
             </UFormField>
             <UButton type="submit" color="primary" size="lg" block :loading="loading">Send Reset Link</UButton>
             <div class="text-center">
-              <NuxtLink to="/login" class="text-sm text-emerald-600 hover:underline">Back to Login</NuxtLink>
+              <NuxtLink to="/login" class="text-sm text-green-600 hover:underline">Back to Login</NuxtLink>
             </div>
           </form>
         </div>

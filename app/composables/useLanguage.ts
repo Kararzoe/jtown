@@ -2,6 +2,10 @@ type Lang = 'en' | 'ha' | 'pcm'
 
 const translations = {
   en: {
+    // Redesign
+    search: 'Search', theme: 'Theme', popularCategories: 'Popular categories', allCategories: 'All categories',
+    trustVerified: 'ID-verified providers', trustNoCommission: 'No middleman, no commission', trustDirect: 'Call or WhatsApp directly',
+    verifiedInJos: 'verified providers in Jos', forBusinesses: 'For businesses', seeAll: 'See all',
     // Nav
     home: 'Home', services: 'Services', products: 'Products', trending: 'Trending',
     sell: 'Get Started', dashboard: 'Dashboard', profile: 'Profile', messages: 'Messages',
@@ -113,6 +117,10 @@ const translations = {
     uploading: 'Uploading...',
   },
   ha: {
+    // Redesign
+    search: 'Nemo', theme: 'Launi', popularCategories: "Shahararrun nau'o'i", allCategories: "Duk nau'o'i",
+    trustVerified: "Masu sana'a da aka tantance", trustNoCommission: 'Babu dillali, babu kwamishan', trustDirect: 'Kira ko WhatsApp kai tsaye',
+    verifiedInJos: "masu sana'a da aka tantance a Jos", forBusinesses: 'Don masu kasuwanci', seeAll: 'Duba duka',
     // Nav
     home: 'Gida', services: 'Ayyuka', products: 'Kayayyaki', trending: 'Shahararru',
     sell: 'Fara', dashboard: 'Shafin Sarrafa', profile: 'Bayanan ku', messages: 'Saƙonni',
@@ -224,6 +232,10 @@ const translations = {
     uploading: 'Ana loda...',
   },
   pcm: {
+    // Redesign
+    search: 'Find', theme: 'Theme', popularCategories: 'Wetin people dey find', allCategories: 'All categories',
+    trustVerified: 'Verified people wey get ID', trustNoCommission: 'No middleman, no commission', trustDirect: 'Call or WhatsApp dem direct',
+    verifiedInJos: 'verified people for Jos', forBusinesses: 'For business people', seeAll: 'See all',
     // Nav
     home: 'Home', services: 'Services', products: 'Products', trending: 'Trending',
     sell: 'Start Now', dashboard: 'Dashboard', profile: 'Profile', messages: 'Messages',

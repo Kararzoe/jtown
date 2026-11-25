@@ -58,7 +58,7 @@ const submit = async () => {
         <div class="text-5xl mb-4">🔐</div>
         <h2 class="text-2xl font-black mb-2">Verifying link...</h2>
         <div class="flex justify-center mt-4">
-          <div class="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+          <div class="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin" />
         </div>
       </UCard>
 

@@ -28,7 +28,7 @@ const submit = async () => {
   <div class="min-h-screen bg-gray-950 flex items-center justify-center px-4">
     <div class="w-full max-w-sm">
       <div class="text-center mb-8">
-        <div class="w-14 h-14 bg-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <div class="w-14 h-14 bg-green-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
           <UIcon name="i-lucide-shield" class="w-7 h-7 text-white" />
         </div>
         <h1 class="text-2xl font-black text-white">Admin Access</h1>

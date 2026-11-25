@@ -155,13 +155,13 @@ const submit = async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-emerald-50 to-white dark:from-gray-900 dark:to-gray-800 py-10 px-4">
+  <div class="min-h-screen bg-gradient-to-br from-green-50 to-white dark:from-gray-900 dark:to-gray-800 py-10 px-4">
     <div class="max-w-2xl mx-auto">
 
       <!-- Success -->
       <div v-if="submitted" class="flex items-center justify-center min-h-[60vh]">
         <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-md w-full text-center shadow-xl">
-          <UIcon name="i-lucide-check-circle" class="w-16 h-16 text-emerald-500 mx-auto mb-4" />
+          <UIcon name="i-lucide-check-circle" class="w-16 h-16 text-green-500 mx-auto mb-4" />
           <h2 class="text-2xl font-bold mb-2">{{ t('applicationSubmitted') }}</h2>
           <p class="text-gray-600 dark:text-gray-400 mb-6">{{ t('applicationDesc') }}</p>
           <UButton to="/" color="primary" size="lg">{{ t('backToHome') }}</UButton>
@@ -171,7 +171,7 @@ const submit = async () => {
       <!-- Form -->
       <div v-else>
         <div class="text-center mb-8">
-          <div class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
+          <div class="inline-flex items-center gap-2 px-4 py-2 bg-green-50 dark:bg-green-900/30 rounded-full text-green-600 dark:text-green-400 text-sm font-medium mb-4">
             <UIcon name="i-lucide-store" class="w-4 h-4" />
             {{ t('registerBusiness') }}
           </div>
@@ -215,7 +215,7 @@ const submit = async () => {
           </div>
 
           <!-- GPS Pin -->
-          <div class="rounded-xl border-2 p-4 transition-all" :class="locationPinned ? 'border-emerald-400 bg-emerald-50 dark:bg-emerald-900/20' : 'border-gray-200 dark:border-gray-700'">
+          <div class="rounded-xl border-2 p-4 transition-all" :class="locationPinned ? 'border-green-400 bg-green-50 dark:bg-green-900/20' : 'border-gray-200 dark:border-gray-700'">
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-sm font-semibold text-gray-800 dark:text-gray-200">📍 {{ t('pinExactLocation') }}</p>
@@ -232,7 +232,7 @@ const submit = async () => {
                 {{ locationPinned ? t('locationPinned') : t('useMyGPS') }}
               </UButton>
             </div>
-            <div v-if="locationPinned && form.lat && form.lng" class="mt-3 rounded-xl overflow-hidden border border-emerald-200">
+            <div v-if="locationPinned && form.lat && form.lng" class="mt-3 rounded-xl overflow-hidden border border-green-200">
               <div :id="'pin-map'" style="height:180px;width:100%" />
             </div>
           </div>
@@ -248,14 +248,14 @@ const submit = async () => {
 
           <!-- Logo Upload -->
           <UFormField :label="t('businessLogo')">
-            <input type="file" accept="image/*" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 text-sm" @change="onLogoChange" />
-            <p v-if="uploading" class="text-sm text-emerald-500 mt-1">{{ t('uploading') }}</p>
+            <input type="file" accept="image/*" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:outline-none dark:bg-gray-700 text-sm" @change="onLogoChange" />
+            <p v-if="uploading" class="text-sm text-green-500 mt-1">{{ t('uploading') }}</p>
             <img v-if="form.image" :src="form.image" alt="Preview" class="mt-2 w-24 h-24 object-cover rounded-xl" />
           </UFormField>
 
           <!-- Gallery Upload -->
           <UFormField :label="t('workSamples')">
-            <input type="file" accept="image/*" multiple class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-emerald-500 focus:outline-none dark:bg-gray-700 text-sm" @change="onGalleryChange" />
+            <input type="file" accept="image/*" multiple class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:outline-none dark:bg-gray-700 text-sm" @change="onGalleryChange" />
             <div v-if="form.gallery.length" class="flex gap-2 mt-2 flex-wrap">
               <img v-for="(url, i) in form.gallery" :key="i" :src="url" class="w-20 h-20 object-cover rounded-lg" />
             </div>
@@ -275,12 +275,12 @@ const submit = async () => {
                 <p class="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-1">{{ t('govId') }} <span class="text-red-500">*</span></p>
                 <p class="text-xs text-gray-500 mb-2">{{ t('govIdDesc') }}</p>
                 <label class="flex items-center gap-3 px-4 py-3 border-2 border-dashed rounded-xl cursor-pointer transition"
-                  :class="form.id_image ? 'border-emerald-400 bg-emerald-50 dark:bg-emerald-900/20' : 'border-gray-300 dark:border-gray-600 hover:border-amber-400'">
+                  :class="form.id_image ? 'border-green-400 bg-green-50 dark:bg-green-900/20' : 'border-gray-300 dark:border-gray-600 hover:border-amber-400'">
                   <input type="file" accept="image/*" class="hidden" @change="onIdChange" />
                   <div v-if="form.id_image" class="flex items-center gap-3 w-full">
                     <img :src="form.id_image" class="w-14 h-14 object-cover rounded-lg flex-shrink-0" />
                     <div>
-                      <p class="text-sm font-semibold text-emerald-600">{{ t('idUploaded') }}</p>
+                      <p class="text-sm font-semibold text-green-600">{{ t('idUploaded') }}</p>
                       <p class="text-xs text-gray-400">Tap to change</p>
                     </div>
                   </div>
@@ -301,12 +301,12 @@ const submit = async () => {
                 <p class="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-1">{{ t('selfieWithId') }} <span class="text-red-500">*</span></p>
                 <p class="text-xs text-gray-500 mb-2">{{ t('selfieDesc') }}</p>
                 <label class="flex items-center gap-3 px-4 py-3 border-2 border-dashed rounded-xl cursor-pointer transition"
-                  :class="form.selfie_image ? 'border-emerald-400 bg-emerald-50 dark:bg-emerald-900/20' : 'border-gray-300 dark:border-gray-600 hover:border-amber-400'">
+                  :class="form.selfie_image ? 'border-green-400 bg-green-50 dark:bg-green-900/20' : 'border-gray-300 dark:border-gray-600 hover:border-amber-400'">
                   <input type="file" accept="image/*" capture="user" class="hidden" @change="onSelfieChange" />
                   <div v-if="form.selfie_image" class="flex items-center gap-3 w-full">
                     <img :src="form.selfie_image" class="w-14 h-14 object-cover rounded-lg flex-shrink-0" />
                     <div>
-                      <p class="text-sm font-semibold text-emerald-600">{{ t('selfieUploaded') }}</p>
+                      <p class="text-sm font-semibold text-green-600">{{ t('selfieUploaded') }}</p>
                       <p class="text-xs text-gray-400">Tap to change</p>
                     </div>
                   </div>
@@ -322,10 +322,10 @@ const submit = async () => {
                 </label>
               </div>
             </div>
-            <p v-if="uploadingId" class="text-xs text-emerald-500 mt-2">Uploading...</p>
+            <p v-if="uploadingId" class="text-xs text-green-500 mt-2">Uploading...</p>
           </div>
 
-          <UButton type="submit" size="xl" block :loading="loading || uploading || uploadingId" class="bg-gradient-to-r from-emerald-500 to-teal-500 font-bold text-lg">
+          <UButton type="submit" size="xl" block :loading="loading || uploading || uploadingId" class="bg-gradient-to-r from-green-500 to-teal-500 font-bold text-lg">
             <UIcon name="i-lucide-send" class="w-5 h-5 mr-2" />
             {{ loading ? t('submitting') : t('submitApplication') }}
           </UButton>

@@ -141,7 +141,7 @@ const save = async () => {
           <!-- Service Images -->
           <div class="pt-2">
             <div class="flex items-center gap-2 mb-3">
-              <UIcon name="i-lucide-image" class="w-4 h-4 text-emerald-500" />
+              <UIcon name="i-lucide-image" class="w-4 h-4 text-green-500" />
               <p class="font-semibold text-gray-800 dark:text-gray-200">Service / Work Images</p>
               <span class="text-xs text-gray-400">(Max 6 — helps build trust with customers)</span>
             </div>
@@ -152,13 +152,13 @@ const save = async () => {
                   <UIcon name="i-lucide-x" class="w-3 h-3 text-white" />
                 </button>
               </div>
-              <label v-if="(form.service_images?.length || 0) + serviceImageFiles.length < 6" class="aspect-square border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-emerald-400 transition">
+              <label v-if="(form.service_images?.length || 0) + serviceImageFiles.length < 6" class="aspect-square border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-green-400 transition">
                 <input type="file" accept="image/*" multiple class="hidden" @change="onServiceImagesChange" />
                 <UIcon name="i-lucide-plus" class="w-6 h-6 text-gray-400" />
                 <span class="text-xs text-gray-400 mt-1">Add photo</span>
               </label>
             </div>
-            <p v-if="uploadingService" class="text-xs text-emerald-500">Uploading images...</p>
+            <p v-if="uploadingService" class="text-xs text-green-500">Uploading images...</p>
           </div>
 
           <div class="pt-2">

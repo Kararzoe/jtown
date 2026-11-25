@@ -187,13 +187,13 @@ const statCards = computed(() => [
   { label: 'Total Users', value: stats.value.users, icon: 'i-lucide-users', color: 'bg-blue-500' },
   { label: 'Products', value: stats.value.products, icon: 'i-lucide-package', color: 'bg-violet-500' },
   { label: 'Orders', value: stats.value.orders, icon: 'i-lucide-shopping-bag', color: 'bg-amber-500' },
-  { label: 'Providers', value: stats.value.providers, icon: 'i-lucide-wrench', color: 'bg-emerald-500' },
+  { label: 'Providers', value: stats.value.providers, icon: 'i-lucide-wrench', color: 'bg-green-500' },
 ])
 </script>
 
 <template>
   <div class="min-h-screen bg-gray-950 flex items-center justify-center" v-if="!authChecked">
-    <div class="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+    <div class="w-10 h-10 border-4 border-green-500 border-t-transparent rounded-full animate-spin" />
   </div>
 
   <div v-else-if="authChecked && !isAdmin" class="min-h-screen bg-gray-950 flex items-center justify-center">
@@ -210,7 +210,7 @@ const statCards = computed(() => [
     <!-- Sidebar -->
     <aside :class="['fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 border-r border-gray-800 flex flex-col transition-transform duration-300', sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0']">
       <div class="p-5 border-b border-gray-800 flex items-center gap-3">
-        <div class="w-9 h-9 bg-emerald-500 rounded-xl flex items-center justify-center">
+        <div class="w-9 h-9 bg-green-500 rounded-xl flex items-center justify-center">
           <UIcon name="i-lucide-shield" class="w-5 h-5 text-white" />
         </div>
         <div>
@@ -220,7 +220,7 @@ const statCards = computed(() => [
       </div>
       <nav class="flex-1 p-3 space-y-1 overflow-y-auto">
         <button v-for="item in navItems" :key="item.value"
-          :class="['w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all', tab === item.value ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'text-gray-400 hover:bg-gray-800 hover:text-white']"
+          :class="['w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all', tab === item.value ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'text-gray-400 hover:bg-gray-800 hover:text-white']"
           @click="tab = item.value; sidebarOpen = false">
           <UIcon :name="item.icon" class="w-4 h-4 flex-shrink-0" />
           {{ item.label }}
@@ -249,9 +249,9 @@ const statCards = computed(() => [
           <h1 class="text-white font-bold capitalize">{{ navItems.find(n => n.value === tab)?.label }}</h1>
         </div>
         <div class="flex items-center gap-2">
-          <div class="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
-            <div class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
-            <span class="text-emerald-400 text-xs font-medium">Live</span>
+          <div class="flex items-center gap-1.5 px-3 py-1 bg-green-500/10 border border-green-500/20 rounded-full">
+            <div class="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
+            <span class="text-green-400 text-xs font-medium">Live</span>
           </div>
           <UBadge color="error" icon="i-lucide-shield" size="sm">Admin</UBadge>
         </div>
@@ -310,10 +310,10 @@ const statCards = computed(() => [
               </div>
             </div>
             <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5">
-              <h3 class="font-bold text-white mb-4 flex items-center gap-2"><UIcon name="i-lucide-users" class="w-4 h-4 text-emerald-400" /> Recent Users</h3>
+              <h3 class="font-bold text-white mb-4 flex items-center gap-2"><UIcon name="i-lucide-users" class="w-4 h-4 text-green-400" /> Recent Users</h3>
               <div class="space-y-2">
                 <div v-for="u in users.slice(0,6)" :key="u.id" class="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-800 transition">
-                  <div class="w-9 h-9 rounded-full bg-emerald-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                  <div class="w-9 h-9 rounded-full bg-green-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                     {{ (u.full_name || u.email || '?').charAt(0).toUpperCase() }}
                   </div>
                   <div class="flex-1 min-w-0">
@@ -334,7 +334,7 @@ const statCards = computed(() => [
             </div>
             <div class="divide-y divide-gray-800">
               <div v-for="u in filteredUsers" :key="u.id" class="flex items-center gap-4 p-4 hover:bg-gray-800/40 transition">
-                <div class="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-white font-bold flex-shrink-0">
+                <div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white font-bold flex-shrink-0">
                   {{ (u.full_name || u.email || '?').charAt(0).toUpperCase() }}
                 </div>
                 <div class="flex-1 min-w-0">
@@ -353,7 +353,7 @@ const statCards = computed(() => [
               <UInput v-model="productSearch" placeholder="Search products..." icon="i-lucide-search" class="flex-1 min-w-48" />
               <div class="flex gap-2">
                 <button v-for="f in ['pending','active','rejected','all']" :key="f"
-                  :class="['px-3 py-1.5 rounded-xl text-xs font-semibold border transition', productFilter === f ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-gray-900 border-gray-700 text-gray-400 hover:text-white']"
+                  :class="['px-3 py-1.5 rounded-xl text-xs font-semibold border transition', productFilter === f ? 'bg-green-500 text-white border-green-500' : 'bg-gray-900 border-gray-700 text-gray-400 hover:text-white']"
                   @click="productFilter = f as any">
                   {{ f.charAt(0).toUpperCase() + f.slice(1) }}
                   <span class="ml-1 opacity-60">{{ f === 'all' ? products.length : products.filter(p => p.status === f).length }}</span>
@@ -372,12 +372,12 @@ const statCards = computed(() => [
                   </div>
                   <div class="flex-1 min-w-0">
                     <p class="font-semibold text-white truncate">{{ p.title }}</p>
-                    <p class="text-sm text-emerald-400 font-semibold">₦{{ p.price?.toLocaleString() }}</p>
+                    <p class="text-sm text-green-400 font-semibold">₦{{ p.price?.toLocaleString() }}</p>
                     <p class="text-xs text-gray-500">{{ p.seller?.full_name || 'Unknown' }} · {{ p.category }}</p>
                   </div>
-                  <span :class="['px-2.5 py-1 rounded-full text-xs font-semibold', p.status === 'active' ? 'bg-emerald-500/20 text-emerald-400' : p.status === 'rejected' ? 'bg-red-500/20 text-red-400' : 'bg-amber-500/20 text-amber-400']">{{ p.status }}</span>
+                  <span :class="['px-2.5 py-1 rounded-full text-xs font-semibold', p.status === 'active' ? 'bg-green-500/20 text-green-400' : p.status === 'rejected' ? 'bg-red-500/20 text-red-400' : 'bg-amber-500/20 text-amber-400']">{{ p.status }}</span>
                   <div class="flex gap-1.5">
-                    <button v-if="p.status !== 'active'" class="px-3 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 rounded-lg text-xs font-semibold transition" @click="updateProductStatus(p.id, 'active')">Approve</button>
+                    <button v-if="p.status !== 'active'" class="px-3 py-1.5 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded-lg text-xs font-semibold transition" @click="updateProductStatus(p.id, 'active')">Approve</button>
                     <button v-if="p.status !== 'rejected'" class="px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg text-xs font-semibold transition" @click="updateProductStatus(p.id, 'rejected')">Reject</button>
                     <button class="w-8 h-8 bg-gray-800 hover:bg-red-500/20 text-gray-400 hover:text-red-400 rounded-lg flex items-center justify-center transition" @click="deleteProduct(p.id)"><UIcon name="i-lucide-trash" class="w-3.5 h-3.5" /></button>
                   </div>
@@ -403,7 +403,7 @@ const statCards = computed(() => [
                   <p class="font-semibold text-white truncate">{{ o.product?.title || 'Unknown product' }}</p>
                   <p class="text-sm text-gray-500">{{ o.buyer?.full_name || 'Unknown' }} · {{ new Date(o.created_at).toLocaleDateString() }}</p>
                 </div>
-                <p class="font-bold text-emerald-400 hidden md:block">₦{{ o.product?.price?.toLocaleString() }}</p>
+                <p class="font-bold text-green-400 hidden md:block">₦{{ o.product?.price?.toLocaleString() }}</p>
                 <USelect :model-value="o.status" :items="['pending','processing','completed','cancelled']" size="xs" class="w-36" @update:model-value="updateOrderStatus(o.id, $event)" />
               </div>
             </div>
@@ -415,7 +415,7 @@ const statCards = computed(() => [
               <UInput v-model="serviceSearch" placeholder="Search by name, location, phone..." icon="i-lucide-search" class="flex-1 min-w-48" />
               <div class="flex gap-2 flex-wrap">
                 <button v-for="f in ['pending','approved','rejected','all']" :key="f"
-                  :class="['px-3 py-1.5 rounded-xl text-xs font-semibold border transition', serviceFilter === f ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-gray-900 border-gray-700 text-gray-400 hover:text-white']"
+                  :class="['px-3 py-1.5 rounded-xl text-xs font-semibold border transition', serviceFilter === f ? 'bg-green-500 text-white border-green-500' : 'bg-gray-900 border-gray-700 text-gray-400 hover:text-white']"
                   @click="serviceFilter = f as any">
                   {{ f.charAt(0).toUpperCase() + f.slice(1) }}
                   <span class="ml-1 opacity-60">{{ f === 'all' ? serviceProviders.length : serviceProviders.filter(s => s.status === f).length }}</span>
@@ -436,16 +436,16 @@ const statCards = computed(() => [
                 <div class="p-4 flex items-center gap-4">
                   <div class="w-12 h-12 rounded-xl overflow-hidden bg-gray-800 flex-shrink-0 flex items-center justify-center border border-gray-700">
                     <img v-if="s.image" :src="s.image" class="w-full h-full object-cover" />
-                    <span v-else class="text-emerald-400 font-bold text-lg">{{ s.service_name?.charAt(0) }}</span>
+                    <span v-else class="text-green-400 font-bold text-lg">{{ s.service_name?.charAt(0) }}</span>
                   </div>
                   <div class="flex-1 min-w-0">
                     <p class="font-bold text-white truncate">{{ s.service_name }}</p>
                     <p class="text-sm text-gray-400 capitalize">{{ s.category?.replace(/-/g,' ') }} · {{ s.location }}</p>
                     <p class="text-xs text-gray-500 font-mono">📞 {{ s.phone }}</p>
                   </div>
-                  <span :class="['px-2.5 py-1 rounded-full text-xs font-semibold', s.status === 'approved' ? 'bg-emerald-500/20 text-emerald-400' : s.status === 'rejected' ? 'bg-red-500/20 text-red-400' : 'bg-amber-500/20 text-amber-400']">{{ s.status }}</span>
+                  <span :class="['px-2.5 py-1 rounded-full text-xs font-semibold', s.status === 'approved' ? 'bg-green-500/20 text-green-400' : s.status === 'rejected' ? 'bg-red-500/20 text-red-400' : 'bg-amber-500/20 text-amber-400']">{{ s.status }}</span>
                   <div class="flex gap-1.5">
-                    <button v-if="s.status !== 'approved'" class="px-3 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 rounded-lg text-xs font-semibold transition" @click="updateServiceStatus(s.id, 'approved')">Approve</button>
+                    <button v-if="s.status !== 'approved'" class="px-3 py-1.5 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded-lg text-xs font-semibold transition" @click="updateServiceStatus(s.id, 'approved')">Approve</button>
                     <button v-if="s.status !== 'rejected'" class="px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg text-xs font-semibold transition" @click="updateServiceStatus(s.id, 'rejected')">Reject</button>
                     <NuxtLink :to="`/provider/${s.id}`" target="_blank" class="w-8 h-8 bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white rounded-lg flex items-center justify-center transition"><UIcon name="i-lucide-eye" class="w-3.5 h-3.5" /></NuxtLink>
                     <button class="w-8 h-8 bg-gray-800 hover:bg-red-500/20 text-gray-400 hover:text-red-400 rounded-lg flex items-center justify-center transition" @click="deleteServiceProvider(s.id)"><UIcon name="i-lucide-trash" class="w-3.5 h-3.5" /></button>
@@ -480,10 +480,10 @@ const statCards = computed(() => [
                   <div v-if="loadingConvos" class="p-4 space-y-3"><div v-for="i in 4" :key="i" class="h-14 rounded-xl bg-gray-800 animate-pulse" /></div>
                   <div v-else-if="conversations.length === 0" class="p-8 text-center text-gray-600"><UIcon name="i-lucide-inbox" class="w-8 h-8 mx-auto mb-2 opacity-40" /><p class="text-sm">No messages</p></div>
                   <button v-for="convo in conversations" :key="convo.user_id"
-                    :class="['w-full p-4 border-b border-gray-800/50 hover:bg-gray-800/50 transition text-left', selectedUser?.user_id === convo.user_id ? 'bg-emerald-500/10 border-l-2 border-l-emerald-500' : '']"
+                    :class="['w-full p-4 border-b border-gray-800/50 hover:bg-gray-800/50 transition text-left', selectedUser?.user_id === convo.user_id ? 'bg-green-500/10 border-l-2 border-l-green-500' : '']"
                     @click="openThread(convo)">
                     <div class="flex items-center gap-3">
-                      <div class="w-9 h-9 bg-emerald-500 rounded-full flex items-center justify-center font-bold text-white text-sm flex-shrink-0 relative">
+                      <div class="w-9 h-9 bg-green-500 rounded-full flex items-center justify-center font-bold text-white text-sm flex-shrink-0 relative">
                         {{ convo.user_name?.charAt(0)?.toUpperCase() || '?' }}
                         <span v-if="convo.unread > 0" class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white text-xs flex items-center justify-center">{{ convo.unread }}</span>
                       </div>
@@ -501,18 +501,18 @@ const statCards = computed(() => [
                 </div>
                 <template v-else>
                   <div class="p-4 border-b border-gray-800 flex items-center gap-3">
-                    <div class="w-9 h-9 bg-emerald-500 rounded-full flex items-center justify-center font-bold text-white text-sm">{{ selectedUser.user_name?.charAt(0)?.toUpperCase() || '?' }}</div>
+                    <div class="w-9 h-9 bg-green-500 rounded-full flex items-center justify-center font-bold text-white text-sm">{{ selectedUser.user_name?.charAt(0)?.toUpperCase() || '?' }}</div>
                     <div><p class="font-bold text-white text-sm">{{ selectedUser.user_name }}</p><p class="text-xs text-gray-500">{{ selectedUser.user_email }}</p></div>
                   </div>
                   <div class="flex-1 overflow-y-auto p-4 space-y-3">
                     <div v-for="msg in threadMessages" :key="msg.id" class="flex" :class="msg.is_admin ? 'justify-end' : 'justify-start'">
-                      <div :class="['px-4 py-2.5 rounded-2xl text-sm max-w-xs', msg.is_admin ? 'bg-emerald-500 text-white rounded-tr-sm' : 'bg-gray-800 text-gray-200 rounded-tl-sm']">{{ msg.content }}</div>
+                      <div :class="['px-4 py-2.5 rounded-2xl text-sm max-w-xs', msg.is_admin ? 'bg-green-500 text-white rounded-tr-sm' : 'bg-gray-800 text-gray-200 rounded-tl-sm']">{{ msg.content }}</div>
                     </div>
                     <div ref="threadEnd" />
                   </div>
                   <div class="p-4 border-t border-gray-800 flex gap-2">
-                    <input v-model="adminReply" type="text" placeholder="Reply..." class="flex-1 px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-sm text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition" @keyup.enter="sendAdminReply" />
-                    <button class="w-10 h-10 bg-emerald-500 hover:bg-emerald-600 rounded-xl flex items-center justify-center transition" @click="sendAdminReply"><UIcon name="i-lucide-send" class="w-4 h-4 text-white" /></button>
+                    <input v-model="adminReply" type="text" placeholder="Reply..." class="flex-1 px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-sm text-white placeholder-gray-500 focus:outline-none focus:border-green-500 transition" @keyup.enter="sendAdminReply" />
+                    <button class="w-10 h-10 bg-green-500 hover:bg-green-600 rounded-xl flex items-center justify-center transition" @click="sendAdminReply"><UIcon name="i-lucide-send" class="w-4 h-4 text-white" /></button>
                   </div>
                 </template>
               </div>
@@ -522,7 +522,7 @@ const statCards = computed(() => [
           <!-- ADD PROVIDER -->
           <div v-else-if="tab === 'addProvider'" class="max-w-2xl">
             <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">
-              <h3 class="font-bold text-white text-lg mb-5 flex items-center gap-2"><UIcon name="i-lucide-plus-circle" class="w-5 h-5 text-emerald-400" /> Add Service Provider</h3>
+              <h3 class="font-bold text-white text-lg mb-5 flex items-center gap-2"><UIcon name="i-lucide-plus-circle" class="w-5 h-5 text-green-400" /> Add Service Provider</h3>
               <form class="space-y-4" @submit.prevent="submitProvider">
                 <UInput v-model="newProvider.service_name" required placeholder="Business / Service name *" size="lg" />
                 <UTextarea v-model="newProvider.description" required placeholder="Description *" :rows="3" />
@@ -535,7 +535,7 @@ const statCards = computed(() => [
                   <UInput v-model="newProvider.price_range" placeholder="Price range" />
                 </div>
                 <USelect v-model="newProvider.category" :items="serviceCategories.map(c => ({ label: c.replace(/-/g,' ').replace(/\b\w/g, (l: string) => l.toUpperCase()), value: c }))" placeholder="Category *" />
-                <div class="rounded-xl border p-4 transition" :class="locationPinned ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-gray-700'">
+                <div class="rounded-xl border p-4 transition" :class="locationPinned ? 'border-green-500/50 bg-green-500/5' : 'border-gray-700'">
                   <div class="flex items-center justify-between">
                     <div>
                       <p class="text-sm font-semibold text-white">📍 Pin Location</p>

@@ -46,7 +46,7 @@ const logout = async () => {
 
     <!-- Loading -->
     <div v-if="loading" class="flex items-center justify-center min-h-screen">
-      <div class="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+      <div class="w-10 h-10 border-4 border-green-500 border-t-transparent rounded-full animate-spin" />
     </div>
 
     <div v-else class="max-w-7xl mx-auto px-4 py-8">
@@ -54,9 +54,9 @@ const logout = async () => {
       <!-- Header -->
       <div class="flex items-center justify-between mb-8">
         <div class="flex items-center gap-4">
-          <div class="w-14 h-14 rounded-2xl overflow-hidden bg-emerald-100 dark:bg-emerald-900/30 flex-shrink-0 border-2 border-emerald-200 dark:border-emerald-800">
+          <div class="w-14 h-14 rounded-2xl overflow-hidden bg-green-100 dark:bg-green-900/30 flex-shrink-0 border-2 border-green-200 dark:border-green-800">
             <img v-if="profile?.avatar_url" :src="profile.avatar_url" class="w-full h-full object-cover" />
-            <div v-else class="w-full h-full flex items-center justify-center text-2xl font-bold text-emerald-600">
+            <div v-else class="w-full h-full flex items-center justify-center text-2xl font-bold text-green-600">
               {{ displayName.charAt(0).toUpperCase() }}
             </div>
           </div>
@@ -98,14 +98,14 @@ const logout = async () => {
             <p class="text-2xl font-black text-gray-900 dark:text-white">{{ favorites.length }}</p>
             <p class="text-xs text-gray-500">Wishlist Items</p>
           </div>
-          <NuxtLink to="/services" class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 hover:border-emerald-300 transition group">
-            <div class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center mb-3">
+          <NuxtLink to="/services" class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 hover:border-green-300 transition group">
+            <div class="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center mb-3">
               <UIcon name="i-lucide-wrench" class="w-5 h-5 text-white" />
             </div>
-            <p class="text-sm font-bold text-gray-900 dark:text-white group-hover:text-emerald-600">Find Services</p>
+            <p class="text-sm font-bold text-gray-900 dark:text-white group-hover:text-green-600">Find Services</p>
             <p class="text-xs text-gray-500">Browse artisans</p>
           </NuxtLink>
-          <NuxtLink to="/products" class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 hover:border-emerald-300 transition group">
+          <NuxtLink to="/products" class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 hover:border-green-300 transition group">
             <div class="w-10 h-10 bg-violet-500 rounded-xl flex items-center justify-center mb-3">
               <UIcon name="i-lucide-store" class="w-5 h-5 text-white" />
             </div>
@@ -119,7 +119,7 @@ const logout = async () => {
           <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700">
             <div class="flex items-center justify-between mb-4">
               <h3 class="font-bold text-gray-900 dark:text-white">Recent Orders</h3>
-              <NuxtLink to="/orders" class="text-xs text-emerald-600 hover:underline">View all</NuxtLink>
+              <NuxtLink to="/orders" class="text-xs text-green-600 hover:underline">View all</NuxtLink>
             </div>
             <div v-if="orders.length === 0" class="text-center py-8">
               <div class="text-4xl mb-2">🛍️</div>
@@ -134,7 +134,7 @@ const logout = async () => {
                 </div>
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-semibold truncate text-gray-900 dark:text-white">{{ order.product?.title }}</p>
-                  <p class="text-xs text-emerald-600 font-semibold">₦{{ order.product?.price?.toLocaleString() }}</p>
+                  <p class="text-xs text-green-600 font-semibold">₦{{ order.product?.price?.toLocaleString() }}</p>
                 </div>
                 <UBadge :color="order.status === 'completed' ? 'success' : order.status === 'cancelled' ? 'error' : 'warning'" size="xs">{{ order.status }}</UBadge>
               </div>
@@ -144,7 +144,7 @@ const logout = async () => {
           <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700">
             <div class="flex items-center justify-between mb-4">
               <h3 class="font-bold text-gray-900 dark:text-white">Wishlist</h3>
-              <NuxtLink to="/wishlist" class="text-xs text-emerald-600 hover:underline">View all</NuxtLink>
+              <NuxtLink to="/wishlist" class="text-xs text-green-600 hover:underline">View all</NuxtLink>
             </div>
             <div v-if="favorites.length === 0" class="text-center py-8">
               <div class="text-4xl mb-2">❤️</div>
@@ -159,7 +159,7 @@ const logout = async () => {
                 </div>
                 <div class="p-2">
                   <p class="text-xs font-semibold truncate text-gray-900 dark:text-white">{{ fav.product?.title }}</p>
-                  <p class="text-xs text-emerald-600 font-bold">₦{{ fav.product?.price?.toLocaleString() }}</p>
+                  <p class="text-xs text-green-600 font-bold">₦{{ fav.product?.price?.toLocaleString() }}</p>
                 </div>
               </div>
             </div>
@@ -171,7 +171,7 @@ const logout = async () => {
       <div class="mb-10">
         <div class="flex items-center justify-between mb-5">
           <div class="flex items-center gap-2">
-            <div class="w-8 h-8 bg-emerald-500 rounded-xl flex items-center justify-center">
+            <div class="w-8 h-8 bg-green-500 rounded-xl flex items-center justify-center">
               <UIcon name="i-lucide-store" class="w-4 h-4 text-white" />
             </div>
             <h2 class="text-lg font-bold text-gray-900 dark:text-white">My Business</h2>
@@ -182,7 +182,7 @@ const logout = async () => {
         <!-- Seller Stats -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
-            <div class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center mb-3">
+            <div class="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center mb-3">
               <UIcon name="i-lucide-package" class="w-5 h-5 text-white" />
             </div>
             <p class="text-2xl font-black text-gray-900 dark:text-white">{{ sellerAnalytics.totalProducts }}</p>
@@ -215,7 +215,7 @@ const logout = async () => {
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
           <div class="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-700">
             <h3 class="font-bold text-gray-900 dark:text-white">My Products</h3>
-            <NuxtLink to="/seller-dashboard" class="text-xs text-emerald-600 hover:underline">Full dashboard →</NuxtLink>
+            <NuxtLink to="/seller-dashboard" class="text-xs text-green-600 hover:underline">Full dashboard →</NuxtLink>
           </div>
           <div v-if="myProducts.length === 0" class="text-center py-12">
             <div class="text-4xl mb-3">🏪</div>
@@ -230,13 +230,13 @@ const logout = async () => {
               </div>
               <div class="flex-1 min-w-0">
                 <p class="font-semibold text-gray-900 dark:text-white truncate">{{ p.title }}</p>
-                <p class="text-sm text-emerald-600 font-bold">₦{{ p.price?.toLocaleString() }}</p>
+                <p class="text-sm text-green-600 font-bold">₦{{ p.price?.toLocaleString() }}</p>
               </div>
               <div class="flex items-center gap-2">
                 <span class="text-xs text-gray-400">{{ p.views || 0 }} views</span>
                 <UBadge :color="p.status === 'active' ? 'success' : p.status === 'rejected' ? 'error' : 'warning'" size="xs">{{ p.status }}</UBadge>
               </div>
-              <NuxtLink :to="`/product/${p.id}`" class="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center hover:bg-emerald-100 transition">
+              <NuxtLink :to="`/product/${p.id}`" class="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center hover:bg-green-100 transition">
                 <UIcon name="i-lucide-eye" class="w-4 h-4 text-gray-500" />
               </NuxtLink>
             </div>
@@ -244,27 +244,27 @@ const logout = async () => {
         </div>
 
         <!-- Become a service provider CTA -->
-        <div class="mt-5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 p-5 text-white flex items-center justify-between gap-4">
+        <div class="mt-5 rounded-2xl bg-ink-900 p-5 text-white flex items-center justify-between gap-4">
           <div>
             <p class="font-bold text-lg">List your service on JosMKT</p>
-            <p class="text-emerald-100 text-sm">Get discovered by thousands of customers in Jos</p>
+            <p class="text-ink-200 text-sm">Get discovered by thousands of customers in Jos</p>
           </div>
-          <UButton to="/become-seller" color="white" size="sm" class="flex-shrink-0 font-bold">Register Now</UButton>
+          <UButton to="/become-seller" color="neutral" variant="solid" size="sm" class="flex-shrink-0 font-bold">Register Now</UButton>
         </div>
       </div>
 
       <!-- Quick Links -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <NuxtLink to="/profile" class="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 hover:border-emerald-300 transition">
-          <UIcon name="i-lucide-user-circle" class="w-5 h-5 text-emerald-500" />
+        <NuxtLink to="/profile" class="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 hover:border-green-300 transition">
+          <UIcon name="i-lucide-user-circle" class="w-5 h-5 text-green-500" />
           <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Edit Profile</span>
         </NuxtLink>
-        <NuxtLink to="/chat" class="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 hover:border-emerald-300 transition">
-          <UIcon name="i-lucide-message-circle" class="w-5 h-5 text-emerald-500" />
+        <NuxtLink to="/chat" class="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 hover:border-green-300 transition">
+          <UIcon name="i-lucide-message-circle" class="w-5 h-5 text-green-500" />
           <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Messages</span>
         </NuxtLink>
-        <NuxtLink to="/compare" class="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 hover:border-emerald-300 transition">
-          <UIcon name="i-lucide-scale" class="w-5 h-5 text-emerald-500" />
+        <NuxtLink to="/compare" class="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 hover:border-green-300 transition">
+          <UIcon name="i-lucide-scale" class="w-5 h-5 text-green-500" />
           <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Compare</span>
         </NuxtLink>
         <NuxtLink v-if="isAdmin" to="/admin" class="flex items-center gap-3 p-4 bg-red-50 dark:bg-red-900/20 rounded-2xl border border-red-200 dark:border-red-800 hover:border-red-400 transition">

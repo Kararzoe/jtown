@@ -25,7 +25,7 @@ onMounted(loadTrending)
     <div class="max-w-7xl mx-auto">
       <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
         <div class="flex items-center gap-3">
-          <UIcon name="i-lucide-trending-up" class="w-8 h-8 text-emerald-500" />
+          <UIcon name="i-lucide-trending-up" class="w-8 h-8 text-green-500" />
           <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Trending Products</h1>
         </div>
         <div class="flex gap-2">
@@ -62,13 +62,13 @@ onMounted(loadTrending)
               <img v-if="product.images?.[0]" :src="product.images[0]" :alt="product.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
               <div v-else class="w-full h-full flex items-center justify-center text-7xl">📦</div>
             </div>
-            <div class="absolute top-2 left-2 px-3 py-1 bg-emerald-500 text-white text-sm font-bold rounded-full">
+            <div class="absolute top-2 left-2 px-3 py-1 bg-green-500 text-white text-sm font-bold rounded-full">
               #{{ index + 1 }}
             </div>
           </div>
           <div class="p-3 md:p-4">
             <h3 class="font-semibold text-sm md:text-base mb-2 line-clamp-2 text-gray-900 dark:text-white">{{ product.title }}</h3>
-            <p class="text-lg md:text-2xl font-bold text-emerald-600 mb-2">₦{{ product.price?.toLocaleString() }}</p>
+            <p class="text-lg md:text-2xl font-bold text-green-600 mb-2">₦{{ product.price?.toLocaleString() }}</p>
             <div class="flex items-center justify-between text-sm text-gray-500">
               <div class="flex items-center gap-1">
                 <UIcon name="i-lucide-eye" class="w-4 h-4" />

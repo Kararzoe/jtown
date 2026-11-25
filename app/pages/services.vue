@@ -13,32 +13,7 @@ const imgUrl = (url: string, w = 400) => {
   return url.replace('/upload/', `/upload/f_auto,q_auto,w_${w}/`)
 }
 
-const categories = computed(() => [
-  { label: t('plumbingCat'), icon: '🔧', slug: 'plumbing' },
-  { label: t('electriciansCat'), icon: '⚡', slug: 'electrical' },
-  { label: t('acCat'), icon: '❄️', slug: 'ac' },
-  { label: t('furnitureCat'), icon: '🛋️', slug: 'furniture' },
-  { label: t('paintingCat'), icon: '🎨', slug: 'painting' },
-  { label: t('mechanicCat'), icon: '🚗', slug: 'mechanic' },
-  { label: t('barbingCat'), icon: '✂️', slug: 'barbing' },
-  { label: t('carpentryCat'), icon: '🔨', slug: 'carpentry' },
-  { label: t('fashionDesignCat'), icon: '👗', slug: 'fashion-design' },
-  { label: t('shoemakerCat'), icon: '👟', slug: 'shoemaking' },
-  { label: t('photographyCat'), icon: '📷', slug: 'photography' },
-  { label: t('techCat'), icon: '💻', slug: 'tech' },
-  { label: t('logisticsCat'), icon: '🚚', slug: 'logistics' },
-  { label: t('laundryCat'), icon: '🧺', slug: 'laundry' },
-  { label: t('educationCat'), icon: '🎓', slug: 'education' },
-  { label: t('perfumeryCat'), icon: '✨', slug: 'perfumery' },
-  { label: t('makeupCat'), icon: '💄', slug: 'makeup' },
-  { label: t('eventCat'), icon: '📅', slug: 'event-planning' },
-  { label: t('rentalsCat'), icon: '🏠', slug: 'rentals' },
-  { label: t('masonCat'), icon: '🧱', slug: 'mason' },
-  { label: t('phoneAccCat'), icon: '📱', slug: 'phone-accessories' },
-  { label: t('legalCat'), icon: '⚖️', slug: 'legal' },
-  { label: t('housingCat'), icon: '🏡', slug: 'housing-agent' },
-  { label: t('ewalletCat'), icon: '💳', slug: 'e-wallet' },
-])
+const { categories } = useCategories()
 
 const loadProviders = async () => {
   if (!category.value && !search.value) return
@@ -112,51 +87,47 @@ const filtered = computed(() => {
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-gray-950">
 
-    <!-- Hero Header -->
-    <div class="bg-gradient-to-br from-gray-900 via-emerald-950 to-gray-900 text-white py-12 px-4 relative overflow-hidden">
-      <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-emerald-500/10 via-transparent to-transparent" />
-      <div class="max-w-7xl mx-auto relative z-10">
-        <div class="flex items-center gap-3 mb-6">
-          <button
-            class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center transition backdrop-blur-sm border border-white/10"
-            @click="router.back()"
-          >
-            <UIcon name="i-lucide-arrow-left" class="w-4 h-4" />
-          </button>
-          <span class="text-sm text-emerald-300 font-medium">{{ t('allServices') }}</span>
-        </div>
+    <!-- Header -->
+    <div class="bg-white dark:bg-gray-950 border-b border-gray-100 dark:border-gray-800 px-4 sm:px-6 lg:px-8 pt-8 pb-10">
+      <div class="max-w-7xl mx-auto">
+        <button
+          type="button"
+          class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors mb-6"
+          @click="router.back()"
+        >
+          <UIcon name="i-lucide-arrow-left" class="w-4 h-4" />
+          {{ t('back') }}
+        </button>
 
-        <div v-if="activeCat" class="flex items-center gap-4 mb-4">
-          <div class="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center text-3xl border border-white/10">
-            {{ activeCat.icon }}
+        <div v-if="activeCat" class="flex items-center gap-4">
+          <div class="w-14 h-14 rounded-xl bg-green-50 dark:bg-green-950/50 flex items-center justify-center flex-shrink-0">
+            <UIcon :name="activeCat.icon" class="w-7 h-7 text-[var(--ui-primary)]" />
           </div>
           <div>
-            <h1 class="text-3xl md:text-4xl font-bold">{{ activeCat.label }}</h1>
-            <p class="text-emerald-300 text-sm mt-1 flex items-center gap-1.5">
+            <h1 class="text-3xl md:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">{{ activeCat.label }}</h1>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mt-1 flex items-center gap-1.5">
               <UIcon name="i-lucide-map-pin" class="w-3.5 h-3.5" />
               Jos, Plateau State · {{ t('verifiedProfessionals') }}
             </p>
           </div>
         </div>
         <div v-else>
-          <h1 class="text-3xl md:text-4xl font-bold mb-2">{{ t('findA') }} {{ t('findServiceProvider') }}</h1>
-          <p class="text-emerald-300 text-sm">{{ t('trustedProfessionals') }}</p>
+          <span class="eyebrow">{{ t('allServices') }}</span>
+          <h1 class="mt-2 text-3xl md:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">{{ t('findA') }} {{ t('findServiceProvider') }}</h1>
+          <p class="mt-2 text-gray-600 dark:text-gray-400">{{ t('trustedProfessionals') }}</p>
         </div>
 
-<!-- Search -->
-        <div class="mt-4 relative max-w-lg">
-          <UIcon name="i-lucide-search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 z-10" />
-          <input
-            v-model="search"
-            type="text"
-            :placeholder="t('searchServices')"
-            class="w-full pl-11 pr-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition text-sm"
-          />
-        </div>
+        <UInput
+          v-model="search"
+          icon="i-lucide-search"
+          size="xl"
+          :placeholder="t('searchServices')"
+          class="mt-6 w-full max-w-lg"
+        />
       </div>
     </div>
 
-    <div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
       <!-- Category Scroll Pills -->
       <div class="flex gap-2 overflow-x-auto pb-3 mb-8 scrollbar-hide">
@@ -164,14 +135,14 @@ const filtered = computed(() => {
           v-for="cat in categories"
           :key="cat.slug"
           :class="[
-            'flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all flex-shrink-0 border',
+            'flex items-center gap-2 px-3.5 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors flex-shrink-0 border',
             category === cat.slug
-              ? 'bg-emerald-500 text-white border-emerald-500 shadow-lg shadow-emerald-500/25'
-              : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-emerald-300 hover:text-emerald-600 dark:hover:border-emerald-600'
+              ? 'bg-ink-900 text-white border-ink-900 dark:bg-white dark:text-gray-900 dark:border-white'
+              : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500'
           ]"
           @click="selectCategory(cat.slug)"
         >
-          <span>{{ cat.icon }}</span>
+          <UIcon :name="cat.icon" class="w-4 h-4" />
           <span>{{ cat.label }}</span>
         </button>
       </div>
@@ -199,8 +170,8 @@ const filtered = computed(() => {
 
       <!-- No Category Selected -->
       <div v-else-if="!category && !search" class="text-center py-24">
-        <div class="w-24 h-24 bg-emerald-50 dark:bg-emerald-900/20 rounded-3xl flex items-center justify-center mx-auto mb-6 text-4xl">
-          🗂️
+        <div class="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-6">
+          <UIcon name="i-lucide-layout-grid" class="w-7 h-7 text-gray-400" />
         </div>
         <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">{{ t('pickCategory') }}</h3>
         <p class="text-gray-500 dark:text-gray-400 max-w-sm mx-auto">{{ t('pickCategoryDesc') }}</p>
@@ -208,8 +179,8 @@ const filtered = computed(() => {
 
       <!-- Empty Results -->
       <div v-else-if="filtered.length === 0 && !loading" class="text-center py-20">
-        <div class="w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-3xl flex items-center justify-center mx-auto mb-6 text-4xl">
-          {{ activeCat?.icon || '🔧' }}
+        <div class="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-6">
+          <UIcon :name="activeCat?.icon || 'i-lucide-search'" class="w-7 h-7 text-gray-400" />
         </div>
         <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
           {{ search ? t('noResultsFor') + ' "' + search + '"' : t('noProvidersIn') + ' ' + activeCat?.label }}
@@ -236,29 +207,27 @@ const filtered = computed(() => {
           <div
             v-for="provider in filtered"
             :key="provider.id"
-            class="group bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-emerald-200 dark:hover:border-emerald-700 overflow-hidden hover:-translate-y-1"
+            class="card-hover bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 overflow-hidden"
           >
-            <!-- Top accent -->
-            <div class="h-1 bg-gradient-to-r from-emerald-400 to-teal-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
             <div class="p-5">
               <!-- Provider Header -->
               <div class="flex items-start gap-3 mb-4">
-                <div class="w-14 h-14 rounded-2xl overflow-hidden bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/40 dark:to-teal-900/40 flex items-center justify-center flex-shrink-0 border border-emerald-100 dark:border-emerald-800">
-                  <img v-if="provider.image" :src="imgUrl(provider.image, 200)" :alt="provider.service_name" class="w-full h-full object-cover" />
-                  <span v-else class="text-emerald-600 dark:text-emerald-400 font-bold text-xl">{{ provider.service_name?.charAt(0) }}</span>
+                <div class="w-14 h-14 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center flex-shrink-0">
+                  <img v-if="provider.image" :src="imgUrl(provider.image, 200)" :alt="provider.service_name" class="w-full h-full object-cover" >
+                  <span v-else class="text-gray-500 dark:text-gray-400 font-semibold text-xl">{{ provider.service_name?.charAt(0) }}</span>
                 </div>
                 <div class="flex-1 min-w-0">
                   <div class="flex items-start justify-between gap-2">
                     <h3 class="font-bold text-gray-900 dark:text-white leading-tight truncate">{{ provider.service_name }}</h3>
                     <div class="flex flex-col items-end gap-1 flex-shrink-0">
-                      <span class="flex items-center gap-1 px-2 py-0.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-xs font-semibold rounded-full border border-emerald-100 dark:border-emerald-800">
+                      <span class="flex items-center gap-1 px-2 py-0.5 bg-green-50 dark:bg-green-950/50 text-green-700 dark:text-green-400 text-xs font-medium rounded-full">
                         <UIcon name="i-lucide-badge-check" class="w-3 h-3" /> {{ t('verified') }}
                       </span>
                     </div>
                   </div>
                   <div class="flex items-center gap-1 mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    <UIcon name="i-lucide-map-pin" class="w-3 h-3 text-emerald-500" />
+                    <UIcon name="i-lucide-map-pin" class="w-3 h-3" />
                     {{ provider.location }}
                   </div>
                 </div>
@@ -269,10 +238,10 @@ const filtered = computed(() => {
 
               <!-- Meta Info -->
               <div class="flex flex-wrap gap-2 mb-4">
-                <span v-if="provider.experience" class="flex items-center gap-1 px-2.5 py-1 bg-gray-50 dark:bg-gray-700/50 rounded-lg text-xs text-gray-600 dark:text-gray-400">
-                  <UIcon name="i-lucide-clock" class="w-3 h-3 text-emerald-500" /> {{ provider.experience }}
+                <span v-if="provider.experience" class="flex items-center gap-1 px-2.5 py-1 bg-gray-100 dark:bg-gray-800 rounded-md text-xs text-gray-600 dark:text-gray-400">
+                  <UIcon name="i-lucide-clock" class="w-3 h-3" /> {{ provider.experience }}
                 </span>
-                <span v-if="provider.price_range" class="flex items-center gap-1 px-2.5 py-1 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg text-xs text-emerald-700 dark:text-emerald-400 font-medium">
+                <span v-if="provider.price_range" class="flex items-center gap-1 px-2.5 py-1 bg-gray-100 dark:bg-gray-800 rounded-md text-xs text-gray-700 dark:text-gray-300 font-medium">
                   ₦ {{ provider.price_range }}
                 </span>
                 <span v-if="provider.rating > 0" class="flex items-center gap-1 px-2.5 py-1 bg-amber-50 dark:bg-amber-900/20 rounded-lg text-xs text-amber-700 dark:text-amber-400">
@@ -287,7 +256,7 @@ const filtered = computed(() => {
                   :key="i"
                   :src="imgUrl(img, 200)"
                   class="w-16 h-16 object-cover rounded-xl border border-gray-100 dark:border-gray-700"
-                />
+                >
                 <div v-if="provider.gallery.length > 3" class="w-16 h-16 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-xs font-semibold text-gray-500">
                   +{{ provider.gallery.length - 3 }}
                 </div>
@@ -297,21 +266,21 @@ const filtered = computed(() => {
               <div class="flex gap-2">
                 <a
                   :href="`tel:${provider.phone}`"
-                  class="flex-1 flex items-center justify-center gap-2 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-sm font-semibold transition-all hover:shadow-lg hover:shadow-emerald-500/25"
+                  class="flex-1 flex items-center justify-center gap-2 py-2.5 bg-ink-900 hover:bg-ink-800 dark:bg-white dark:hover:bg-gray-200 dark:text-gray-900 text-white rounded-lg text-sm font-semibold transition-colors"
                 >
                   <UIcon name="i-lucide-phone" class="w-4 h-4" /> {{ t('call') }}
                 </a>
                 <a
                   :href="`https://wa.me/${provider.phone?.replace(/[^0-9]/g, '')}?text=Hi, I found you on JosMKT. I need your ${provider.service_name} service`"
                   target="_blank"
-                  class="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-xl text-sm font-semibold transition-all hover:shadow-lg hover:shadow-green-500/25"
+                  class="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#25D366] hover:bg-[#1ebe5b] text-white rounded-lg text-sm font-semibold transition-colors"
                 >
-                  <UIcon name="i-lucide-message-circle" class="w-4 h-4" /> {{ t('whatsapp') }}
+                  <UIcon name="i-simple-icons-whatsapp" class="w-4 h-4" /> {{ t('whatsapp') }}
                 </a>
-                <NuxtLink :to="`/provider/${provider.id}`" class="flex items-center justify-center px-3 py-2.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-xl transition-all">
+                <NuxtLink :to="`/provider/${provider.id}`" class="flex items-center justify-center px-3 py-2.5 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg transition-colors" :aria-label="provider.service_name">
                   <UIcon name="i-lucide-eye" class="w-4 h-4" />
                 </NuxtLink>
-                <a v-if="provider.lat && provider.lng" :href="`https://www.google.com/maps?q=${provider.lat},${provider.lng}`" target="_blank" class="flex items-center justify-center px-3 py-2.5 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 text-blue-600 dark:text-blue-400 rounded-xl transition-all" title="View on Google Maps">
+                <a v-if="provider.lat && provider.lng" :href="`https://www.google.com/maps?q=${provider.lat},${provider.lng}`" target="_blank" class="flex items-center justify-center px-3 py-2.5 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg transition-colors" title="View on Google Maps">
                   <UIcon name="i-lucide-map-pin" class="w-4 h-4" />
                 </a>
               </div>
@@ -321,22 +290,23 @@ const filtered = computed(() => {
       </div>
 
       <!-- CTA -->
-      <div class="mt-16 rounded-3xl bg-gradient-to-r from-emerald-600 to-teal-500 p-8 md:p-12 text-white text-center relative overflow-hidden">
-        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-white/10 via-transparent to-transparent" />
-        <div class="relative z-10">
-          <div class="text-4xl mb-4">💼</div>
-          <h3 class="text-2xl md:text-3xl font-bold mb-3">{{ t('areYouProvider') }}</h3>
-          <p class="text-emerald-100 mb-8 max-w-md mx-auto">{{ t('listBusinessDesc') }}</p>
-          <UButton to="/become-seller" color="white" size="lg" class="font-bold hover:scale-105 transition-transform">
+      <div class="mt-16 rounded-2xl bg-ink-900 text-white overflow-hidden grid md:grid-cols-5">
+        <div class="md:col-span-3 p-8 md:p-12">
+          <h3 class="text-2xl md:text-3xl font-bold tracking-tight">{{ t('areYouProvider') }}</h3>
+          <p class="mt-3 text-ink-200 max-w-md">{{ t('listBusinessDesc') }}</p>
+          <NuxtLink
+            to="/become-seller"
+            class="mt-8 inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-brand-orange hover:bg-brand-orange-dark text-white text-sm font-semibold transition-colors"
+          >
             {{ t('registerBusinessCta') }}
-          </UButton>
+            <UIcon name="i-lucide-arrow-right" class="w-4 h-4" />
+          </NuxtLink>
+        </div>
+        <div class="hidden md:block md:col-span-2 relative min-h-56">
+          <img src="/images/shop-owner.webp" alt="" aria-hidden="true" loading="lazy" class="absolute inset-0 w-full h-full object-cover" >
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<style scoped>
-.scrollbar-hide::-webkit-scrollbar { display: none; }
-.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-</style>

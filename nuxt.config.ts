@@ -7,6 +7,11 @@ export default defineNuxtConfig({
 
   app: {
     head: {
+      htmlAttrs: { lang: 'en' },
+      meta: [
+        { name: 'description', content: 'Find trusted, verified artisans and service providers in Jos — plumbers, electricians, mechanics, tailors and more. Call or WhatsApp them directly.' },
+        { name: 'theme-color', content: '#10292a' }
+      ],
       link: [
         { rel: 'icon', type: 'image/png', href: '/josmkt-logo.png' },
         { rel: 'apple-touch-icon', href: '/josmkt-logo.png' }

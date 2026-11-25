@@ -98,9 +98,9 @@ watch(expanded, () => {
           <UIcon name="i-lucide-x" class="w-3.5 h-3.5 text-gray-500" />
         </button>
         <div class="flex items-center gap-3 mb-3">
-          <div class="w-12 h-12 rounded-xl overflow-hidden bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center flex-shrink-0">
+          <div class="w-12 h-12 rounded-xl overflow-hidden bg-green-100 dark:bg-green-900/30 flex items-center justify-center flex-shrink-0">
             <img v-if="selectedProvider.image" :src="selectedProvider.image" class="w-full h-full object-cover" />
-            <span v-else class="text-emerald-600 font-bold text-lg">{{ selectedProvider.service_name?.charAt(0) }}</span>
+            <span v-else class="text-green-600 font-bold text-lg">{{ selectedProvider.service_name?.charAt(0) }}</span>
           </div>
           <div class="flex-1 min-w-0">
             <p class="font-bold text-gray-900 dark:text-white truncate">{{ selectedProvider.service_name }}</p>
@@ -109,7 +109,7 @@ watch(expanded, () => {
         </div>
         <p class="text-xs text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">{{ selectedProvider.description }}</p>
         <div class="flex gap-2">
-          <a :href="`tel:${selectedProvider.phone}`" class="flex-1 flex items-center justify-center gap-1.5 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-semibold transition">
+          <a :href="`tel:${selectedProvider.phone}`" class="flex-1 flex items-center justify-center gap-1.5 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl text-xs font-semibold transition">
             <UIcon name="i-lucide-phone" class="w-3.5 h-3.5" /> Call
           </a>
           <a :href="`https://wa.me/${selectedProvider.phone?.replace(/[^0-9]/g, '')}?text=Hi, I found you on JosMKT. I need your ${selectedProvider.service_name} service`" target="_blank" class="flex-1 flex items-center justify-center gap-1.5 py-2 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-xl text-xs font-semibold transition">

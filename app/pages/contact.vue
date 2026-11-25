@@ -31,15 +31,15 @@ const handleSubmit = () => {
 
       <div class="mt-8 grid md:grid-cols-2 gap-4">
         <div class="flex items-center gap-3 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm">
-          <UIcon name="i-lucide-phone" class="w-5 h-5 text-emerald-500" />
+          <UIcon name="i-lucide-phone" class="w-5 h-5 text-green-500" />
           <span class="text-gray-700 dark:text-gray-300">+234 904 383 2380</span>
         </div>
         <div class="flex items-center gap-3 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm">
-          <UIcon name="i-lucide-map-pin" class="w-5 h-5 text-emerald-500" />
+          <UIcon name="i-lucide-map-pin" class="w-5 h-5 text-green-500" />
           <span class="text-gray-700 dark:text-gray-300">Jos, Plateau State, Nigeria</span>
         </div>
         <div class="flex items-center gap-3 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm">
-          <UIcon name="i-lucide-mail" class="w-5 h-5 text-emerald-500" />
+          <UIcon name="i-lucide-mail" class="w-5 h-5 text-green-500" />
           <span class="text-gray-700 dark:text-gray-300">josmktforyou@gmail.com</span>
         </div>
         <a href="https://wa.me/2349043832380" target="_blank" class="flex items-center gap-3 bg-green-50 dark:bg-green-900/20 p-4 rounded-xl shadow-sm hover:bg-green-100 dark:hover:bg-green-900/30 transition">

@@ -111,13 +111,13 @@ const scrollTo = (el: Ref<HTMLElement | null>) => {
       <!-- Tab Toggle -->
       <div class="flex gap-2 mb-4">
         <button
-          :class="['flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition border', activeTab === 'support' ? 'bg-emerald-500 text-white border-emerald-500 shadow-lg shadow-emerald-500/20' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-emerald-300']"
+          :class="['flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition border', activeTab === 'support' ? 'bg-green-500 text-white border-green-500 shadow-lg shadow-green-500/20' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-green-300']"
           @click="activeTab = 'support'"
         >
           <UIcon name="i-lucide-headset" class="w-4 h-4" /> Support Chat
         </button>
         <button
-          :class="['flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition border', activeTab === 'chats' ? 'bg-emerald-500 text-white border-emerald-500 shadow-lg shadow-emerald-500/20' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-emerald-300']"
+          :class="['flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition border', activeTab === 'chats' ? 'bg-green-500 text-white border-green-500 shadow-lg shadow-green-500/20' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-green-300']"
           @click="activeTab = 'chats'"
         >
           <UIcon name="i-lucide-message-square" class="w-4 h-4" /> My Chats
@@ -127,7 +127,7 @@ const scrollTo = (el: Ref<HTMLElement | null>) => {
       <!-- Support Chat -->
       <div v-if="activeTab === 'support'" class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden flex flex-col" style="height: 72vh">
         <!-- Header -->
-        <div class="flex items-center gap-3 px-5 py-4 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-emerald-500 to-teal-500">
+        <div class="flex items-center gap-3 px-5 py-4 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-green-500 to-teal-500">
           <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
             <UIcon name="i-lucide-shield" class="w-5 h-5 text-white" />
           </div>
@@ -135,7 +135,7 @@ const scrollTo = (el: Ref<HTMLElement | null>) => {
             <p class="font-bold text-white">JosMKT Support</p>
             <div class="flex items-center gap-1.5">
               <span class="w-2 h-2 bg-green-300 rounded-full animate-pulse" />
-              <p class="text-xs text-emerald-100">Admin · Usually replies within a few hours</p>
+              <p class="text-xs text-green-100">Admin · Usually replies within a few hours</p>
             </div>
           </div>
         </div>
@@ -143,12 +143,12 @@ const scrollTo = (el: Ref<HTMLElement | null>) => {
         <!-- Messages -->
         <div class="flex-1 overflow-y-auto px-4 py-4 space-y-3">
           <div v-if="loadingSupport" class="flex items-center justify-center h-full">
-            <UIcon name="i-lucide-loader" class="w-6 h-6 animate-spin text-emerald-500" />
+            <UIcon name="i-lucide-loader" class="w-6 h-6 animate-spin text-green-500" />
           </div>
 
           <div v-else-if="supportMessages.length === 0" class="flex flex-col items-center justify-center h-full text-center">
-            <div class="w-16 h-16 bg-emerald-50 dark:bg-emerald-900/20 rounded-2xl flex items-center justify-center mb-3">
-              <UIcon name="i-lucide-message-circle" class="w-8 h-8 text-emerald-400" />
+            <div class="w-16 h-16 bg-green-50 dark:bg-green-900/20 rounded-2xl flex items-center justify-center mb-3">
+              <UIcon name="i-lucide-message-circle" class="w-8 h-8 text-green-400" />
             </div>
             <p class="font-semibold text-gray-700 dark:text-gray-300">Start a conversation</p>
             <p class="text-sm text-gray-400 mt-1 max-w-xs">Ask about your account, report an issue, or get help with anything on JosMKT</p>
@@ -169,13 +169,13 @@ const scrollTo = (el: Ref<HTMLElement | null>) => {
               :class="msg.is_admin ? 'justify-start' : 'justify-end'"
             >
               <div class="flex items-end gap-2 max-w-sm">
-                <div v-if="msg.is_admin" class="w-7 h-7 bg-emerald-500 rounded-full flex items-center justify-center flex-shrink-0 mb-1">
+                <div v-if="msg.is_admin" class="w-7 h-7 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mb-1">
                   <UIcon name="i-lucide-shield" class="w-3.5 h-3.5 text-white" />
                 </div>
                 <div>
                   <div
                     class="px-4 py-2.5 rounded-2xl text-sm leading-relaxed"
-                    :class="msg.is_admin ? 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-tl-sm' : 'bg-emerald-500 text-white rounded-tr-sm'"
+                    :class="msg.is_admin ? 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-tl-sm' : 'bg-green-500 text-white rounded-tr-sm'"
                   >
                     {{ msg.content }}
                   </div>
@@ -196,11 +196,11 @@ const scrollTo = (el: Ref<HTMLElement | null>) => {
               v-model="newSupport"
               type="text"
               placeholder="Type your message..."
-              class="flex-1 px-4 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm focus:outline-none focus:border-emerald-400 transition"
+              class="flex-1 px-4 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm focus:outline-none focus:border-green-400 transition"
               @keyup.enter="sendSupport"
             />
             <button
-              class="w-10 h-10 bg-emerald-500 hover:bg-emerald-600 rounded-xl flex items-center justify-center transition flex-shrink-0 disabled:opacity-50"
+              class="w-10 h-10 bg-green-500 hover:bg-green-600 rounded-xl flex items-center justify-center transition flex-shrink-0 disabled:opacity-50"
               :disabled="!newSupport.trim()"
               @click="sendSupport"
             >
@@ -229,11 +229,11 @@ const scrollTo = (el: Ref<HTMLElement | null>) => {
               v-for="chat in chats"
               :key="chat.id"
               class="w-full p-4 border-b border-gray-50 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition text-left"
-              :class="selectedChat?.id === chat.id ? 'bg-emerald-50 dark:bg-emerald-900/20 border-l-2 border-l-emerald-500' : ''"
+              :class="selectedChat?.id === chat.id ? 'bg-green-50 dark:bg-green-900/20 border-l-2 border-l-green-500' : ''"
               @click="selectChat(chat)"
             >
               <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center font-bold text-emerald-600 flex-shrink-0">
+                <div class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center font-bold text-green-600 flex-shrink-0">
                   {{ otherParticipant(chat)?.full_name?.charAt(0) || '?' }}
                 </div>
                 <div class="flex-1 min-w-0">
@@ -259,7 +259,7 @@ const scrollTo = (el: Ref<HTMLElement | null>) => {
               </div>
               <div class="flex-1 overflow-y-auto p-4 space-y-3">
                 <div v-for="(msg, i) in chatMessages" :key="i" class="flex" :class="msg.sender_id === user?.id ? 'justify-end' : 'justify-start'">
-                  <div class="max-w-xs px-4 py-2.5 rounded-2xl text-sm" :class="msg.sender_id === user?.id ? 'bg-emerald-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'">
+                  <div class="max-w-xs px-4 py-2.5 rounded-2xl text-sm" :class="msg.sender_id === user?.id ? 'bg-green-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'">
                     {{ msg.content }}
                   </div>
                 </div>
@@ -267,8 +267,8 @@ const scrollTo = (el: Ref<HTMLElement | null>) => {
               </div>
               <div class="p-4 border-t border-gray-100 dark:border-gray-700">
                 <div class="flex gap-2">
-                  <input v-model="newChatMessage" type="text" placeholder="Type a message..." class="flex-1 px-4 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm focus:outline-none focus:border-emerald-400 transition" @keyup.enter="sendChatMessage" />
-                  <button class="w-10 h-10 bg-emerald-500 hover:bg-emerald-600 rounded-xl flex items-center justify-center transition" @click="sendChatMessage">
+                  <input v-model="newChatMessage" type="text" placeholder="Type a message..." class="flex-1 px-4 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm focus:outline-none focus:border-green-400 transition" @keyup.enter="sendChatMessage" />
+                  <button class="w-10 h-10 bg-green-500 hover:bg-green-600 rounded-xl flex items-center justify-center transition" @click="sendChatMessage">
                     <UIcon name="i-lucide-send" class="w-4 h-4 text-white" />
                   </button>
                 </div>

@@ -48,13 +48,13 @@ onMounted(async () => {
         <h2 class="text-2xl font-black mb-2">Verifying your email...</h2>
         <p class="text-gray-500">Please wait a moment</p>
         <div class="mt-4 flex justify-center">
-          <div class="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+          <div class="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin" />
         </div>
       </div>
 
       <div v-else-if="status === 'success'">
         <div class="text-5xl mb-4">✅</div>
-        <h2 class="text-2xl font-black mb-2 text-emerald-600">Email Verified!</h2>
+        <h2 class="text-2xl font-black mb-2 text-green-600">Email Verified!</h2>
         <p class="text-gray-500 mb-6">Your account is confirmed. Redirecting to dashboard...</p>
         <UButton to="/dashboard" color="primary" block>Go to Dashboard</UButton>
       </div>
