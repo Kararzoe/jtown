@@ -118,7 +118,7 @@ onMounted(async () => {
         </div>
 
         <div class="lg:col-span-5 relative">
-          <div class="relative aspect-[4/5] max-w-md mx-auto lg:max-w-none rounded-2xl overflow-hidden bg-gray-200 dark:bg-gray-800 shadow-xl">
+          <div class="relative aspect-[4/3] lg:aspect-[4/5] max-w-xl mx-auto lg:max-w-none rounded-2xl overflow-hidden bg-gray-200 dark:bg-gray-800 shadow-xl">
             <img
               src="/images/hero-electrician.webp"
               alt="Electrician at work installing a power meter"
@@ -127,7 +127,7 @@ onMounted(async () => {
             >
           </div>
           <div
-            v-if="allProviders.length"
+            v-if="allProviders.length >= 10"
             class="absolute -bottom-5 left-4 sm:left-8 lg:-left-6 flex items-center gap-3 rounded-xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-lg px-4 py-3"
           >
             <span class="w-10 h-10 rounded-lg bg-green-50 dark:bg-green-950/50 flex items-center justify-center">
@@ -143,8 +143,8 @@ onMounted(async () => {
     </section>
 
     <!-- Popular categories -->
-    <section id="services" class="py-20 px-4 sm:px-6 lg:px-8 bg-white dark:bg-gray-950">
-      <div class="max-w-7xl mx-auto">
+    <section id="services" class="py-20 bg-white dark:bg-gray-950">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-end justify-between gap-4 mb-10 reveal">
           <div>
             <span class="eyebrow">{{ t('ourServices') }}</span>
@@ -200,8 +200,8 @@ onMounted(async () => {
     </section>
 
     <!-- How it works -->
-    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-900 border-y border-gray-100 dark:border-gray-800">
-      <div class="max-w-7xl mx-auto">
+    <section class="py-20 bg-gray-50 dark:bg-gray-900 border-y border-gray-100 dark:border-gray-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="max-w-2xl mb-12 reveal">
           <span class="eyebrow">{{ t('simpleProcess') }}</span>
           <h2 class="mt-2 text-3xl md:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">{{ t('howItWorks') }}</h2>
@@ -228,8 +228,8 @@ onMounted(async () => {
     </section>
 
     <!-- Map -->
-    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-white dark:bg-gray-950">
-      <div class="max-w-7xl mx-auto">
+    <section class="py-20 bg-white dark:bg-gray-950">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 reveal">
           <div class="max-w-2xl">
             <span class="eyebrow">{{ t('liveServiceMap') }}</span>
@@ -249,8 +249,8 @@ onMounted(async () => {
     </section>
 
     <!-- Featured products (only when there are any) -->
-    <section v-if="products.length" class="py-20 px-4 sm:px-6 lg:px-8 bg-white dark:bg-gray-950 border-t border-gray-100 dark:border-gray-800">
-      <div class="max-w-7xl mx-auto">
+    <section v-if="products.length" class="py-20 bg-white dark:bg-gray-950 border-t border-gray-100 dark:border-gray-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-end justify-between gap-4 mb-8">
           <div>
             <span class="eyebrow">{{ t('products') }}</span>
@@ -265,8 +265,8 @@ onMounted(async () => {
     </section>
 
     <!-- For businesses -->
-    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-ink-900 text-white">
-      <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+    <section class="py-20 bg-ink-900 text-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
         <div class="relative order-last lg:order-first reveal">
           <div class="aspect-[4/3] rounded-2xl overflow-hidden bg-ink-800">
             <img src="/images/shop-owner.webp" alt="Shop owner standing behind the counter of her store" loading="lazy" class="w-full h-full object-cover" >
@@ -302,8 +302,8 @@ onMounted(async () => {
     </section>
 
     <!-- FAQ -->
-    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-white dark:bg-gray-950">
-      <div class="max-w-7xl mx-auto grid lg:grid-cols-3 gap-10">
+    <section class="py-20 bg-white dark:bg-gray-950">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-3 gap-10">
         <div class="reveal">
           <span class="eyebrow">FAQ</span>
           <h2 class="mt-2 text-3xl md:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">{{ t('faqTitle') }}</h2>
@@ -326,10 +326,10 @@ onMounted(async () => {
     </section>
 
     <!-- Final CTA -->
-    <section class="relative px-4 sm:px-6 lg:px-8 py-24 overflow-hidden">
+    <section class="relative py-24 overflow-hidden">
       <img src="/images/market.webp" alt="" aria-hidden="true" loading="lazy" class="absolute inset-0 w-full h-full object-cover" >
       <div class="absolute inset-0 bg-ink-950/80" />
-      <div class="relative max-w-3xl mx-auto text-center text-white">
+      <div class="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
         <h2 class="text-3xl md:text-5xl font-bold tracking-tight">{{ t('readyToGrow') }}</h2>
         <p class="mt-4 text-lg text-ink-100/90">{{ t('joinThousands') }}</p>
         <div class="mt-10 flex flex-col sm:flex-row gap-3 justify-center">

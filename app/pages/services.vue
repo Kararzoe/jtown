@@ -88,8 +88,8 @@ const filtered = computed(() => {
   <div class="min-h-screen bg-gray-50 dark:bg-gray-950">
 
     <!-- Header -->
-    <div class="bg-white dark:bg-gray-950 border-b border-gray-100 dark:border-gray-800 px-4 sm:px-6 lg:px-8 pt-8 pb-10">
-      <div class="max-w-7xl mx-auto">
+    <div class="bg-white dark:bg-gray-950 border-b border-gray-100 dark:border-gray-800 pt-8 pb-10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <button
           type="button"
           class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors mb-6"
